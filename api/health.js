@@ -13,8 +13,8 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    // Test Firebase Realtime Database connection.
-    const snapshot = await db.ref(".info/connected").get();
+    // Read the Firebase database root.
+    await db.ref("/").limitToFirst(1).get();
 
     return res.status(200).json({
       success: true,
@@ -25,14 +25,14 @@ module.exports = async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error("Health check error:", error.message);
+    console.error("Firebase health check failed:", error);
 
     return res.status(503).json({
       success: false,
       service: "Appnetick Admin Backend",
       status: "running",
       firebase: "error",
-      message: "Unable to verify Firebase connection."
+      message: error.message || "Firebase connection failed."
     });
   }
 };
