@@ -1,0 +1,16 @@
+{
+  "name": "appnetick-admin-backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Appnetick Admin Backend API",
+  "main": "api/health.js",
+  "scripts": {
+    "start": "vercel dev"
+  },
+  "dependencies": {
+    "firebase-admin": "^13.5.0"
+  },
+  "devDependencies": {
+    "vercel": "^48.0.0"
+  }
+}
