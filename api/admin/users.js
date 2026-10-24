@@ -16,6 +16,11 @@ function verifyAdmin(req, res) {
 
   const authorization = req.headers.authorization || "";
 
+  console.log("ADMIN_API_KEY configured:", !!adminApiKey);
+console.log(
+  "Authorization header received:",
+  !!req.headers.authorization
+);
   if (!authorization.startsWith("Bearer ")) {
     res.status(401).json({
       success: false,
