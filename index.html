@@ -1,0 +1,2000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="theme-color"
+        content="#0B1020"
+    >
+
+    <title>Appnetick Admin</title>
+
+    <style>
+        :root {
+            --background: #0B1020;
+            --sidebar: #10172A;
+            --surface: #141D32;
+            --surface-hover: #1A2640;
+            --border: #26334D;
+            --primary: #2979FF;
+            --primary-hover: #1D68E8;
+            --text: #F4F7FF;
+            --muted: #91A0BB;
+            --green: #36D399;
+            --red: #FB7185;
+            --orange: #FBBF24;
+            --radius: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            color-scheme: dark;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: var(--background);
+            color: var(--text);
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+        }
+
+        button,
+        input,
+        select {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        .app {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR */
+
+        .sidebar {
+            width: 250px;
+            flex-shrink: 0;
+            padding: 25px 17px;
+            background: var(--sidebar);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 10px;
+            margin-bottom: 38px;
+        }
+
+        .brand-logo {
+            width: 43px;
+            height: 43px;
+            border-radius: 14px;
+            display: grid;
+            place-items: center;
+            background: var(--primary);
+            color: white;
+            font-size: 21px;
+            font-weight: 800;
+        }
+
+        .brand-name {
+            font-size: 18px;
+            font-weight: 750;
+            letter-spacing: -0.5px;
+        }
+
+        .brand-subtitle {
+            margin-top: 4px;
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        .nav-label {
+            padding: 0 12px;
+            margin: 0 0 12px;
+            font-size: 10px;
+            font-weight: 750;
+            letter-spacing: 1.5px;
+            color: var(--muted);
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 13px 14px;
+            margin-bottom: 6px;
+            border-radius: 11px;
+            text-decoration: none;
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .nav-item.active {
+            background: rgba(41, 121, 255, 0.15);
+            color: #75A8FF;
+            box-shadow: inset 3px 0 #2979FF;
+        }
+
+        .nav-icon {
+            width: 20px;
+            text-align: center;
+            font-size: 17px;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            padding: 15px;
+            border: 1px solid var(--border);
+            background: rgba(255,255,255,0.025);
+            border-radius: 13px;
+        }
+
+        .sidebar-bottom-title {
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .sidebar-bottom-text {
+            margin-top: 7px;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        /* MAIN */
+
+        .main {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .topbar {
+            min-height: 82px;
+            padding: 18px 34px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(11,16,32,0.88);
+        }
+
+        .page-heading {
+            margin: 0;
+            font-size: 21px;
+            font-weight: 750;
+            letter-spacing: -0.6px;
+        }
+
+        .breadcrumb {
+            margin-top: 6px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .status-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 12px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--orange);
+        }
+
+        .status-dot.connected {
+            background: var(--green);
+        }
+
+        .status-dot.error {
+            background: var(--red);
+        }
+
+        .admin-avatar {
+            width: 39px;
+            height: 39px;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            background: #263C65;
+            color: #A9C9FF;
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .content {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 30px 34px 50px;
+        }
+
+        .welcome {
+            margin-bottom: 25px;
+        }
+
+        .welcome h2 {
+            margin: 0;
+            font-size: 25px;
+            font-weight: 750;
+            letter-spacing: -0.8px;
+        }
+
+        .welcome p {
+            margin: 9px 0 0;
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        /* STAT CARDS */
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+            margin-bottom: 27px;
+        }
+
+        .stat-card {
+            padding: 22px;
+            min-height: 145px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            font-weight: 550;
+            color: var(--muted);
+        }
+
+        .stat-icon {
+            width: 37px;
+            height: 37px;
+            border-radius: 11px;
+            display: grid;
+            place-items: center;
+            background: rgba(41,121,255,0.13);
+            color: #75A8FF;
+            font-size: 18px;
+        }
+
+        .stat-value {
+            margin-top: 17px;
+            font-size: 31px;
+            line-height: 1;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .stat-caption {
+            margin-top: 10px;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        /* USERS PANEL */
+
+        .users-panel {
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--surface);
+            overflow: hidden;
+        }
+
+        .panel-header {
+            padding: 22px 23px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .panel-title {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 750;
+        }
+
+        .panel-description {
+            margin-top: 6px;
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        .button {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            padding: 11px 15px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            background: #1B2740;
+            font-size: 12px;
+            font-weight: 650;
+            transition: 0.2s;
+        }
+
+        .button:hover {
+            background: var(--surface-hover);
+        }
+
+        .button.primary {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .button.primary:hover {
+            background: var(--primary-hover);
+        }
+
+        .button:disabled {
+            opacity: 0.6;
+            cursor: wait;
+        }
+
+        .toolbar {
+            padding: 17px 22px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .search-wrap {
+            flex: 1;
+            max-width: 400px;
+            position: relative;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+            font-size: 15px;
+            pointer-events: none;
+        }
+
+        .search-input {
+            width: 100%;
+            height: 42px;
+            padding: 0 14px 0 39px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            outline: none;
+            color: var(--text);
+            background: #0E1629;
+            font-size: 12px;
+        }
+
+        .search-input:focus,
+        .select:focus,
+        .api-input:focus {
+            border-color: var(--primary);
+        }
+
+        .filters {
+            display: flex;
+            gap: 9px;
+        }
+
+        .select {
+            height: 42px;
+            max-width: 190px;
+            padding: 0 12px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            outline: none;
+            background: #0E1629;
+            color: var(--text);
+            font-size: 12px;
+        }
+
+        .results-label {
+            padding: 15px 22px 10px;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        /* DESKTOP TABLE */
+
+        .table-wrap {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        thead {
+            background: rgba(255,255,255,0.018);
+        }
+
+        th {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 15px 20px;
+            border-bottom: 1px solid rgba(38,51,77,0.7);
+            font-size: 12px;
+            vertical-align: middle;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        tbody tr:hover {
+            background: rgba(255,255,255,0.018);
+        }
+
+        .user-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 180px;
+        }
+
+        .user-avatar {
+            width: 39px;
+            height: 39px;
+            flex-shrink: 0;
+            border-radius: 12px;
+            background: #263C65;
+            display: grid;
+            place-items: center;
+            color: #A9C9FF;
+            font-size: 13px;
+            font-weight: 800;
+            overflow: hidden;
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .user-name {
+            font-weight: 700;
+            font-size: 12px;
+            overflow-wrap: anywhere;
+        }
+
+        .user-subtitle {
+            margin-top: 5px;
+            color: var(--muted);
+            font-size: 10px;
+            overflow-wrap: anywhere;
+        }
+
+        .email {
+            color: #BCC7DB;
+            overflow-wrap: anywhere;
+            min-width: 150px;
+        }
+
+        .source-badge,
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6px 9px;
+            border-radius: 7px;
+            font-size: 10px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .source-badge.website {
+            background: rgba(167,139,250,0.12);
+            color: #BCA8FF;
+        }
+
+        .source-badge.android_app {
+            background: rgba(41,121,255,0.13);
+            color: #8BB5FF;
+        }
+
+        .status-badge.active {
+            background: rgba(54,211,153,0.12);
+            color: var(--green);
+        }
+
+        .status-badge.unknown {
+            background: rgba(251,191,36,0.12);
+            color: var(--orange);
+        }
+
+        .status-badge.other {
+            background: rgba(145,160,187,0.12);
+            color: #B9C5D9;
+        }
+
+        .verify {
+            color: var(--green);
+            font-weight: 700;
+        }
+
+        .not-verified {
+            color: var(--muted);
+        }
+
+        .empty {
+            padding: 55px 20px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .empty-icon {
+            font-size: 32px;
+            margin-bottom: 13px;
+        }
+
+        .error-box {
+            display: none;
+            margin: 18px 22px;
+            padding: 15px;
+            border: 1px solid rgba(251,113,133,0.35);
+            border-radius: 10px;
+            color: #FDA4AF;
+            background: rgba(251,113,133,0.07);
+            font-size: 12px;
+            line-height: 1.7;
+            overflow-wrap: anywhere;
+        }
+
+        .loading {
+            display: none;
+            padding: 42px 20px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .spinner {
+            width: 25px;
+            height: 25px;
+            margin: 0 auto 13px;
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .panel-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            padding: 15px 22px;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        /* MOBILE USER CARDS */
+
+        .mobile-users {
+            display: none;
+            padding: 12px;
+        }
+
+        .mobile-user {
+            padding: 15px;
+            margin-bottom: 10px;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            background: rgba(255,255,255,0.015);
+        }
+
+        .mobile-user-top {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .mobile-user-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .mobile-user-name {
+            font-size: 13px;
+            font-weight: 750;
+            overflow-wrap: anywhere;
+        }
+
+        .mobile-user-email {
+            margin-top: 5px;
+            color: var(--muted);
+            font-size: 11px;
+            overflow-wrap: anywhere;
+        }
+
+        .mobile-user-meta {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+            margin-top: 14px;
+        }
+
+        .mobile-user-uid {
+            margin-top: 13px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 10px;
+            overflow-wrap: anywhere;
+            line-height: 1.6;
+        }
+
+        /* CONNECTION DIALOG */
+
+        .dialog-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+            background: rgba(0,0,0,0.72);
+            backdrop-filter: blur(8px);
+        }
+
+        .dialog-backdrop.open {
+            display: flex;
+        }
+
+        .dialog {
+            width: 100%;
+            max-width: 470px;
+            padding: 25px;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            background: var(--sidebar);
+            box-shadow: 0 25px 80px rgba(0,0,0,0.35);
+        }
+
+        .dialog h3 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .dialog p {
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        .field-label {
+            display: block;
+            margin: 18px 0 8px;
+            font-size: 12px;
+            font-weight: 650;
+        }
+
+        .api-input {
+            width: 100%;
+            height: 44px;
+            padding: 0 13px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            outline: none;
+            color: var(--text);
+            background: #0B1020;
+            font-size: 12px;
+        }
+
+        .security-note {
+            margin-top: 13px;
+            padding: 12px;
+            border-radius: 9px;
+            background: rgba(251,191,36,0.07);
+            color: #E8C779;
+            font-size: 11px;
+            line-height: 1.7;
+        }
+
+        .dialog-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 9px;
+            margin-top: 22px;
+        }
+
+        /* MOBILE NAV */
+
+        .mobile-nav {
+            display: none;
+        }
+
+        @media (max-width: 1050px) {
+            .sidebar {
+                width: 215px;
+            }
+
+            .content {
+                padding: 25px 22px 40px;
+            }
+
+            .topbar {
+                padding: 17px 22px;
+            }
+
+            th,
+            td {
+                padding-left: 14px;
+                padding-right: 14px;
+            }
+        }
+
+        @media (max-width: 760px) {
+            .app {
+                display: block;
+                padding-bottom: 72px;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .topbar {
+                min-height: 72px;
+                padding: 14px 17px;
+            }
+
+            .page-heading {
+                font-size: 18px;
+            }
+
+            .breadcrumb {
+                font-size: 10px;
+            }
+
+            .status-pill {
+                padding: 8px;
+                font-size: 0;
+                gap: 0;
+            }
+
+            .status-dot {
+                width: 8px;
+                height: 8px;
+            }
+
+            .admin-avatar {
+                width: 36px;
+                height: 36px;
+            }
+
+            .content {
+                padding: 23px 15px 30px;
+            }
+
+            .welcome h2 {
+                font-size: 23px;
+            }
+
+            .welcome p {
+                font-size: 12px;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+                gap: 11px;
+                margin-bottom: 21px;
+            }
+
+            .stat-card {
+                min-height: auto;
+                padding: 16px;
+                display: grid;
+                grid-template-columns: 1fr auto;
+                align-items: center;
+            }
+
+            .stat-top {
+                display: contents;
+            }
+
+            .stat-label {
+                align-self: end;
+            }
+
+            .stat-icon {
+                grid-column: 2;
+                grid-row: 1 / span 3;
+            }
+
+            .stat-value {
+                margin-top: 8px;
+                font-size: 27px;
+            }
+
+            .stat-caption {
+                margin-top: 6px;
+            }
+
+            .panel-header {
+                padding: 18px 15px;
+                align-items: flex-start;
+            }
+
+            .panel-title {
+                font-size: 15px;
+            }
+
+            .panel-description {
+                max-width: 230px;
+                line-height: 1.6;
+            }
+
+            .panel-header .button {
+                padding: 10px 11px;
+                font-size: 11px;
+                white-space: nowrap;
+            }
+
+            .toolbar {
+                padding: 13px 14px;
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .search-wrap {
+                max-width: none;
+            }
+
+            .filters {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .select {
+                width: 100%;
+                max-width: none;
+                min-width: 0;
+            }
+
+            .results-label {
+                padding: 13px 15px 7px;
+            }
+
+            .table-wrap {
+                display: none;
+            }
+
+            .mobile-users {
+                display: block;
+            }
+
+            .panel-footer {
+                padding: 13px 15px;
+                font-size: 10px;
+                align-items: flex-start;
+                line-height: 1.7;
+            }
+
+            .mobile-nav {
+                position: fixed;
+                z-index: 50;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                padding: 9px 7px calc(9px + env(safe-area-inset-bottom));
+                background: rgba(16,23,42,0.97);
+                border-top: 1px solid var(--border);
+                backdrop-filter: blur(15px);
+            }
+
+            .mobile-nav-item {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 5px;
+                padding: 5px 0;
+                color: var(--muted);
+                font-size: 9px;
+                font-weight: 650;
+                text-decoration: none;
+            }
+
+            .mobile-nav-item span:first-child {
+                font-size: 18px;
+            }
+
+            .mobile-nav-item.active {
+                color: #75A8FF;
+            }
+
+            .dialog {
+                padding: 21px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .topbar {
+                padding-left: 12px;
+                padding-right: 12px;
+            }
+
+            .content {
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+
+            .topbar-right {
+                gap: 7px;
+            }
+
+            .brand-name {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- DESKTOP SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+            <div class="brand-logo">A</div>
+
+            <div>
+                <div class="brand-name">Appnetick</div>
+                <div class="brand-subtitle">ADMIN CONSOLE</div>
+            </div>
+        </div>
+
+        <div class="nav-label">MAIN MENU</div>
+
+        <a class="nav-item active" href="#users">
+            <span class="nav-icon">▦</span>
+            <span>All Users</span>
+        </a>
+
+        <a
+            class="nav-item"
+            href="#"
+            data-coming-soon="Memberships"
+        >
+            <span class="nav-icon">♙</span>
+            <span>Memberships</span>
+        </a>
+
+        <a
+            class="nav-item"
+            href="#"
+            data-coming-soon="Notifications"
+        >
+            <span class="nav-icon">♧</span>
+            <span>Notifications</span>
+        </a>
+
+        <a
+            class="nav-item"
+            href="#"
+            data-coming-soon="Help & Support"
+        >
+            <span class="nav-icon">◉</span>
+            <span>Help & Support</span>
+        </a>
+
+        <div class="nav-label" style="margin-top: 28px;">
+            SYSTEM
+        </div>
+
+        <a
+            class="nav-item"
+            href="#"
+            id="connectionNav"
+        >
+            <span class="nav-icon">⌘</span>
+            <span>API Connection</span>
+        </a>
+
+        <div class="sidebar-bottom">
+            <div class="sidebar-bottom-title">
+                Admin Workspace
+            </div>
+
+            <div class="sidebar-bottom-text">
+                Manage your Appnetick users from one place.
+            </div>
+        </div>
+
+    </aside>
+
+    <!-- MAIN CONTENT -->
+
+    <main class="main">
+
+        <header class="topbar">
+
+            <div>
+                <h1 class="page-heading">Admin Dashboard</h1>
+
+                <div class="breadcrumb">
+                    Home / Users / All Users
+                </div>
+            </div>
+
+            <div class="topbar-right">
+
+                <div class="status-pill">
+                    <span
+                        class="status-dot"
+                        id="connectionDot"
+                    ></span>
+
+                    <span id="connectionStatus">
+                        Not connected
+                    </span>
+                </div>
+
+                <div class="admin-avatar">AD</div>
+
+            </div>
+
+        </header>
+
+        <section class="content">
+
+            <div class="welcome">
+                <h2>All Users</h2>
+
+                <p>
+                    View and manage users registered on Appnetick.
+                    Connect your backend to load live user data.
+                </p>
+            </div>
+
+            <!-- STATISTICS -->
+
+            <div class="stats">
+
+                <article class="stat-card">
+
+                    <div class="stat-top">
+                        <div class="stat-label">Total Users</div>
+                        <div class="stat-icon">♙</div>
+                    </div>
+
+                    <div
+                        class="stat-value"
+                        id="totalUsers"
+                    >—</div>
+
+                    <div class="stat-caption">
+                        Website + Android app
+                    </div>
+
+                </article>
+
+                <article class="stat-card">
+
+                    <div class="stat-top">
+                        <div class="stat-label">Website Users</div>
+                        <div
+                            class="stat-icon"
+                            style="background:rgba(167,139,250,.12);color:#BCA8FF;"
+                        >⌘</div>
+                    </div>
+
+                    <div
+                        class="stat-value"
+                        id="websiteUsers"
+                    >—</div>
+
+                    <div class="stat-caption">
+                        Registered through website
+                    </div>
+
+                </article>
+
+                <article class="stat-card">
+
+                    <div class="stat-top">
+                        <div class="stat-label">Android App Users</div>
+                        <div
+                            class="stat-icon"
+                            style="background:rgba(54,211,153,.12);color:#36D399;"
+                        >▣</div>
+                    </div>
+
+                    <div
+                        class="stat-value"
+                        id="appUsers"
+                    >—</div>
+
+                    <div class="stat-caption">
+                        Registered in the Android app
+                    </div>
+
+                </article>
+
+            </div>
+
+            <!-- USERS TABLE -->
+
+            <section class="users-panel" id="users">
+
+                <div class="panel-header">
+
+                    <div>
+                        <h2 class="panel-title">
+                            User Directory
+                        </h2>
+
+                        <div class="panel-description">
+                            Search and view registered accounts.
+                        </div>
+                    </div>
+
+                    <button
+                        class="button primary"
+                        id="refreshButton"
+                        type="button"
+                    >
+                        <span>↻</span>
+                        <span>Refresh</span>
+                    </button>
+
+                </div>
+
+                <div class="toolbar">
+
+                    <div class="search-wrap">
+
+                        <span class="search-icon">⌕</span>
+
+                        <input
+                            class="search-input"
+                            id="searchInput"
+                            type="search"
+                            placeholder="Search name, email, username or UID..."
+                            autocomplete="off"
+                        >
+
+                    </div>
+
+                    <div class="filters">
+
+                        <select
+                            class="select"
+                            id="sourceFilter"
+                            aria-label="Filter by source"
+                        >
+                            <option value="all">All Sources</option>
+                            <option value="website">Website</option>
+                            <option value="android_app">Android App</option>
+                        </select>
+
+                        <select
+                            class="select"
+                            id="statusFilter"
+                            aria-label="Filter by status"
+                        >
+                            <option value="all">All Statuses</option>
+                            <option value="active">Active</option>
+                            <option value="other">Other</option>
+                        </select>
+
+                    </div>
+
+                </div>
+
+                <div
+                    class="error-box"
+                    id="errorBox"
+                    role="alert"
+                ></div>
+
+                <div
+                    class="loading"
+                    id="loading"
+                    aria-live="polite"
+                >
+                    <div class="spinner"></div>
+                    Loading users...
+                </div>
+
+                <div
+                    class="empty"
+                    id="emptyState"
+                    style="display:none;"
+                >
+                    <div class="empty-icon">♙</div>
+                    <div id="emptyMessage">No users found.</div>
+                </div>
+
+                <div
+                    class="results-label"
+                    id="resultsLabel"
+                >
+                    Connect your API to load users.
+                </div>
+
+                <!-- DESKTOP TABLE -->
+
+                <div class="table-wrap" id="tableWrap">
+
+                    <table>
+
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Email</th>
+                                <th>Source</th>
+                                <th>Status</th>
+                                <th>Verification</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="usersTableBody"></tbody>
+
+                    </table>
+
+                </div>
+
+                <!-- MOBILE CARDS -->
+
+                <div
+                    class="mobile-users"
+                    id="mobileUsers"
+                ></div>
+
+                <div class="panel-footer">
+
+                    <span id="footerCount">
+                        0 users
+                    </span>
+
+                    <span id="lastUpdated">
+                        Not synced yet
+                    </span>
+
+                </div>
+
+            </section>
+
+        </section>
+
+    </main>
+
+</div>
+
+<!-- MOBILE BOTTOM NAV -->
+
+<nav class="mobile-nav">
+
+    <a class="mobile-nav-item active" href="#users">
+        <span>▦</span>
+        <span>Users</span>
+    </a>
+
+    <a
+        class="mobile-nav-item"
+        href="#"
+        data-coming-soon="Memberships"
+    >
+        <span>♙</span>
+        <span>Memberships</span>
+    </a>
+
+    <a
+        class="mobile-nav-item"
+        href="#"
+        data-coming-soon="Notifications"
+    >
+        <span>♧</span>
+        <span>Notifications</span>
+    </a>
+
+    <a
+        class="mobile-nav-item"
+        href="#connection"
+        id="mobileConnectionNav"
+    >
+        <span>⌘</span>
+        <span>Connect</span>
+    </a>
+
+</nav>
+
+<!-- API CONNECTION DIALOG -->
+
+<div
+    class="dialog-backdrop"
+    id="connectionDialog"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="dialogTitle"
+>
+
+    <div class="dialog">
+
+        <h3 id="dialogTitle">Connect Admin API</h3>
+
+        <p>
+            Enter your backend URL and admin API key to load live users.
+            Your key will remain in this page's memory only and will not
+            be saved to local storage.
+        </p>
+
+        <label
+            class="field-label"
+            for="apiUrl"
+        >
+            Backend URL
+        </label>
+
+        <input
+            class="api-input"
+            id="apiUrl"
+            type="url"
+            value="https://apisequizeshoplite.vercel.app"
+            autocomplete="url"
+            spellcheck="false"
+        >
+
+        <label
+            class="field-label"
+            for="apiKey"
+        >
+            Admin API Key
+        </label>
+
+        <input
+            class="api-input"
+            id="apiKey"
+            type="password"
+            placeholder="Enter your ADMIN_API_KEY"
+            autocomplete="off"
+            spellcheck="false"
+        >
+
+        <div class="security-note">
+            Security: this sends your key to the configured backend.
+            Use this only for private testing. For production, replace
+            the shared API key with proper admin login and server-side
+            sessions.
+        </div>
+
+        <div class="dialog-actions">
+
+            <button
+                class="button"
+                id="cancelConnection"
+                type="button"
+            >
+                Cancel
+            </button>
+
+            <button
+                class="button primary"
+                id="connectButton"
+                type="button"
+            >
+                Connect & Load
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+(function () {
+    "use strict";
+
+    const API_PATH = "/api/admin/users";
+
+    let users = [];
+
+    // Kept in memory only. Never stored in localStorage.
+    let adminKey = "";
+
+    const $ = (id) => document.getElementById(id);
+
+    const elements = {
+        totalUsers: $("totalUsers"),
+        websiteUsers: $("websiteUsers"),
+        appUsers: $("appUsers"),
+
+        searchInput: $("searchInput"),
+        sourceFilter: $("sourceFilter"),
+        statusFilter: $("statusFilter"),
+
+        tableBody: $("usersTableBody"),
+        mobileUsers: $("mobileUsers"),
+
+        resultsLabel: $("resultsLabel"),
+        footerCount: $("footerCount"),
+        lastUpdated: $("lastUpdated"),
+
+        loading: $("loading"),
+        errorBox: $("errorBox"),
+        emptyState: $("emptyState"),
+        emptyMessage: $("emptyMessage"),
+
+        refreshButton: $("refreshButton"),
+
+        connectionDot: $("connectionDot"),
+        connectionStatus: $("connectionStatus"),
+
+        connectionDialog: $("connectionDialog"),
+        apiUrl: $("apiUrl"),
+        apiKey: $("apiKey"),
+        connectButton: $("connectButton")
+    };
+
+    function escapeHTML(value) {
+        return String(value == null ? "" : value)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#39;");
+    }
+
+    function getDisplayName(user) {
+        return (
+            user.full_name ||
+            user.name ||
+            user.username ||
+            user.email ||
+            user.uid ||
+            "Unnamed User"
+        );
+    }
+
+    function getInitials(name) {
+        const parts = String(name || "U")
+            .trim()
+            .split(/\s+/)
+            .filter(Boolean);
+
+        if (!parts.length) {
+            return "U";
+        }
+
+        if (parts.length === 1) {
+            return parts[0].slice(0, 2).toUpperCase();
+        }
+
+        return (
+            parts[0][0] +
+            parts[1][0]
+        ).toUpperCase();
+    }
+
+    function getSourceLabel(source) {
+        return source === "website"
+            ? "Website"
+            : "Android App";
+    }
+
+    function getStatus(user) {
+        if (user.source === "website") {
+            return String(user.status || "unknown").toLowerCase();
+        }
+
+        return "active";
+    }
+
+    function getStatusLabel(user) {
+        const status = getStatus(user);
+
+        if (status === "active") {
+            return "Active";
+        }
+
+        if (status === "unknown") {
+            return "Unknown";
+        }
+
+        return status.charAt(0).toUpperCase() + status.slice(1);
+    }
+
+    function getStatusClass(user) {
+        const status = getStatus(user);
+
+        if (status === "active") {
+            return "active";
+        }
+
+        if (status === "unknown") {
+            return "unknown";
+        }
+
+        return "other";
+    }
+
+    function isVerified(user) {
+        return user.verified === true;
+    }
+
+    function getAvatarMarkup(user, name) {
+        const avatar = String(user.avatar || "");
+
+        if (
+            /^https:\/\//i.test(avatar) ||
+            /^http:\/\//i.test(avatar)
+        ) {
+            return (
+                '<img src="' + escapeHTML(avatar) + '"' +
+                ' alt="" loading="lazy"' +
+                ' referrerpolicy="no-referrer"' +
+                ' onerror="this.remove()">'
+            );
+        }
+
+        return escapeHTML(getInitials(name));
+    }
+
+    function setConnectionStatus(status) {
+        elements.connectionDot.className = "status-dot";
+
+        if (status === "connected") {
+            elements.connectionDot.classList.add("connected");
+            elements.connectionStatus.textContent = "Connected";
+            return;
+        }
+
+        if (status === "error") {
+            elements.connectionDot.classList.add("error");
+            elements.connectionStatus.textContent = "Connection error";
+            return;
+        }
+
+        elements.connectionStatus.textContent = "Not connected";
+    }
+
+    function showError(message) {
+        elements.errorBox.textContent = message;
+        elements.errorBox.style.display = "block";
+    }
+
+    function clearError() {
+        elements.errorBox.textContent = "";
+        elements.errorBox.style.display = "none";
+    }
+
+    function updateStats(data) {
+        elements.totalUsers.textContent =
+            Number(data.total ?? users.length).toLocaleString();
+
+        elements.websiteUsers.textContent =
+            Number(
+                data.websiteUsers ??
+                users.filter(user => user.source === "website").length
+            ).toLocaleString();
+
+        elements.appUsers.textContent =
+            Number(
+                data.appUsers ??
+                users.filter(user => user.source === "android_app").length
+            ).toLocaleString();
+    }
+
+    function filterUsers() {
+        const query = elements.searchInput.value
+            .trim()
+            .toLowerCase();
+
+        const source = elements.sourceFilter.value;
+        const status = elements.statusFilter.value;
+
+        return users.filter(user => {
+            const searchValues = [
+                user.uid,
+                user.name,
+                user.full_name,
+                user.username,
+                user.email,
+                user.source
+            ];
+
+            const matchesQuery = !query ||
+                searchValues.some(value =>
+                    String(value || "")
+                        .toLowerCase()
+                        .includes(query)
+                );
+
+            const matchesSource =
+                source === "all" ||
+                user.source === source;
+
+            const userStatus = getStatus(user);
+
+            const matchesStatus =
+                status === "all" ||
+                (status === "active" && userStatus === "active") ||
+                (status === "other" && userStatus !== "active");
+
+            return (
+                matchesQuery &&
+                matchesSource &&
+                matchesStatus
+            );
+        });
+    }
+
+    function renderDesktopRow(user) {
+        const name = getDisplayName(user);
+        const source = user.source === "website"
+            ? "website"
+            : "android_app";
+
+        const verification = isVerified(user)
+            ? '<span class="verify">✓ Verified</span>'
+            : '<span class="not-verified">Not verified</span>';
+
+        return `
+            <tr>
+                <td>
+                    <div class="user-cell">
+                        <div class="user-avatar">
+                            ${getAvatarMarkup(user, name)}
+                        </div>
+
+                        <div>
+                            <div class="user-name">
+                                ${escapeHTML(name)}
+                            </div>
+
+                            <div class="user-subtitle">
+                                ${escapeHTML(user.uid || "")}
+                            </div>
+                        </div>
+                    </div>
+                </td>
+
+                <td class="email">
+                    ${escapeHTML(user.email || "—")}
+                </td>
+
+                <td>
+                    <span class="source-badge ${source}">
+                        ${getSourceLabel(source)}
+                    </span>
+                </td>
+
+                <td>
+                    <span class="status-badge ${getStatusClass(user)}">
+                        ${escapeHTML(getStatusLabel(user))}
+                    </span>
+                </td>
+
+                <td>${verification}</td>
+            </tr>
+        `;
+    }
+
+    function renderMobileCard(user) {
+        const name = getDisplayName(user);
+        const source = user.source === "website"
+            ? "website"
+            : "android_app";
+
+        const verification = isVerified(user)
+            ? '<span class="verify">✓ Verified</span>'
+            : '<span class="not-verified">Not verified</span>';
+
+        return `
+            <article class="mobile-user">
+                <div class="mobile-user-top">
+                    <div class="user-avatar">
+                        ${getAvatarMarkup(user, name)}
+                    </div>
+
+                    <div class="mobile-user-info">
+                        <div class="mobile-user-name">
+                            ${escapeHTML(name)}
+                        </div>
+
+                        <div class="mobile-user-email">
+                            ${escapeHTML(user.email || "No email available")}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mobile-user-meta">
+                    <span class="source-badge ${source}">
+                        ${getSourceLabel(source)}
+                    </span>
+
+                    <span class="status-badge ${getStatusClass(user)}">
+                        ${escapeHTML(getStatusLabel(user))}
+                    </span>
+
+                    ${verification}
+                </div>
+
+                <div class="mobile-user-uid">
+                    UID: ${escapeHTML(user.uid || "—")}
+                </div>
+            </article>
+        `;
+    }
+
+    function renderUsers() {
+        const filtered = filterUsers();
+
+        elements.tableBody.innerHTML = "";
+        elements.mobileUsers.innerHTML = "";
+
+        elements.resultsLabel.textContent =
+            "Showing " + filtered.length +
+            " of " + users.length + " users";
+
+        elements.footerCount.textContent =
+            filtered.length + " users shown";
+
+        if (filtered.length === 0) {
+            elements.emptyState.style.display = "block";
+
+            elements.emptyMessage.textContent = users.length
+                ? "No users match your search or filters."
+                : "No users loaded yet. Connect your backend to continue.";
+
+            elements.tableBody.innerHTML = "";
+            elements.mobileUsers.innerHTML = "";
+
+            return;
+        }
+
+        elements.emptyState.style.display = "none";
+
+        elements.tableBody.innerHTML =
+            filtered.map(renderDesktopRow).join("");
+
+        elements.mobileUsers.innerHTML =
+            filtered.map(renderMobileCard).join("");
+    }
+
+    async function loadUsers() {
+        const baseURL = elements.apiUrl.value.trim().replace(/\/+$/, "");
+
+        if (!baseURL) {
+            showError("Please enter your backend URL.");
+            return;
+        }
+
+        if (!adminKey) {
+            openConnectionDialog();
+            return;
+        }
+
+        clearError();
+
+        elements.loading.style.display = "block";
+        elements.refreshButton.disabled = true;
+        elements.connectButton.disabled = true;
+
+        try {
+            const response = await fetch(baseURL + API_PATH, {
+                method: "GET",
+                headers: {
+                    "Authorization": "Bearer " + adminKey,
+                    "Accept": "application/json"
+                },
+                cache: "no-store"
+            });
+
+            let data;
+
+            try {
+                data = await response.json();
+            } catch {
+                throw new Error(
+                    "The backend returned an invalid response."
+                );
+            }
+
+            if (!response.ok || data.success !== true) {
+                if (response.status === 401 || response.status === 403) {
+                    throw new Error(
+                        "Unauthorized. Check the admin API key."
+                    );
+                }
+
+                throw new Error(
+                    data.message ||
+                    data.error ||
+                    "Unable to load users."
+                );
+            }
+
+            if (!Array.isArray(data.users)) {
+                throw new Error(
+                    "The API response does not contain a users array."
+                );
+            }
+
+            users = data.users.map(user => ({
+                ...user,
+                source: user.source || "website"
+            }));
+
+            updateStats(data);
+            renderUsers();
+
+            setConnectionStatus("connected");
+
+            elements.lastUpdated.textContent =
+                "Last synced: " +
+                new Date().toLocaleTimeString();
+
+        } catch (error) {
+            setConnectionStatus("error");
+
+            const message = error instanceof TypeError
+                ? "Network/CORS error. Check that the API is deployed and allows requests from this frontend domain."
+                : error.message;
+
+            showError(message);
+
+        } finally {
+            elements.loading.style.display = "none";
+            elements.refreshButton.disabled = false;
+            elements.connectButton.disabled = false;
+        }
+    }
+
+    function openConnectionDialog() {
+        elements.connectionDialog.classList.add("open");
+        elements.apiKey.focus();
+    }
+
+    function closeConnectionDialog() {
+        elements.connectionDialog.classList.remove("open");
+    }
+
+    elements.searchInput.addEventListener("input", renderUsers);
+    elements.sourceFilter.addEventListener("change", renderUsers);
+    elements.statusFilter.addEventListener("change", renderUsers);
+
+    elements.refreshButton.addEventListener("click", loadUsers);
+
+    $("connectionNav").addEventListener("click", function (event) {
+        event.preventDefault();
+        openConnectionDialog();
+    });
+
+    $("mobileConnectionNav").addEventListener("click", function (event) {
+        event.preventDefault();
+        openConnectionDialog();
+    });
+
+    $("cancelConnection").addEventListener("click", closeConnectionDialog);
+
+    elements.connectionDialog.addEventListener("click", function (event) {
+        if (event.target === elements.connectionDialog) {
+            closeConnectionDialog();
+        }
+    });
+
+    elements.connectButton.addEventListener("click", async function () {
+        const key = elements.apiKey.value.trim();
+
+        if (!key) {
+            showError("Enter your admin API key to continue.");
+            return;
+        }
+
+        adminKey = key;
+
+        closeConnectionDialog();
+
+        await loadUsers();
+    });
+
+    document.querySelectorAll("[data-coming-soon]").forEach(link => {
+        link.addEventListener("click", function (event) {
+            event.preventDefault();
+
+            alert(
+                this.getAttribute("data-coming-soon") +
+                " will be added in a later update."
+            );
+        });
+    });
+
+    renderUsers();
+
+    // Ask for the API connection when the page is ready.
+    openConnectionDialog();
+
+})();
+</script>
+
+</body>
+</html>
