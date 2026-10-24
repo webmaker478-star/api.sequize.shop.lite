@@ -2,26 +2,21 @@ const crypto = require("crypto");
 const { db } = require("../../lib/firebase");
 
 const CATEGORIES = [
-  "general",
+const CATEGORIES = [
   "orders",
-  "order_status",
   "payments",
   "shipping",
   "delivery",
-  "cancellations",
   "returns",
   "refunds",
-  "products",
-  "stock",
-  "offers",
-  "coupons",
-  "wishlist",
+  "cancellations",
+  "discounts",
+  "promotions",
   "cart",
+  "wishlist",
   "account",
   "security",
   "support",
-  "reviews",
-  "loyalty",
   "system"
 ];
 
