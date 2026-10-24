@@ -3,1150 +3,1065 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#101114">
+<meta name="theme-color" content="#111111">
 
-<title>ShopLite Admin Dashboard</title>
+<title>Appnetick Admin Panel</title>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-
 :root {
-  --bg: #101114;
-  --surface: #18191e;
-  --surface2: #202127;
-  --surface3: #282a32;
-  --border: #30313a;
-  --text: #f4f5f8;
-  --muted: #9295a3;
-  --primary: #6d7cff;
-  --primary-hover: #5969ef;
-  --green: #43d6a0;
-  --red: #ff6978;
-  --orange: #ffb86b;
-  --radius: 18px;
+    --bg: #111111;
+    --surface: #1b1b1b;
+    --surface2: #242424;
+    --surface3: #2b2b2b;
+    --border: #363636;
+    --text: #ffffff;
+    --muted: #a0a0a0;
+    --primary: #2979ff;
+    --success: #27c98b;
+    --danger: #ff5b65;
+    --warning: #ffb547;
+    --radius: 16px;
 }
 
 * {
-  box-sizing: border-box;
-  -webkit-tap-highlight-color: transparent;
+    box-sizing: border-box;
 }
 
 html {
-  scroll-behavior: smooth;
+    scroll-behavior: smooth;
 }
 
 body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--text);
-  font-family: Inter, Arial, sans-serif;
-  font-size: 14px;
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: Inter, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", Roboto, Arial, sans-serif;
+    font-size: 14px;
 }
 
 button,
 input,
 textarea,
 select {
-  font: inherit;
+    font: inherit;
 }
 
 button {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 button:disabled {
-  opacity: .55;
-  cursor: not-allowed;
+    opacity: .55;
+    cursor: not-allowed;
 }
 
 input,
 textarea,
 select {
-  width: 100%;
-  color: var(--text);
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 12px 13px;
-  outline: none;
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    padding: 12px 13px;
+    outline: none;
 }
 
 input:focus,
 textarea:focus,
 select:focus {
-  border-color: var(--primary);
+    border-color: var(--primary);
 }
 
 textarea {
-  resize: vertical;
-  min-height: 105px;
-  line-height: 1.6;
+    min-height: 120px;
+    resize: vertical;
 }
 
 select option {
-  background: var(--surface2);
-  color: var(--text);
+    background: var(--surface);
+    color: white;
 }
 
 button:focus-visible {
-  outline: 2px solid var(--primary);
-  outline-offset: 3px;
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
 }
 
 .app {
-  min-height: 100vh;
+    min-height: 100vh;
 }
 
 .sidebar {
-  position: fixed;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 245px;
-  background: var(--surface);
-  border-right: 1px solid var(--border);
-  padding: 25px 16px;
-  display: flex;
-  flex-direction: column;
-  z-index: 20;
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: 240px;
+    background: #171717;
+    border-right: 1px solid var(--border);
+    padding: 24px 16px;
+    display: flex;
+    flex-direction: column;
+    z-index: 20;
 }
 
 .brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 0 10px 30px;
-}
-
-.brand-icon {
-  height: 43px;
-  width: 43px;
-  border-radius: 14px;
-  background: var(--primary);
-  display: grid;
-  place-items: center;
-  font-size: 21px;
-  font-weight: 800;
-}
-
-.brand-name {
-  font-size: 17px;
-  font-weight: 800;
-}
-
-.brand-sub {
-  font-size: 11px;
-  color: var(--muted);
-  margin-top: 5px;
-}
-
-.nav-label {
-  color: var(--muted);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  padding: 15px 12px 10px;
-}
-
-.nav-item {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  border: 0;
-  background: transparent;
-  color: var(--muted);
-  text-align: left;
-  padding: 13px 14px;
-  border-radius: 12px;
-  margin-bottom: 5px;
-}
-
-.nav-item:hover,
-.nav-item.active {
-  background: #292c3c;
-  color: #fff;
-}
-
-.nav-icon {
-  font-size: 18px;
-  width: 22px;
-  text-align: center;
-}
-
-.sidebar-bottom {
-  margin-top: auto;
-  border-top: 1px solid var(--border);
-  padding-top: 15px;
-}
-
-.connection-status {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--muted);
-  font-size: 12px;
-  padding: 12px;
-  overflow-wrap: anywhere;
-}
-
-.status-dot {
-  height: 8px;
-  width: 8px;
-  border-radius: 50%;
-  background: var(--orange);
-  flex-shrink: 0;
-}
-
-.status-dot.online {
-  background: var(--green);
-}
-
-.main {
-  margin-left: 245px;
-  min-height: 100vh;
-}
-
-.topbar {
-  height: 76px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 32px;
-  border-bottom: 1px solid var(--border);
-  background: rgba(16,17,20,.94);
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  gap: 15px;
-}
-
-.breadcrumb {
-  font-size: 13px;
-  color: var(--muted);
-}
-
-.breadcrumb strong {
-  color: var(--text);
-}
-
-.top-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.avatar-admin {
-  width: 35px;
-  height: 35px;
-  background: var(--surface3);
-  border-radius: 12px;
-  display: grid;
-  place-items: center;
-  font-weight: 700;
-}
-
-.content {
-  padding: 30px 32px 70px;
-  max-width: 1600px;
-  margin: auto;
-}
-
-.page-heading {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 20px;
-  margin-bottom: 25px;
-}
-
-h1 {
-  font-size: 27px;
-  letter-spacing: -.8px;
-  margin: 0;
-  font-weight: 800;
-}
-
-.subtitle {
-  color: var(--muted);
-  margin-top: 9px;
-  line-height: 1.6;
-  font-size: 13px;
-}
-
-.button {
-  border: 1px solid var(--border);
-  background: var(--surface2);
-  color: var(--text);
-  padding: 11px 15px;
-  border-radius: 11px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  font-weight: 600;
-  font-size: 12px;
-  transition: .15s;
-}
-
-.button:hover {
-  filter: brightness(1.13);
-}
-
-.button.primary {
-  background: var(--primary);
-  border-color: var(--primary);
-  color: white;
-}
-
-.button.primary:hover {
-  background: var(--primary-hover);
-}
-
-.button.danger {
-  color: var(--red);
-  background: rgba(255,105,120,.08);
-  border-color: rgba(255,105,120,.25);
-}
-
-.button.small {
-  padding: 8px 11px;
-  font-size: 11px;
-}
-
-.stats {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0,1fr));
-  gap: 16px;
-  margin-bottom: 25px;
-}
-
-.stat-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 20px;
-  min-width: 0;
-}
-
-.stat-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-}
-
-.stat-label {
-  color: var(--muted);
-  font-size: 12px;
-}
-
-.stat-icon {
-  height: 35px;
-  width: 35px;
-  display: grid;
-  place-items: center;
-  background: var(--surface3);
-  border-radius: 11px;
-  font-size: 17px;
-}
-
-.stat-number {
-  font-size: 29px;
-  font-weight: 800;
-  letter-spacing: -1px;
-  margin-top: 16px;
-  overflow-wrap: anywhere;
-}
-
-.stat-description {
-  color: var(--muted);
-  font-size: 11px;
-  margin-top: 7px;
-}
-
-.panel {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
-}
-
-.panel-header {
-  padding: 21px 22px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 15px;
-  border-bottom: 1px solid var(--border);
-}
-
-.panel-title {
-  font-weight: 750;
-  font-size: 15px;
-}
-
-.panel-description {
-  font-size: 12px;
-  color: var(--muted);
-  margin-top: 6px;
-  line-height: 1.5;
-}
-
-.toolbar {
-  display: flex;
-  gap: 10px;
-  padding: 18px 22px;
-  border-bottom: 1px solid var(--border);
-  align-items: center;
-}
-
-.search-box {
-  flex: 1;
-  min-width: 100px;
-  position: relative;
-}
-
-.search-box input {
-  padding-left: 38px;
-}
-
-.search-symbol {
-  position: absolute;
-  left: 13px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--muted);
-}
-
-.toolbar select {
-  width: 165px;
-}
-
-.table-wrap {
-  width: 100%;
-  overflow-x: auto;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  white-space: nowrap;
-}
-
-th {
-  text-align: left;
-  color: var(--muted);
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: .8px;
-  padding: 15px 18px;
-  font-weight: 700;
-  background: rgba(255,255,255,.015);
-}
-
-td {
-  padding: 15px 18px;
-  border-top: 1px solid rgba(255,255,255,.055);
-  font-size: 12px;
-}
-
-tbody tr:hover {
-  background: rgba(255,255,255,.025);
-}
-
-.customer-cell {
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  min-width: 190px;
-}
-
-.customer-avatar {
-  width: 39px;
-  height: 39px;
-  border-radius: 13px;
-  background: var(--surface3);
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-  overflow: hidden;
-  font-weight: 800;
-}
-
-.customer-avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.customer-name {
-  font-weight: 650;
-  font-size: 12px;
-}
-
-.customer-email {
-  color: var(--muted);
-  font-size: 11px;
-  margin-top: 5px;
-}
-
-.uid-text {
-  color: var(--muted);
-  max-width: 155px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  border-radius: 8px;
-  padding: 6px 8px;
-  font-size: 10px;
-  font-weight: 650;
-  background: var(--surface3);
-  color: var(--muted);
-}
-
-.badge.green {
-  color: var(--green);
-  background: rgba(67,214,160,.09);
-}
-
-.badge.blue {
-  color: #a7b2ff;
-  background: rgba(109,124,255,.12);
-}
-
-.badge.orange {
-  color: var(--orange);
-  background: rgba(255,184,107,.10);
-}
-
-.badge.red {
-  color: var(--red);
-  background: rgba(255,105,120,.09);
-}
-
-.mobile-users {
-  display: none;
-}
-
-.empty-state {
-  padding: 45px 20px;
-  text-align: center;
-  color: var(--muted);
-  line-height: 1.8;
-}
-
-.empty-icon {
-  font-size: 32px;
-  margin-bottom: 12px;
-}
-
-.pagination-info {
-  color: var(--muted);
-  font-size: 11px;
-  padding: 15px 20px;
-  border-top: 1px solid var(--border);
-}
-
-/* Modal and bottom sheet */
-
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.67);
-  z-index: 100;
-  opacity: 0;
-  visibility: hidden;
-  transition: .22s;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-}
-
-.overlay.open {
-  opacity: 1;
-  visibility: visible;
-}
-
-.sheet {
-  width: 100%;
-  max-width: 760px;
-  max-height: 92dvh;
-  overflow: hidden;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 23px 23px 0 0;
-  transform: translateY(35px);
-  transition: transform .25s ease;
-  display: flex;
-  flex-direction: column;
-  padding-bottom: env(safe-area-inset-bottom);
-}
-
-.overlay.open .sheet {
-  transform: translateY(0);
-}
-
-.sheet-handle {
-  height: 4px;
-  width: 42px;
-  border-radius: 10px;
-  background: #555761;
-  margin: 11px auto 0;
-  flex-shrink: 0;
-}
-
-.sheet-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 18px 22px;
-  border-bottom: 1px solid var(--border);
-}
-
-.sheet-user-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.sheet-user-title {
-  font-size: 16px;
-  font-weight: 800;
-  overflow-wrap: anywhere;
-}
-
-.sheet-user-subtitle {
-  color: var(--muted);
-  font-size: 11px;
-  margin-top: 5px;
-  overflow-wrap: anywhere;
-}
-
-.close-button {
-  width: 37px;
-  height: 37px;
-  border-radius: 11px;
-  border: 1px solid var(--border);
-  background: var(--surface2);
-  color: var(--text);
-  font-size: 20px;
-  flex-shrink: 0;
-}
-
-.sheet-tabs {
-  display: flex;
-  gap: 5px;
-  padding: 12px 20px 0;
-  border-bottom: 1px solid var(--border);
-}
-
-.sheet-tab {
-  padding: 12px 13px;
-  background: transparent;
-  border: 0;
-  border-bottom: 2px solid transparent;
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.sheet-tab.active {
-  color: var(--text);
-  border-bottom-color: var(--primary);
-}
-
-.sheet-body {
-  overflow-y: auto;
-  padding: 20px;
-  overscroll-behavior: contain;
-}
-
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
-
-.form-group {
-  min-width: 0;
-}
-
-.form-group.full {
-  grid-column: 1 / -1;
-}
-
-.form-group label {
-  display: block;
-  color: #c5c6d0;
-  font-size: 11px;
-  font-weight: 700;
-  margin-bottom: 9px;
-}
-
-.form-group .help {
-  color: var(--muted);
-  font-size: 10px;
-  line-height: 1.6;
-  margin-top: 7px;
-}
-
-.char-count {
-  font-size: 10px;
-  color: var(--muted);
-  text-align: right;
-  margin-top: 5px;
-}
-
-.form-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding-top: 20px;
-}
-
-.form-footer .hint {
-  color: var(--muted);
-  font-size: 10px;
-  line-height: 1.6;
-}
-
-.form-footer .button {
-  flex-shrink: 0;
-}
-
-.history-toolbar {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 15px;
-}
-
-.history-toolbar select {
-  flex: 1;
-  min-width: 0;
-}
-
-.notification-card {
-  padding: 15px;
-  border: 1px solid var(--border);
-  background: var(--surface2);
-  border-radius: 14px;
-  margin-bottom: 11px;
-}
-
-.notification-card-top {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-}
-
-.notification-icon {
-  width: 38px;
-  height: 38px;
-  display: grid;
-  place-items: center;
-  border-radius: 12px;
-  background: var(--surface3);
-  flex-shrink: 0;
-  font-size: 17px;
-}
-
-.notification-main {
-  flex: 1;
-  min-width: 0;
-}
-
-.notification-title {
-  font-weight: 750;
-  font-size: 13px;
-  line-height: 1.5;
-  overflow-wrap: anywhere;
-}
-
-.notification-message {
-  font-size: 12px;
-  line-height: 1.7;
-  color: #c0c2cc;
-  margin-top: 7px;
-  overflow-wrap: anywhere;
-  white-space: pre-wrap;
-}
-
-.notification-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
-  align-items: center;
-  margin-top: 12px;
-}
-
-.notification-actions {
-  display: flex;
-  gap: 7px;
-  margin-top: 12px;
-  flex-wrap: wrap;
-}
-
-.history-count {
-  font-size: 11px;
-  color: var(--muted);
-  margin-bottom: 13px;
-}
-
-.toast-container {
-  position: fixed;
-  z-index: 300;
-  right: 20px;
-  bottom: 20px;
-  width: min(380px, calc(100vw - 30px));
-  display: grid;
-  gap: 9px;
-}
-
-.toast {
-  background: #292b34;
-  border: 1px solid var(--border);
-  padding: 14px 16px;
-  border-radius: 13px;
-  box-shadow: 0 12px 35px rgba(0,0,0,.3);
-  font-size: 12px;
-  line-height: 1.6;
-  animation: toastIn .2s ease;
-  overflow-wrap: anywhere;
-}
-
-.toast.success {
-  border-color: rgba(67,214,160,.4);
-}
-
-.toast.error {
-  border-color: rgba(255,105,120,.5);
-}
-
-@keyframes toastIn {
-  from {
-    transform: translateY(8px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-/* Connection dialog */
-
-.dialog-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.75);
-  z-index: 200;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-}
-
-.dialog-overlay.open {
-  display: flex;
-}
-
-.dialog {
-  width: 100%;
-  max-width: 450px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 22px;
-  padding: 25px;
-  box-shadow: 0 20px 70px rgba(0,0,0,.4);
-}
-
-.dialog h2 {
-  font-size: 20px;
-  margin: 0;
-}
-
-.dialog-description {
-  font-size: 12px;
-  color: var(--muted);
-  line-height: 1.7;
-  margin: 12px 0 22px;
-}
-
-.dialog .form-group {
-  margin-bottom: 17px;
-}
-
-.dialog-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 20px;
-}
-
-.mobile-nav {
-  display: none;
-}
-
-.loading {
-  opacity: .6;
-  pointer-events: none;
-}
-
-.hidden {
-  display: none !important;
-}
-
-@media (min-width: 1000px) {
-  .sheet {
-    border-radius: 23px;
-    max-height: 88dvh;
-    margin-bottom: 25px;
-  }
-
-  .sheet-handle {
-    display: none;
-  }
-
-  .overlay {
-    align-items: flex-end;
-  }
-}
-
-@media (max-width: 1150px) {
-  .stats {
-    grid-template-columns: repeat(2, minmax(0,1fr));
-  }
-
-  .content {
-    padding-left: 22px;
-    padding-right: 22px;
-  }
-
-  .topbar {
-    padding: 0 22px;
-  }
-}
-
-@media (max-width: 760px) {
-  .sidebar {
-    display: none;
-  }
-
-  .main {
-    margin-left: 0;
-    padding-bottom: 75px;
-  }
-
-  .topbar {
-    height: 61px;
-    padding: 0 16px;
-  }
-
-  .content {
-    padding: 22px 14px 35px;
-  }
-
-  .page-heading {
-    margin-bottom: 20px;
-  }
-
-  h1 {
-    font-size: 23px;
-  }
-
-  .subtitle {
-    font-size: 11px;
-  }
-
-  .page-heading > .button {
-    padding: 10px;
-  }
-
-  .stats {
-    gap: 10px;
-    margin-bottom: 18px;
-  }
-
-  .stat-card {
-    padding: 14px;
-    border-radius: 15px;
-  }
-
-  .stat-number {
-    font-size: 24px;
-    margin-top: 13px;
-  }
-
-  .stat-label {
-    font-size: 10px;
-  }
-
-  .stat-icon {
-    width: 30px;
-    height: 30px;
-  }
-
-  .panel-header {
-    padding: 17px 15px;
-  }
-
-  .toolbar {
-    padding: 13px;
-    flex-wrap: wrap;
-  }
-
-  .search-box {
-    flex-basis: 100%;
-  }
-
-  .toolbar select {
-    flex: 1;
-    width: auto;
-  }
-
-  .table-wrap {
-    display: none;
-  }
-
-  .mobile-users {
-    display: block;
-    padding: 10px;
-  }
-
-  .mobile-user-card {
-    padding: 13px;
-    border: 1px solid var(--border);
-    background: var(--surface2);
-    border-radius: 15px;
-    margin-bottom: 9px;
-  }
-
-  .mobile-user-top {
     display: flex;
     align-items: center;
     gap: 11px;
-  }
+    padding: 4px 10px 28px;
+    font-size: 19px;
+    font-weight: 800;
+    letter-spacing: -.5px;
+}
 
-  .mobile-user-main {
-    flex: 1;
-    min-width: 0;
-  }
+.brand-logo {
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+    background: var(--primary);
+    display: grid;
+    place-items: center;
+    font-weight: 900;
+}
 
-  .mobile-user-name {
+.brand small {
+    display: block;
+    font-size: 10px;
+    color: var(--muted);
+    font-weight: 500;
+    margin-top: 3px;
+    letter-spacing: .5px;
+}
+
+.nav-label {
+    color: #737373;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.3px;
+    padding: 12px 12px 9px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 12px;
+    margin: 3px 0;
+    border: 0;
+    background: transparent;
+    color: #aaa;
+    border-radius: 11px;
+    text-align: left;
+}
+
+.nav-item .nav-icon {
+    width: 22px;
+    text-align: center;
+    font-size: 17px;
+}
+
+.nav-item.active {
+    color: white;
+    background: #252525;
+}
+
+.nav-item.active .nav-icon {
+    color: var(--primary);
+}
+
+.sidebar-bottom {
+    margin-top: auto;
+}
+
+.connection-indicator {
+    padding: 13px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin: 12px 2px;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.status-dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--warning);
+    margin-right: 6px;
+}
+
+.status-dot.online {
+    background: var(--success);
+}
+
+.status-dot.offline {
+    background: var(--danger);
+}
+
+.main {
+    margin-left: 240px;
+    min-height: 100vh;
+    padding: 28px 30px 50px;
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 30px;
+}
+
+.page-title {
+    font-size: 25px;
+    font-weight: 800;
+    letter-spacing: -.7px;
+    margin: 0;
+}
+
+.page-subtitle {
+    color: var(--muted);
+    margin-top: 7px;
     font-size: 13px;
-    font-weight: 750;
-    overflow-wrap: anywhere;
-  }
+}
 
-  .mobile-user-email {
+.topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn {
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: white;
+    padding: 11px 15px;
+    border-radius: 10px;
+    font-weight: 650;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+}
+
+.btn:hover {
+    filter: brightness(1.13);
+}
+
+.btn-primary {
+    background: var(--primary);
+    border-color: var(--primary);
+}
+
+.btn-danger {
+    color: white;
+    background: #3a2022;
+    border-color: #613034;
+}
+
+.btn-small {
+    padding: 8px 11px;
+    font-size: 12px;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 25px;
+}
+
+.stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 21px;
+    min-width: 0;
+}
+
+.stat-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.stat-icon {
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    border-radius: 11px;
+    background: #242e40;
+    color: #7eafff;
+    font-size: 18px;
+}
+
+.stat-number {
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin-top: 18px;
+    overflow-wrap: anywhere;
+}
+
+.stat-caption {
+    color: var(--muted);
+    font-size: 11px;
+    margin-top: 5px;
+}
+
+.panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    padding: 20px;
+    border-bottom: 1px solid var(--border);
+}
+
+.panel-title {
+    font-size: 16px;
+    font-weight: 750;
+}
+
+.panel-description {
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+.toolbar {
+    padding: 16px 20px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+}
+
+.search-wrap {
+    position: relative;
+    flex: 1;
+    min-width: 150px;
+}
+
+.search-wrap input {
+    padding-left: 38px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 13px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+}
+
+.toolbar select {
+    width: auto;
+    min-width: 135px;
+}
+
+.table-wrap {
+    width: 100%;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    white-space: nowrap;
+}
+
+th {
+    color: var(--muted);
+    background: #202020;
+    text-align: left;
+    padding: 14px 18px;
+    font-size: 11px;
+    font-weight: 750;
+    letter-spacing: .4px;
+}
+
+td {
+    padding: 15px 18px;
+    border-top: 1px solid #303030;
+    vertical-align: middle;
+}
+
+tbody tr {
+    transition: background .15s;
+    cursor: pointer;
+}
+
+tbody tr:hover {
+    background: #242424;
+}
+
+.user-cell {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    min-width: 190px;
+}
+
+.avatar {
+    width: 39px;
+    height: 39px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #303030;
+    display: grid;
+    place-items: center;
+    color: white;
+    font-weight: 750;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+.avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.user-name {
+    font-weight: 700;
+    font-size: 13px;
+    max-width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.user-secondary {
     font-size: 11px;
     color: var(--muted);
     margin-top: 5px;
-    overflow-wrap: anywhere;
-  }
-
-  .mobile-user-bottom {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    margin-top: 13px;
-    padding-top: 12px;
-    border-top: 1px solid var(--border);
-  }
-
-  .mobile-user-uid {
-    color: var(--muted);
-    font-size: 10px;
+    max-width: 230px;
     overflow: hidden;
     text-overflow: ellipsis;
-  }
+}
 
-  .mobile-nav {
-    display: flex;
-    position: fixed;
-    z-index: 30;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: calc(65px + env(safe-area-inset-bottom));
-    padding: 6px 8px env(safe-area-inset-bottom);
-    background: rgba(24,25,30,.97);
-    border-top: 1px solid var(--border);
-    justify-content: space-around;
-    backdrop-filter: blur(15px);
-  }
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 9px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 750;
+    background: #292929;
+    color: #ccc;
+}
 
-  .mobile-nav button {
-    flex: 1;
+.badge-blue {
+    background: #1d2d48;
+    color: #8eb9ff;
+}
+
+.badge-green {
+    background: #18372c;
+    color: #6ee0b3;
+}
+
+.badge-yellow {
+    background: #3b3020;
+    color: #ffd18b;
+}
+
+.badge-red {
+    background: #3c2224;
+    color: #ff9ba1;
+}
+
+.table-action {
+    color: #8eb9ff;
+    font-weight: 700;
     background: transparent;
     border: 0;
+}
+
+.loading,
+.empty-state,
+.error-state {
+    padding: 45px 20px;
+    text-align: center;
     color: var(--muted);
-    font-size: 10px;
+    line-height: 1.7;
+}
+
+.error-state {
+    color: #ff999f;
+}
+
+.spinner {
+    display: inline-block;
+    width: 19px;
+    height: 19px;
+    border: 2px solid #555;
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+    vertical-align: middle;
+    margin-right: 7px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.mobile-user-list {
+    display: none;
+}
+
+.pagination-info {
+    padding: 15px 20px;
+    color: var(--muted);
+    font-size: 12px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+/* Bottom sheet */
+
+.sheet-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.65);
+    z-index: 100;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .22s, visibility .22s;
+}
+
+.sheet-backdrop.open {
+    opacity: 1;
+    visibility: visible;
+}
+
+.bottom-sheet {
+    position: fixed;
+    z-index: 101;
+    bottom: 0;
+    right: 0;
+    width: min(660px, 100%);
+    max-height: 92vh;
+    overflow-y: auto;
+    background: #1b1b1b;
+    border: 1px solid #3a3a3a;
+    border-bottom: 0;
+    border-radius: 22px 22px 0 0;
+    padding: 0 22px 25px;
+    transform: translateY(105%);
+    transition: transform .28s ease;
+    visibility: hidden;
+}
+
+.bottom-sheet.open {
+    transform: translateY(0);
+    visibility: visible;
+}
+
+.sheet-handle {
+    width: 42px;
+    height: 4px;
+    border-radius: 10px;
+    background: #555;
+    margin: 10px auto 19px;
+}
+
+.sheet-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 15px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--border);
+}
+
+.sheet-user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.sheet-user .avatar {
+    width: 46px;
+    height: 46px;
+}
+
+.sheet-user-info {
+    min-width: 0;
+}
+
+.sheet-user-info h2 {
+    margin: 0;
+    font-size: 17px;
+    overflow-wrap: anywhere;
+}
+
+.sheet-user-info p {
+    color: var(--muted);
+    margin: 5px 0 0;
+    font-size: 12px;
+    overflow-wrap: anywhere;
+}
+
+.icon-btn {
+    width: 35px;
+    height: 35px;
+    flex-shrink: 0;
+    background: var(--surface3);
+    border: 1px solid var(--border);
+    color: white;
+    border-radius: 10px;
+    font-size: 18px;
+}
+
+.sheet-tabs {
+    display: flex;
+    gap: 8px;
+    padding: 17px 0;
+}
+
+.sheet-tab {
+    flex: 1;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    background: #242424;
+    padding: 11px;
+    border-radius: 10px;
+    font-weight: 700;
+}
+
+.sheet-tab.active {
+    background: #1d3151;
+    border-color: #315b96;
+    color: #a9ccff;
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.form-hint {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 7px;
+    line-height: 1.5;
+}
+
+.form-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding-top: 3px;
+}
+
+.notice {
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 15px;
+    font-size: 12px;
+    line-height: 1.6;
+    display: none;
+    overflow-wrap: anywhere;
+}
+
+.notice.show {
+    display: block;
+}
+
+.notice.success {
+    background: #18372c;
+    color: #8ce5c0;
+    border-color: #285c48;
+}
+
+.notice.error {
+    background: #3c2224;
+    color: #ffafb3;
+    border-color: #643236;
+}
+
+.history-toolbar {
+    display: flex;
+    gap: 9px;
+    margin-bottom: 14px;
+}
+
+.history-toolbar select {
+    flex: 1;
+    min-width: 0;
+}
+
+.notification-list {
     display: flex;
     flex-direction: column;
+    gap: 10px;
+}
+
+.notification-card {
+    padding: 15px;
+    border: 1px solid var(--border);
+    background: #222;
+    border-radius: 12px;
+}
+
+.notification-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.notification-title {
+    font-weight: 750;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.notification-message {
+    color: #c0c0c0;
+    font-size: 12px;
+    line-height: 1.7;
+    margin-top: 8px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.notification-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: 12px;
+    align-items: center;
+}
+
+.notification-date {
+    font-size: 10px;
+    color: var(--muted);
+}
+
+.history-count {
+    color: var(--muted);
+    font-size: 12px;
+    margin-bottom: 12px;
+}
+
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    width: min(350px, calc(100% - 40px));
+}
+
+.toast {
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: #242424;
+    border: 1px solid var(--border);
+    box-shadow: 0 10px 35px rgba(0,0,0,.3);
+    font-size: 13px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.toast.success {
+    border-color: #285c48;
+}
+
+.toast.error {
+    border-color: #643236;
+}
+
+.dialog-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.7);
+    z-index: 150;
+    display: none;
     align-items: center;
     justify-content: center;
-    gap: 4px;
-  }
+    padding: 20px;
+}
 
-  .mobile-nav button.active {
-    color: #aab3ff;
-  }
+.dialog-backdrop.open {
+    display: flex;
+}
 
-  .mobile-nav .nav-icon {
-    font-size: 20px;
-  }
+.dialog {
+    width: min(440px, 100%);
+    padding: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+}
 
-  .sheet {
-    max-height: 94dvh;
-  }
+.dialog h2 {
+    margin: 0 0 8px;
+    font-size: 19px;
+}
 
-  .sheet-header {
-    padding: 15px;
-  }
+.dialog p {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.7;
+}
 
-  .sheet-body {
-    padding: 15px;
-  }
+.dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 18px;
+}
 
-  .form-grid {
-    grid-template-columns: 1fr;
-    gap: 15px;
-  }
+.mobile-nav {
+    display: none;
+}
 
-  .form-group.full {
-    grid-column: auto;
-  }
+@media (max-width: 1000px) {
+    .sidebar {
+        width: 210px;
+    }
 
-  .form-footer {
-    align-items: stretch;
-    flex-direction: column;
-  }
+    .main {
+        margin-left: 210px;
+        padding: 24px 20px 40px;
+    }
 
-  .form-footer .button {
-    width: 100%;
-    min-height: 45px;
-  }
+    .stats {
+        gap: 10px;
+    }
 
-  .history-toolbar {
-    flex-direction: column;
-  }
+    .stat-card {
+        padding: 16px;
+    }
 
-  .notification-card {
-    padding: 12px;
-  }
+    .stat-number {
+        font-size: 25px;
+    }
+}
 
-  .toast-container {
-    bottom: 80px;
-    right: 15px;
-  }
+@media (max-width: 720px) {
+    .sidebar {
+        display: none;
+    }
+
+    .main {
+        margin-left: 0;
+        padding: 20px 14px 95px;
+    }
+
+    .topbar {
+        align-items: flex-start;
+        margin-bottom: 23px;
+    }
+
+    .page-title {
+        font-size: 22px;
+    }
+
+    .page-subtitle {
+        line-height: 1.5;
+    }
+
+    .topbar-actions {
+        gap: 7px;
+    }
+
+    .topbar-actions .btn {
+        padding: 10px 11px;
+        font-size: 12px;
+    }
+
+    .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .stat-card {
+        padding: 15px;
+    }
+
+    .stat-card:last-child {
+        grid-column: 1 / -1;
+    }
+
+    .stat-number {
+        font-size: 26px;
+        margin-top: 12px;
+    }
+
+    .panel-header {
+        padding: 16px;
+    }
+
+    .toolbar {
+        padding: 13px;
+        flex-wrap: wrap;
+    }
+
+    .search-wrap {
+        flex-basis: 100%;
+    }
+
+    .toolbar select {
+        flex: 1;
+        min-width: 0;
+        width: 0;
+    }
+
+    .table-wrap {
+        display: none;
+    }
+
+    .mobile-user-list {
+        display: block;
+    }
+
+    .mobile-user-card {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 15px;
+        border-bottom: 1px solid #303030;
+        cursor: pointer;
+    }
+
+    .mobile-user-card:active {
+        background: #292929;
+    }
+
+    .mobile-user-card .avatar {
+        width: 43px;
+        height: 43px;
+    }
+
+    .mobile-user-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .mobile-user-info .user-name,
+    .mobile-user-info .user-secondary {
+        max-width: 100%;
+    }
+
+    .mobile-user-right {
+        text-align: right;
+        flex-shrink: 0;
+    }
+
+    .mobile-user-right small {
+        display: block;
+        color: var(--muted);
+        margin-top: 6px;
+        font-size: 10px;
+    }
+
+    .pagination-info {
+        padding: 13px 15px;
+    }
+
+    .bottom-sheet {
+        padding-left: 16px;
+        padding-right: 16px;
+        max-height: 94vh;
+    }
+
+    .sheet-header {
+        gap: 8px;
+    }
+
+    .sheet-user-info h2 {
+        font-size: 15px;
+    }
+
+    .sheet-tabs {
+        padding: 14px 0;
+    }
+
+    .mobile-nav {
+        display: flex;
+        position: fixed;
+        z-index: 30;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 68px;
+        background: rgba(24,24,24,.97);
+        border-top: 1px solid var(--border);
+        padding: 5px 7px env(safe-area-inset-bottom, 0);
+        justify-content: space-around;
+        backdrop-filter: blur(15px);
+    }
+
+    .mobile-nav button {
+        flex: 1;
+        background: transparent;
+        border: 0;
+        color: #999;
+        font-size: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+    }
+
+    .mobile-nav button span {
+        font-size: 19px;
+    }
+
+    .mobile-nav button.active {
+        color: #8eb9ff;
+    }
+
+    .toast-container {
+        top: 12px;
+        right: 12px;
+        width: calc(100% - 24px);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+    }
 }
 </style>
 </head>
@@ -1155,534 +1070,356 @@ tbody tr:hover {
 
 <div class="app">
 
-  <!-- DESKTOP SIDEBAR -->
-  <aside class="sidebar">
-    <div class="brand">
-      <div class="brand-icon">S</div>
-      <div>
-        <div class="brand-name">ShopLite</div>
-        <div class="brand-sub">ADMIN CONTROL CENTER</div>
-      </div>
-    </div>
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-logo">A</div>
+            <div>
+                Appnetick
+                <small>ADMIN PANEL</small>
+            </div>
+        </div>
 
-    <div class="nav-label">WORKSPACE</div>
+        <div class="nav-label">WORKSPACE</div>
 
-    <button class="nav-item active" data-nav="users" onclick="showSection('users')">
-      <span class="nav-icon">▦</span>
-      <span>Customers</span>
-    </button>
-
-    <button class="nav-item" data-nav="notifications" onclick="showSection('notifications')">
-      <span class="nav-icon">♧</span>
-      <span>Notifications</span>
-    </button>
-
-    <div class="nav-label">SYSTEM</div>
-
-    <button class="nav-item" onclick="openConnectionDialog()">
-      <span class="nav-icon">⚙</span>
-      <span>API Connection</span>
-    </button>
-
-    <div class="sidebar-bottom">
-      <div class="connection-status">
-        <span class="status-dot" id="sidebarStatusDot"></span>
-        <span id="sidebarStatusText">Not connected</span>
-      </div>
-
-      <button class="nav-item" onclick="openConnectionDialog()">
-        <span class="nav-icon">⇄</span>
-        <span>Manage Connection</span>
-      </button>
-    </div>
-  </aside>
-
-  <!-- MAIN -->
-  <main class="main">
-
-    <header class="topbar">
-      <div class="breadcrumb">
-        ShopLite / <strong id="breadcrumbCurrent">Customers</strong>
-      </div>
-
-      <div class="top-actions">
-        <button class="button small" onclick="refreshCurrentSection()">
-          ↻ <span class="desktop-refresh-label">Refresh</span>
+        <button class="nav-item active" type="button" id="navUsers">
+            <span class="nav-icon">◉</span>
+            <span>Users</span>
         </button>
 
-        <div class="avatar-admin">A</div>
-      </div>
-    </header>
+        <button class="nav-item" type="button" id="navNotifications">
+            <span class="nav-icon">♧</span>
+            <span>Notifications</span>
+        </button>
 
-    <div class="content">
+        <div class="nav-label">MANAGEMENT</div>
 
-      <!-- USER SECTION -->
-      <section id="usersSection">
+        <button class="nav-item" type="button" data-placeholder="Memberships">
+            <span class="nav-icon">◇</span>
+            <span>Memberships</span>
+        </button>
 
-        <div class="page-heading">
-          <div>
-            <h1>Customers</h1>
-            <div class="subtitle">
-              View customers and manage their e-commerce notifications.
+        <button class="nav-item" type="button" data-placeholder="Support">
+            <span class="nav-icon">✉</span>
+            <span>Support</span>
+        </button>
+
+        <div class="sidebar-bottom">
+            <div class="connection-indicator">
+                <div>
+                    <span class="status-dot" id="connectionDot"></span>
+                    <span id="connectionLabel">Not connected</span>
+                </div>
+                <div id="connectionUrl" style="margin-top:5px;overflow-wrap:anywhere">
+                    Configure API connection
+                </div>
+                <button class="btn btn-small" type="button"
+                    style="width:100%;margin-top:12px"
+                    id="connectionButton">
+                    API Settings
+                </button>
             </div>
-          </div>
-
-          <button class="button primary" onclick="loadUsers()">
-            ↻ Refresh Users
-          </button>
         </div>
+    </aside>
 
-        <div class="stats">
+    <main class="main">
 
-          <div class="stat-card">
-            <div class="stat-top">
-              <div class="stat-label">Total Customers</div>
-              <div class="stat-icon">♙</div>
-            </div>
-            <div class="stat-number" id="totalUsers">—</div>
-            <div class="stat-description">Available customer records</div>
-          </div>
-
-          <div class="stat-card">
-            <div class="stat-top">
-              <div class="stat-label">Website Customers</div>
-              <div class="stat-icon">⌘</div>
-            </div>
-            <div class="stat-number" id="websiteUsersCount">—</div>
-            <div class="stat-description">Website user records</div>
-          </div>
-
-          <div class="stat-card">
-            <div class="stat-top">
-              <div class="stat-label">App Customers</div>
-              <div class="stat-icon">▣</div>
-            </div>
-            <div class="stat-number" id="appUsersCount">—</div>
-            <div class="stat-description">App user records</div>
-          </div>
-
-          <div class="stat-card">
-            <div class="stat-top">
-              <div class="stat-label">Filtered Results</div>
-              <div class="stat-icon">⌕</div>
-            </div>
-            <div class="stat-number" id="filteredUsersCount">—</div>
-            <div class="stat-description">Matching search and filter</div>
-          </div>
-
-        </div>
-
-        <div class="panel">
-
-          <div class="panel-header">
+        <header class="topbar">
             <div>
-              <div class="panel-title">All Customers</div>
-              <div class="panel-description">
-                Select a customer to send notifications and view notification history.
-              </div>
-            </div>
-            <span class="badge blue" id="usersCountBadge">0 users</span>
-          </div>
-
-          <div class="toolbar">
-
-            <div class="search-box">
-              <span class="search-symbol">⌕</span>
-              <input
-                id="userSearch"
-                type="search"
-                placeholder="Search name, email, username or UID..."
-                autocomplete="off"
-              >
+                <h1 class="page-title">Users</h1>
+                <div class="page-subtitle">
+                    Manage users and send e-commerce notifications.
+                </div>
             </div>
 
-            <select id="sourceFilter" aria-label="Filter by source">
-              <option value="all">All sources</option>
-              <option value="website">Website</option>
-              <option value="app">App</option>
-            </select>
+            <div class="topbar-actions">
+                <button class="btn" type="button" id="refreshButton">
+                    ↻ <span class="refresh-text">Refresh</span>
+                </button>
+                <button class="btn btn-primary" type="button" id="connectButton">
+                    Connect API
+                </button>
+            </div>
+        </header>
 
-            <select id="statusFilter" aria-label="Filter by status">
-              <option value="all">All statuses</option>
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-            </select>
+        <section class="stats">
+            <div class="stat-card">
+                <div class="stat-head">
+                    <span>Total Users</span>
+                    <span class="stat-icon">♙</span>
+                </div>
+                <div class="stat-number" id="totalUsers">—</div>
+                <div class="stat-caption">All users returned by the API</div>
+            </div>
 
-          </div>
+            <div class="stat-card">
+                <div class="stat-head">
+                    <span>App Users</span>
+                    <span class="stat-icon">▣</span>
+                </div>
+                <div class="stat-number" id="appUsersCount">—</div>
+                <div class="stat-caption">Users from the app database</div>
+            </div>
 
-          <!-- DESKTOP TABLE -->
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Customer</th>
-                  <th>UID</th>
-                  <th>Source</th>
-                  <th>Status</th>
-                  <th>Created</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
+            <div class="stat-card">
+                <div class="stat-head">
+                    <span>Website Users</span>
+                    <span class="stat-icon">◎</span>
+                </div>
+                <div class="stat-number" id="websiteUsersCount">—</div>
+                <div class="stat-caption">Users from the website database</div>
+            </div>
+        </section>
 
-              <tbody id="usersTableBody">
-                <tr>
-                  <td colspan="6">
-                    <div class="empty-state">
-                      Loading customers...
+        <section class="panel">
+
+            <div class="panel-header">
+                <div>
+                    <div class="panel-title">All Users</div>
+                    <div class="panel-description">
+                        Select a user to send a notification or view notification history.
                     </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+                </div>
 
-          <!-- MOBILE CARDS -->
-          <div class="mobile-users" id="mobileUsers">
-            <div class="empty-state">Loading customers...</div>
-          </div>
-
-          <div class="pagination-info" id="usersFooter">
-            Connect your API to load customers.
-          </div>
-
-        </div>
-
-      </section>
-
-      <!-- NOTIFICATION OVERVIEW -->
-      <section id="notificationsSection" class="hidden">
-
-        <div class="page-heading">
-          <div>
-            <h1>Notifications</h1>
-            <div class="subtitle">
-              Manage customer notifications, categories and delivery records.
+                <span class="badge badge-blue" id="listCountBadge">
+                    0 users
+                </span>
             </div>
-          </div>
 
-          <button class="button primary" onclick="showSection('users')">
-            + Select Customer
-          </button>
-        </div>
+            <div class="toolbar">
+                <div class="search-wrap">
+                    <span class="search-icon">⌕</span>
+                    <input type="search" id="userSearch"
+                        placeholder="Search name, email, username or UID...">
+                </div>
 
-        <div class="stats">
+                <select id="sourceFilter" aria-label="Filter users by source">
+                    <option value="all">All Sources</option>
+                    <option value="app">App Users</option>
+                    <option value="website">Website Users</option>
+                </select>
 
-          <div class="stat-card">
-            <div class="stat-top">
-              <div class="stat-label">Customers</div>
-              <div class="stat-icon">♙</div>
+                <select id="verifiedFilter" aria-label="Filter users by verification">
+                    <option value="all">All Users</option>
+                    <option value="verified">Verified</option>
+                    <option value="unverified">Not Verified</option>
+                </select>
             </div>
-            <div class="stat-number" id="notificationCustomerCount">—</div>
-            <div class="stat-description">Loaded customer records</div>
-          </div>
 
-          <div class="stat-card">
-            <div class="stat-top">
-              <div class="stat-label">Categories</div>
-              <div class="stat-icon">▤</div>
+            <div class="table-wrap" id="desktopUserList">
+                <div class="loading">
+                    <span class="spinner"></span>
+                    Loading users...
+                </div>
             </div>
-            <div class="stat-number" id="notificationCategoryCount">21</div>
-            <div class="stat-description">E-commerce notification categories</div>
-          </div>
 
-        </div>
-
-        <div class="panel">
-          <div class="panel-header">
-            <div>
-              <div class="panel-title">Notification Management</div>
-              <div class="panel-description">
-                Select a customer from the Customers section to compose a notification
-                or view notifications associated with that customer.
-              </div>
+            <div class="mobile-user-list" id="mobileUserList">
+                <div class="loading">
+                    <span class="spinner"></span>
+                    Loading users...
+                </div>
             </div>
-          </div>
 
-          <div class="empty-state">
-            <div class="empty-icon">♧</div>
-            <div><strong>No customer selected</strong></div>
-            <div>Go to Customers and select a customer to get started.</div>
-            <br>
-            <button class="button primary" onclick="showSection('users')">
-              View Customers
-            </button>
-          </div>
-        </div>
+            <div class="pagination-info">
+                <span id="resultsText">Waiting for users...</span>
+                <span id="lastUpdated"></span>
+            </div>
 
-      </section>
+        </section>
 
-    </div>
+    </main>
 
-  </main>
-
-  <!-- MOBILE NAVIGATION -->
-  <nav class="mobile-nav">
-
-    <button class="active" data-nav="users" onclick="showSection('users')">
-      <span class="nav-icon">♙</span>
-      <span>Customers</span>
-    </button>
-
-    <button data-nav="notifications" onclick="showSection('notifications')">
-      <span class="nav-icon">♧</span>
-      <span>Notifications</span>
-    </button>
-
-    <button onclick="openConnectionDialog()">
-      <span class="nav-icon">⚙</span>
-      <span>Settings</span>
-    </button>
-
-  </nav>
+    <nav class="mobile-nav">
+        <button type="button" class="active" id="mobileNavUsers">
+            <span>◉</span>
+            Users
+        </button>
+        <button type="button" id="mobileNavNotifications">
+            <span>♧</span>
+            Notifications
+        </button>
+        <button type="button" id="mobileNavSettings">
+            <span>⚙</span>
+            Settings
+        </button>
+    </nav>
 
 </div>
 
-<!-- CUSTOMER BOTTOM SHEET -->
-<div class="overlay" id="customerOverlay" onclick="overlayBackdropClick(event)">
+<!-- Bottom sheet backdrop -->
+<div class="sheet-backdrop" id="sheetBackdrop"></div>
 
-  <div class="sheet" role="dialog" aria-modal="true" aria-label="Customer notifications">
+<!-- User notification bottom sheet -->
+<section class="bottom-sheet" id="userSheet"
+    role="dialog" aria-modal="true" aria-labelledby="sheetUserName">
 
     <div class="sheet-handle"></div>
 
     <div class="sheet-header">
+        <div class="sheet-user">
+            <div class="avatar" id="sheetAvatar">U</div>
+            <div class="sheet-user-info">
+                <h2 id="sheetUserName">Select a user</h2>
+                <p id="sheetUserEmail">—</p>
+                <p id="sheetUserUid">UID: —</p>
+            </div>
+        </div>
 
-      <div class="customer-avatar" id="sheetAvatar">C</div>
-
-      <div class="sheet-user-info">
-        <div class="sheet-user-title" id="sheetCustomerName">Customer</div>
-        <div class="sheet-user-subtitle" id="sheetCustomerEmail"></div>
-        <div class="sheet-user-subtitle" id="sheetCustomerUid"></div>
-      </div>
-
-      <button class="close-button" onclick="closeCustomerSheet()" aria-label="Close">
-        ×
-      </button>
-
+        <button type="button" class="icon-btn" id="closeSheet"
+            aria-label="Close">×</button>
     </div>
 
     <div class="sheet-tabs">
-
-      <button
-        class="sheet-tab active"
-        id="composeTab"
-        onclick="switchSheetTab('compose')"
-      >
-        ✎ Send Notification
-      </button>
-
-      <button
-        class="sheet-tab"
-        id="historyTab"
-        onclick="switchSheetTab('history')"
-      >
-        ◷ Notification History
-      </button>
-
+        <button type="button" class="sheet-tab active" id="sendTab">
+            Send Notification
+        </button>
+        <button type="button" class="sheet-tab" id="historyTab">
+            Notification History
+        </button>
     </div>
 
-    <div class="sheet-body">
+    <div id="sendPanel">
+        <div class="notice" id="sendNotice"></div>
 
-      <!-- COMPOSE -->
-      <div id="composePanel">
+        <form id="notificationForm">
 
-        <div class="form-grid">
+            <div class="form-group">
+                <label for="notificationCategory">Notification Category</label>
+                <select id="notificationCategory" required>
+                    <option value="orders">Orders</option>
+                    <option value="payments">Payments</option>
+                    <option value="shipping">Shipping</option>
+                    <option value="delivery">Delivery</option>
+                    <option value="returns">Returns</option>
+                    <option value="refunds">Refunds</option>
+                    <option value="cancellations">Cancellations</option>
+                    <option value="discounts">Discounts</option>
+                    <option value="promotions">Promotions</option>
+                    <option value="cart">Cart</option>
+                    <option value="wishlist">Wishlist</option>
+                    <option value="account">Account</option>
+                    <option value="security">Security</option>
+                    <option value="support">Support</option>
+                    <option value="system">System</option>
+                </select>
+                <div class="form-hint">
+                    Choose the e-commerce notification category.
+                </div>
+            </div>
 
-          <div class="form-group full">
-            <label for="notificationTitle">Notification Title *</label>
-            <input
-              id="notificationTitle"
-              type="text"
-              maxlength="150"
-              placeholder="Example: Your order has been confirmed"
-            >
-          </div>
+            <div class="form-group">
+                <label for="notificationTitle">Notification Title</label>
+                <input id="notificationTitle" type="text"
+                    maxlength="150" required
+                    placeholder="Example: Your order has been shipped">
+            </div>
 
-          <div class="form-group full">
-            <label for="notificationMessage">Message *</label>
-            <textarea
-              id="notificationMessage"
-              maxlength="5000"
-              placeholder="Write the notification message..."
-            ></textarea>
+            <div class="form-group">
+                <label for="notificationMessage">Message</label>
+                <textarea id="notificationMessage"
+                    maxlength="5000" required
+                    placeholder="Write the notification message..."></textarea>
+                <div class="form-hint">
+                    Maximum 5000 characters.
+                </div>
+            </div>
 
-            <div class="char-count" id="messageCount">0 / 5000</div>
-          </div>
+            <div class="form-footer">
+                <button type="button" class="btn" id="cancelSend">
+                    Cancel
+                </button>
+                <button type="submit" class="btn btn-primary" id="sendNotificationButton">
+                    Send Notification
+                </button>
+            </div>
 
-          <div class="form-group">
-            <label for="notificationCategory">Category *</label>
+        </form>
+    </div>
 
-            <select id="notificationCategory">
-
-              <option value="general">General</option>
-              <option value="orders">Orders</option>
-              <option value="order_status">Order Status</option>
-              <option value="payments">Payments</option>
-              <option value="shipping">Shipping</option>
-              <option value="delivery">Delivery</option>
-              <option value="cancellations">Cancellations</option>
-              <option value="returns">Returns</option>
-              <option value="refunds">Refunds</option>
-              <option value="products">Products</option>
-              <option value="stock">Stock Updates</option>
-              <option value="offers">Offers</option>
-              <option value="coupons">Coupons</option>
-              <option value="wishlist">Wishlist</option>
-              <option value="cart">Cart</option>
-              <option value="account">Account</option>
-              <option value="security">Security</option>
-              <option value="support">Support</option>
-              <option value="reviews">Reviews</option>
-              <option value="loyalty">Loyalty & Rewards</option>
-              <option value="system">System</option>
-
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="notificationOrderId">Order ID (Optional)</label>
-            <input
-              id="notificationOrderId"
-              type="text"
-              maxlength="150"
-              placeholder="Example: ORD-10025"
-            >
-          </div>
-
-          <div class="form-group full">
-            <label for="notificationProductId">Product ID (Optional)</label>
-            <input
-              id="notificationProductId"
-              type="text"
-              maxlength="150"
-              placeholder="Enter product ID if related to a product"
-            >
-          </div>
-
-        </div>
-
-        <div class="form-footer">
-
-          <div class="hint">
-            Notification will be saved for the selected customer.<br>
-            This does not send a push notification to their phone.
-          </div>
-
-          <button
-            class="button primary"
-            id="sendNotificationButton"
-            onclick="sendNotification()"
-          >
-            <span>➤</span>
-            <span>Send Notification</span>
-          </button>
-
-        </div>
-
-      </div>
-
-      <!-- HISTORY -->
-      <div id="historyPanel" class="hidden">
+    <div id="historyPanel" hidden>
+        <div class="notice" id="historyNotice"></div>
 
         <div class="history-toolbar">
+            <select id="historyCategoryFilter" aria-label="Filter notification history">
+                <option value="all">All Categories</option>
+                <option value="orders">Orders</option>
+                <option value="payments">Payments</option>
+                <option value="shipping">Shipping</option>
+                <option value="delivery">Delivery</option>
+                <option value="returns">Returns</option>
+                <option value="refunds">Refunds</option>
+                <option value="cancellations">Cancellations</option>
+                <option value="discounts">Discounts</option>
+                <option value="promotions">Promotions</option>
+                <option value="cart">Cart</option>
+                <option value="wishlist">Wishlist</option>
+                <option value="account">Account</option>
+                <option value="security">Security</option>
+                <option value="support">Support</option>
+                <option value="system">System</option>
+            </select>
 
-          <select id="historyCategoryFilter">
-            <option value="">All Categories</option>
-            <option value="general">General</option>
-            <option value="orders">Orders</option>
-            <option value="order_status">Order Status</option>
-            <option value="payments">Payments</option>
-            <option value="shipping">Shipping</option>
-            <option value="delivery">Delivery</option>
-            <option value="cancellations">Cancellations</option>
-            <option value="returns">Returns</option>
-            <option value="refunds">Refunds</option>
-            <option value="products">Products</option>
-            <option value="stock">Stock Updates</option>
-            <option value="offers">Offers</option>
-            <option value="coupons">Coupons</option>
-            <option value="wishlist">Wishlist</option>
-            <option value="cart">Cart</option>
-            <option value="account">Account</option>
-            <option value="security">Security</option>
-            <option value="support">Support</option>
-            <option value="reviews">Reviews</option>
-            <option value="loyalty">Loyalty & Rewards</option>
-            <option value="system">System</option>
-          </select>
-
-          <button class="button" id="refreshHistoryButton" onclick="loadNotificationHistory()">
-            ↻ Refresh
-          </button>
-
+            <button type="button" class="btn btn-small"
+                id="refreshHistoryButton">
+                ↻ Refresh
+            </button>
         </div>
 
         <div class="history-count" id="historyCount">
-          Notification history
+            Notification history
         </div>
 
-        <div id="notificationHistoryList">
-          <div class="empty-state">Select a customer to view history.</div>
+        <div class="notification-list" id="notificationList">
+            <div class="loading">Select a user to load notification history.</div>
         </div>
-
-      </div>
-
     </div>
 
-  </div>
+</section>
 
-</div>
+<!-- API configuration dialog -->
+<div class="dialog-backdrop" id="apiDialogBackdrop">
+    <div class="dialog" role="dialog" aria-modal="true"
+        aria-labelledby="apiDialogTitle">
 
-<!-- API CONNECTION DIALOG -->
-<div class="dialog-overlay" id="connectionDialog">
+        <h2 id="apiDialogTitle">API Connection</h2>
 
-  <div class="dialog" role="dialog" aria-modal="true">
+        <p>
+            Enter the backend URL and admin API key. The key remains in
+            page memory and is not saved to local storage.
+        </p>
 
-    <h2>API Connection</h2>
+        <form id="apiConfigForm">
 
-    <div class="dialog-description">
-      Connect your admin dashboard to the e-commerce backend.
-      The API key remains in memory and is not saved to localStorage.
+            <div class="form-group">
+                <label for="apiBaseInput">Backend Base URL</label>
+                <input id="apiBaseInput" type="url"
+                    value="https://apisequizeshoplite.vercel.app"
+                    required>
+            </div>
+
+            <div class="form-group">
+                <label for="apiKeyInput">Admin API Key</label>
+                <input id="apiKeyInput" type="password"
+                    autocomplete="off"
+                    placeholder="Enter ADMIN_API_KEY"
+                    required>
+            </div>
+
+            <div class="form-hint">
+                Use the same key configured as ADMIN_API_KEY in Vercel.
+                Do not publish this admin page with a shared secret embedded in its source.
+            </div>
+
+            <div class="dialog-actions">
+                <button type="button" class="btn" id="cancelApiConfig">
+                    Cancel
+                </button>
+                <button type="submit" class="btn btn-primary" id="saveApiConfig">
+                    Connect
+                </button>
+            </div>
+
+        </form>
     </div>
-
-    <div class="form-group">
-      <label for="apiUrl">Backend API Base URL</label>
-      <input
-        id="apiUrl"
-        type="url"
-        placeholder="https://your-backend.vercel.app"
-        autocomplete="url"
-      >
-      <div class="help">
-        Enter the backend domain without an endpoint path.
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="apiKey">Admin API Key</label>
-      <input
-        id="apiKey"
-        type="password"
-        placeholder="Enter ADMIN_API_KEY"
-        autocomplete="off"
-      >
-    </div>
-
-    <div class="dialog-description" id="connectionMessage"></div>
-
-    <div class="dialog-footer">
-
-      <button class="button" onclick="closeConnectionDialog()">
-        Cancel
-      </button>
-
-      <button class="button primary" id="connectButton" onclick="connectAPI()">
-        Connect & Load Users
-      </button>
-
-    </div>
-
-  </div>
-
 </div>
 
 <div class="toast-container" id="toastContainer"></div>
@@ -1690,1395 +1427,1159 @@ tbody tr:hover {
 <script>
 "use strict";
 
-/* =========================================================
-   CONFIGURATION
-========================================================= */
+/*
+ * Backend endpoints
+ *
+ * GET  /api/admin/users
+ * POST /api/admin/notifications
+ *
+ * The notification API should support:
+ * send, list, unread_count, delete
+ */
 
-const DEFAULT_API_URL = "https://apisequizeshoplite.vercel.app";
+const DEFAULT_API_BASE = "https://apisequizeshoplite.vercel.app";
 
-const USERS_ENDPOINT = "/api/admin/users";
-const NOTIFICATIONS_ENDPOINT = "/api/admin/notifications";
+const ENDPOINTS = {
+    users: "/api/admin/users",
+    notifications: "/api/admin/notifications"
+};
 
-const NOTIFICATION_CATEGORIES = [
-  "general",
-  "orders",
-  "order_status",
-  "payments",
-  "shipping",
-  "delivery",
-  "cancellations",
-  "returns",
-  "refunds",
-  "products",
-  "stock",
-  "offers",
-  "coupons",
-  "wishlist",
-  "cart",
-  "account",
-  "security",
-  "support",
-  "reviews",
-  "loyalty",
-  "system"
+const CATEGORIES = [
+    "orders",
+    "payments",
+    "shipping",
+    "delivery",
+    "returns",
+    "refunds",
+    "cancellations",
+    "discounts",
+    "promotions",
+    "cart",
+    "wishlist",
+    "account",
+    "security",
+    "support",
+    "system"
 ];
 
-/*
- * API key is intentionally kept only in JavaScript memory.
- * It is not written to localStorage or sessionStorage.
- */
-let API_BASE_URL = DEFAULT_API_URL;
+let API_BASE = DEFAULT_API_BASE;
 let ADMIN_API_KEY = "";
 
 let allUsers = [];
-let filteredUsers = [];
+let visibleUsers = [];
 let selectedUser = null;
-let currentSection = "users";
-let currentSheetTab = "compose";
+let notificationHistory = [];
 
-let historyCache = [];
-let historyRequestNumber = 0;
-let usersRequestNumber = 0;
+let isLoadingUsers = false;
+let isSendingNotification = false;
+let isLoadingHistory = false;
 
-/* =========================================================
-   UTILITIES
-========================================================= */
-
-function $(id) {
-  return document.getElementById(id);
-}
+const $ = id => document.getElementById(id);
 
 function escapeHTML(value) {
-  return String(value == null ? "" : value)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+    return String(value == null ? "" : value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
 
-function safeString(value) {
-  if (value === undefined || value === null) {
-    return "";
-  }
+function showToast(message, type = "success") {
+    const toast = document.createElement("div");
+    toast.className = "toast " + type;
+    toast.textContent = message;
 
-  return String(value);
+    $("toastContainer").appendChild(toast);
+
+    setTimeout(() => {
+        toast.remove();
+    }, 4200);
+}
+
+function showNotice(element, message, type) {
+    element.className = "notice show " + type;
+    element.textContent = message;
+}
+
+function hideNotice(element) {
+    element.className = "notice";
+    element.textContent = "";
+}
+
+function setConnection(connected, label) {
+    $("connectionDot").className =
+        "status-dot " + (connected ? "online" : "offline");
+
+    $("connectionLabel").textContent =
+        label || (connected ? "Connected" : "Not connected");
+
+    $("connectionUrl").textContent = API_BASE;
+}
+
+function getInitials(user) {
+    const name = user.full_name || user.name ||
+        user.username || user.Username || user.email || "U";
+
+    return String(name).trim().slice(0, 1).toUpperCase() || "U";
+}
+
+function normalizeUser(raw, forcedSource) {
+    if (!raw || typeof raw !== "object") {
+        return null;
+    }
+
+    const uid = String(
+        raw.uid ||
+        raw.UID ||
+        raw.id ||
+        raw.userId ||
+        raw.key ||
+        ""
+    ).trim();
+
+    if (!uid) {
+        return null;
+    }
+
+    const username = String(
+        raw.username ||
+        raw.Username ||
+        raw.user_name ||
+        ""
+    );
+
+    const fullName = String(
+        raw.full_name ||
+        raw.fullName ||
+        raw.name ||
+        raw.displayName ||
+        username ||
+        raw.email ||
+        "User"
+    );
+
+    const email = String(raw.email || raw.Email || "");
+
+    let source = forcedSource ||
+        raw.source ||
+        raw.userType ||
+        "";
+
+    source = String(source).toLowerCase();
+
+    if (source !== "app" && source !== "website") {
+        source = (
+            raw.Username !== undefined ||
+            raw.full_name !== undefined ||
+            raw.avatar !== undefined ||
+            raw.private_profile !== undefined
+        ) ? "app" : "website";
+    }
+
+    const verifiedValue =
+        raw.verified !== undefined ? raw.verified :
+        raw.verify !== undefined ? raw.verify :
+        raw.isVerified !== undefined ? raw.isVerified :
+        false;
+
+    const verified =
+        verifiedValue === true ||
+        verifiedValue === 1 ||
+        String(verifiedValue).toLowerCase() === "true" ||
+        String(verifiedValue) === "1";
+
+    return {
+        ...raw,
+        uid,
+        username,
+        full_name: fullName,
+        email,
+        avatar: String(raw.avatar || raw.photoURL || raw.photoUrl || ""),
+        source,
+        verified,
+        createdAt: raw.createdAt || raw.created_at || raw.created_at_ms || 0
+    };
+}
+
+/*
+ * Supports the expected API format:
+ * { success, total, users: [] }
+ *
+ * Also supports:
+ * { websiteUsers: [], appUsers: [] }
+ *
+ * This makes the list resilient to differences in the API response.
+ */
+function extractUsers(data) {
+    const output = [];
+    const seen = new Set();
+
+    function add(raw, source) {
+        const user = normalizeUser(raw, source);
+
+        if (!user || seen.has(user.uid)) {
+            return;
+        }
+
+        seen.add(user.uid);
+        output.push(user);
+    }
+
+    if (Array.isArray(data.users)) {
+        data.users.forEach(user => add(user, user && user.source));
+    } else if (data.users && typeof data.users === "object") {
+        Object.keys(data.users).forEach(key => {
+            const raw = data.users[key];
+
+            if (raw && typeof raw === "object") {
+                add({ ...raw, uid: raw.uid || key }, raw.source);
+            }
+        });
+    }
+
+    if (Array.isArray(data.appUsers)) {
+        data.appUsers.forEach(user => add(user, "app"));
+    } else if (data.appUsers && typeof data.appUsers === "object") {
+        Object.keys(data.appUsers).forEach(key => {
+            const raw = data.appUsers[key];
+            if (raw && typeof raw === "object") {
+                add({ ...raw, uid: raw.uid || key }, "app");
+            }
+        });
+    }
+
+    if (Array.isArray(data.websiteUsers)) {
+        data.websiteUsers.forEach(user => add(user, "website"));
+    } else if (data.websiteUsers && typeof data.websiteUsers === "object") {
+        Object.keys(data.websiteUsers).forEach(key => {
+            const raw = data.websiteUsers[key];
+            if (raw && typeof raw === "object") {
+                add({ ...raw, uid: raw.uid || key }, "website");
+            }
+        });
+    }
+
+    return output;
+}
+
+function getSourceCounts(data, normalizedUsers) {
+    let appCount = 0;
+    let websiteCount = 0;
+
+    if (Array.isArray(data.appUsers)) {
+        appCount = data.appUsers.length;
+    } else if (data.appUsers && typeof data.appUsers === "object") {
+        appCount = Object.keys(data.appUsers).length;
+    }
+
+    if (Array.isArray(data.websiteUsers)) {
+        websiteCount = data.websiteUsers.length;
+    } else if (data.websiteUsers && typeof data.websiteUsers === "object") {
+        websiteCount = Object.keys(data.websiteUsers).length;
+    }
+
+    if (
+        data.appUsers === undefined &&
+        data.websiteUsers === undefined
+    ) {
+        appCount = normalizedUsers.filter(u => u.source === "app").length;
+        websiteCount = normalizedUsers.filter(u => u.source === "website").length;
+    }
+
+    return { appCount, websiteCount };
+}
+
+async function apiRequest(path, options = {}) {
+    if (!ADMIN_API_KEY) {
+        throw new Error("Admin API key is missing. Connect the API first.");
+    }
+
+    const headers = {
+        "Authorization": "Bearer " + ADMIN_API_KEY,
+        "Accept": "application/json",
+        ...(options.headers || {})
+    };
+
+    if (options.body !== undefined) {
+        headers["Content-Type"] = "application/json";
+    }
+
+    let response;
+
+    try {
+        response = await fetch(API_BASE + path, {
+            ...options,
+            headers,
+            cache: "no-store"
+        });
+    } catch (error) {
+        throw new Error(
+            "Could not connect to the backend. Check the URL, internet connection and CORS settings."
+        );
+    }
+
+    const text = await response.text();
+
+    let data;
+
+    try {
+        data = text ? JSON.parse(text) : {};
+    } catch (error) {
+        throw new Error(
+            "Backend returned an invalid response. Check the API route and Vercel deployment."
+        );
+    }
+
+    if (!response.ok || data.success === false) {
+        throw new Error(
+            data.message ||
+            ("Request failed with HTTP " + response.status)
+        );
+    }
+
+    return data;
+}
+
+function setUsersLoading() {
+    $("desktopUserList").innerHTML = `
+        <div class="loading">
+            <span class="spinner"></span>
+            Loading users...
+        </div>`;
+
+    $("mobileUserList").innerHTML = `
+        <div class="loading">
+            <span class="spinner"></span>
+            Loading users...
+        </div>`;
+
+    $("resultsText").textContent = "Loading users...";
+}
+
+function renderAvatar(user, className = "avatar") {
+    const initial = escapeHTML(getInitials(user));
+    const avatarURL = String(user.avatar || "").trim();
+
+    if (avatarURL) {
+        return `
+            <div class="${className}">
+                <img src="${escapeHTML(avatarURL)}"
+                    alt=""
+                    loading="lazy"
+                    referrerpolicy="no-referrer"
+                    onerror="this.parentElement.textContent='${initial}'">
+            </div>`;
+    }
+
+    return `<div class="${className}">${initial}</div>`;
 }
 
 function formatDate(value) {
-  if (!value) {
-    return "—";
-  }
+    if (!value) return "—";
 
-  let date;
+    let date;
 
-  if (typeof value === "number" || /^\d+$/.test(String(value))) {
-    date = new Date(Number(value));
-  } else {
-    date = new Date(value);
-  }
+    if (typeof value === "number" || /^\d+$/.test(String(value))) {
+        let numeric = Number(value);
 
-  if (Number.isNaN(date.getTime())) {
-    return "—";
-  }
-
-  return date.toLocaleString(undefined, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit"
-  });
-}
-
-function getInitials(name) {
-  const value = safeString(name).trim();
-
-  if (!value) {
-    return "C";
-  }
-
-  return value
-    .split(/\s+/)
-    .slice(0, 2)
-    .map(part => part.charAt(0))
-    .join("")
-    .toUpperCase();
-}
-
-function showToast(message, type) {
-  const toast = document.createElement("div");
-
-  toast.className = "toast " + (type || "");
-  toast.textContent = message;
-
-  $("toastContainer").appendChild(toast);
-
-  setTimeout(() => {
-    toast.remove();
-  }, 4200);
-}
-
-function setConnectionStatus(connected, message) {
-  const dot = $("sidebarStatusDot");
-  const text = $("sidebarStatusText");
-
-  dot.classList.toggle("online", connected);
-
-  text.textContent = message || (
-    connected ? "Connected" : "Not connected"
-  );
-}
-
-function setButtonLoading(button, loading, loadingText) {
-  if (!button) {
-    return;
-  }
-
-  if (loading) {
-    button.dataset.originalHTML = button.innerHTML;
-    button.disabled = true;
-    button.innerHTML = escapeHTML(loadingText || "Please wait...");
-  } else {
-    button.disabled = false;
-
-    if (button.dataset.originalHTML) {
-      button.innerHTML = button.dataset.originalHTML;
-      delete button.dataset.originalHTML;
-    }
-  }
-}
-
-function normalizeBaseUrl(value) {
-  let url = safeString(value).trim();
-
-  if (!url) {
-    throw new Error("Backend URL is required.");
-  }
-
-  url = url.replace(/\/+$/, "");
-
-  let parsed;
-
-  try {
-    parsed = new URL(url);
-  } catch (_) {
-    throw new Error("Please enter a valid backend URL.");
-  }
-
-  if (parsed.protocol !== "https:" && parsed.hostname !== "localhost") {
-    throw new Error("Backend must use HTTPS.");
-  }
-
-  if (parsed.username || parsed.password) {
-    throw new Error("Credentials are not allowed in the backend URL.");
-  }
-
-  if (parsed.search || parsed.hash) {
-    throw new Error("Remove query parameters from the backend URL.");
-  }
-
-  return url;
-}
-
-/* =========================================================
-   API REQUESTS
-========================================================= */
-
-async function apiRequest(path, options) {
-  if (!ADMIN_API_KEY) {
-    openConnectionDialog();
-    throw new Error("Connect your admin API first.");
-  }
-
-  const requestOptions = options || {};
-
-  const headers = Object.assign(
-    {},
-    requestOptions.headers || {},
-    {
-      "Authorization": "Bearer " + ADMIN_API_KEY,
-      "Accept": "application/json"
-    }
-  );
-
-  if (requestOptions.body !== undefined) {
-    headers["Content-Type"] = "application/json";
-  }
-
-  let response;
-
-  try {
-    response = await fetch(API_BASE_URL + path, {
-      method: requestOptions.method || "GET",
-      headers,
-      body: requestOptions.body === undefined
-        ? undefined
-        : JSON.stringify(requestOptions.body),
-      cache: "no-store"
-    });
-  } catch (error) {
-    throw new Error(
-      "Network error. Check your internet, backend URL and CORS settings."
-    );
-  }
-
-  const rawText = await response.text();
-
-  let data;
-
-  try {
-    data = rawText ? JSON.parse(rawText) : {};
-  } catch (_) {
-    throw new Error(
-      "Backend returned a non-JSON response. Check Vercel deployment and endpoint URL."
-    );
-  }
-
-  if (!response.ok || data.success === false) {
-    if (response.status === 401) {
-      setConnectionStatus(false, "Unauthorized");
-    }
-
-    throw new Error(
-      data.message ||
-      "Request failed with status " + response.status
-    );
-  }
-
-  return data;
-}
-
-async function notificationAction(body) {
-  return apiRequest(NOTIFICATIONS_ENDPOINT, {
-    method: "POST",
-    body
-  });
-}
-
-/* =========================================================
-   CONNECTION
-========================================================= */
-
-function openConnectionDialog() {
-  $("apiUrl").value = API_BASE_URL;
-  $("apiKey").value = "";
-  $("connectionMessage").textContent = ADMIN_API_KEY
-    ? "A key is already active in this page session. Enter the key again only if you want to replace it."
-    : "Enter your backend URL and ADMIN_API_KEY.";
-
-  $("connectionDialog").classList.add("open");
-}
-
-function closeConnectionDialog() {
-  $("connectionDialog").classList.remove("open");
-}
-
-async function connectAPI() {
-  let url;
-
-  try {
-    url = normalizeBaseUrl($("apiUrl").value);
-  } catch (error) {
-    showToast(error.message, "error");
-    return;
-  }
-
-  const key = $("apiKey").value.trim();
-
-  if (!key && !ADMIN_API_KEY) {
-    showToast("Admin API key is required.", "error");
-    return;
-  }
-
-  const previousUrl = API_BASE_URL;
-  const previousKey = ADMIN_API_KEY;
-
-  API_BASE_URL = url;
-
-  if (key) {
-    ADMIN_API_KEY = key;
-  }
-
-  const button = $("connectButton");
-
-  setButtonLoading(button, true, "Connecting...");
-
-  $("connectionMessage").textContent = "Checking backend and loading customers...";
-
-  try {
-    await loadUsers(true);
-
-    closeConnectionDialog();
-
-    $("apiKey").value = "";
-
-    setConnectionStatus(true, "Connected");
-
-    showToast("Backend connected successfully.", "success");
-
-  } catch (error) {
-    API_BASE_URL = previousUrl;
-    ADMIN_API_KEY = previousKey;
-
-    $("connectionMessage").textContent = error.message;
-
-    setConnectionStatus(false, "Connection failed");
-
-    showToast(error.message, "error");
-
-  } finally {
-    setButtonLoading(button, false);
-  }
-}
-
-/* =========================================================
-   SECTION NAVIGATION
-========================================================= */
-
-function showSection(section) {
-  currentSection = section;
-
-  $("usersSection").classList.toggle(
-    "hidden",
-    section !== "users"
-  );
-
-  $("notificationsSection").classList.toggle(
-    "hidden",
-    section !== "notifications"
-  );
-
-  $("breadcrumbCurrent").textContent =
-    section === "users" ? "Customers" : "Notifications";
-
-  document.querySelectorAll("[data-nav]").forEach(button => {
-    button.classList.toggle(
-      "active",
-      button.dataset.nav === section
-    );
-  });
-
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth"
-  });
-}
-
-function refreshCurrentSection() {
-  if (currentSection === "users") {
-    loadUsers();
-  } else if (selectedUser) {
-    loadNotificationHistory();
-  }
-}
-
-/* =========================================================
-   USERS
-========================================================= */
-
-function getUserName(user) {
-  return safeString(
-    user.full_name ||
-    user.name ||
-    user.Username ||
-    user.username ||
-    user.displayName ||
-    user.email ||
-    "Unnamed Customer"
-  );
-}
-
-function getUserEmail(user) {
-  return safeString(
-    user.email ||
-    user.saved_email ||
-    user.Email ||
-    ""
-  );
-}
-
-function getUserUid(user) {
-  return safeString(
-    user.uid ||
-    user.id ||
-    user.UID ||
-    ""
-  );
-}
-
-function getUserAvatar(user) {
-  return safeString(
-    user.avatar ||
-    user.photoURL ||
-    user.photo ||
-    user.profileImage ||
-    ""
-  );
-}
-
-function getUserSource(user) {
-  const value = safeString(
-    user.source ||
-    user.userSource ||
-    user.accountType ||
-    ""
-  ).toLowerCase();
-
-  if (value === "app" || value === "android") {
-    return "app";
-  }
-
-  if (value === "website" || value === "web") {
-    return "website";
-  }
-
-  return "website";
-}
-
-function getUserStatus(user) {
-  const value = safeString(
-    user.status ||
-    user.account_status ||
-    ""
-  ).toLowerCase();
-
-  if (
-    user.disabled === true ||
-    user.active === false ||
-    value === "inactive" ||
-    value === "disabled" ||
-    value === "blocked" ||
-    value === "suspended"
-  ) {
-    return "inactive";
-  }
-
-  return "active";
-}
-
-function getUserCreatedDate(user) {
-  return (
-    user.createdAt ||
-    user.created_at ||
-    user.created ||
-    user.timestamp ||
-    null
-  );
-}
-
-function normalizeUser(user, index) {
-  const uid = getUserUid(user);
-
-  return Object.assign({}, user, {
-    uid,
-    _key: uid || ("user_" + index),
-    _name: getUserName(user),
-    _email: getUserEmail(user),
-    _avatar: getUserAvatar(user),
-    _source: getUserSource(user),
-    _status: getUserStatus(user),
-    _created: getUserCreatedDate(user)
-  });
-}
-
-function getUserArray(data) {
-  if (Array.isArray(data.users)) {
-    return data.users;
-  }
-
-  if (Array.isArray(data.data)) {
-    return data.data;
-  }
-
-  if (Array.isArray(data.customers)) {
-    return data.customers;
-  }
-
-  if (
-    data.users &&
-    typeof data.users === "object"
-  ) {
-    return Object.keys(data.users).map(key => {
-      const value = data.users[key];
-
-      return Object.assign(
-        {},
-        value || {},
-        {
-          uid: value && (value.uid || value.id)
-            ? (value.uid || value.id)
-            : key
+        if (numeric > 0 && numeric < 100000000000) {
+            numeric *= 1000;
         }
-      );
-    });
-  }
 
-  return [];
+        date = new Date(numeric);
+    } else {
+        date = new Date(value);
+    }
+
+    if (Number.isNaN(date.getTime())) {
+        return "—";
+    }
+
+    return date.toLocaleDateString(undefined, {
+        year: "numeric",
+        month: "short",
+        day: "numeric"
+    });
 }
 
-async function loadUsers(silent) {
-  if (!ADMIN_API_KEY) {
-    openConnectionDialog();
-    return;
-  }
+function getFilteredUsers() {
+    const query = $("userSearch").value.trim().toLowerCase();
+    const source = $("sourceFilter").value;
+    const verification = $("verifiedFilter").value;
 
-  const requestId = ++usersRequestNumber;
+    return allUsers.filter(user => {
+        const searchText = [
+            user.uid,
+            user.username,
+            user.Username,
+            user.full_name,
+            user.name,
+            user.email
+        ].join(" ").toLowerCase();
 
-  $("usersTableBody").innerHTML =
-    '<tr><td colspan="6"><div class="empty-state">Loading customers...</div></td></tr>';
+        if (query && !searchText.includes(query)) {
+            return false;
+        }
 
-  $("mobileUsers").innerHTML =
-    '<div class="empty-state">Loading customers...</div>';
+        if (source !== "all" && user.source !== source) {
+            return false;
+        }
 
-  try {
-    const data = await apiRequest(USERS_ENDPOINT, {
-      method: "GET"
+        if (verification === "verified" && !user.verified) {
+            return false;
+        }
+
+        if (verification === "unverified" && user.verified) {
+            return false;
+        }
+
+        return true;
     });
-
-    if (requestId !== usersRequestNumber) {
-      return;
-    }
-
-    const rawUsers = getUserArray(data);
-
-    allUsers = rawUsers
-      .map(normalizeUser)
-      .filter(user => user.uid);
-
-    /*
-     * Remove duplicate UIDs if an endpoint includes the same
-     * customer in more than one response group.
-     */
-    const unique = new Map();
-
-    allUsers.forEach(user => {
-      if (!unique.has(user.uid)) {
-        unique.set(user.uid, user);
-      }
-    });
-
-    allUsers = Array.from(unique.values());
-
-    $("totalUsers").textContent =
-      Number.isFinite(Number(data.total))
-        ? Number(data.total).toLocaleString()
-        : allUsers.length.toLocaleString();
-
-    const websiteCount = Number.isFinite(Number(data.websiteUsers))
-      ? Number(data.websiteUsers)
-      : allUsers.filter(user => user._source === "website").length;
-
-    const appCount = Number.isFinite(Number(data.appUsers))
-      ? Number(data.appUsers)
-      : allUsers.filter(user => user._source === "app").length;
-
-    $("websiteUsersCount").textContent =
-      websiteCount.toLocaleString();
-
-    $("appUsersCount").textContent =
-      appCount.toLocaleString();
-
-    $("notificationCustomerCount").textContent =
-      allUsers.length.toLocaleString();
-
-    filterUsers();
-
-    setConnectionStatus(true, "Connected");
-
-    if (!silent) {
-      showToast(
-        allUsers.length + " customer records loaded.",
-        "success"
-      );
-    }
-
-  } catch (error) {
-    if (requestId !== usersRequestNumber) {
-      return;
-    }
-
-    $("usersTableBody").innerHTML =
-      '<tr><td colspan="6"><div class="empty-state">' +
-      escapeHTML(error.message) +
-      '</div></td></tr>';
-
-    $("mobileUsers").innerHTML =
-      '<div class="empty-state">' +
-      escapeHTML(error.message) +
-      '</div>';
-
-    $("usersFooter").textContent =
-      "Could not load customers.";
-
-    if (!silent) {
-      showToast(error.message, "error");
-    }
-
-    throw error;
-  }
 }
 
-function filterUsers() {
-  const search = $("userSearch").value
-    .trim()
-    .toLowerCase();
-
-  const source = $("sourceFilter").value;
-  const status = $("statusFilter").value;
-
-  filteredUsers = allUsers.filter(user => {
-    const text = [
-      user._name,
-      user._email,
-      user.uid,
-      user.Username,
-      user.username,
-      user.full_name
-    ].join(" ").toLowerCase();
-
-    if (search && !text.includes(search)) {
-      return false;
+function renderDesktopUsers(users) {
+    if (!users.length) {
+        $("desktopUserList").innerHTML = `
+            <div class="empty-state">
+                <div style="font-size:28px;margin-bottom:10px">⌕</div>
+                <strong>No users found</strong>
+                <div>Try changing the search or filters.</div>
+            </div>`;
+        return;
     }
 
-    if (source !== "all" && user._source !== source) {
-      return false;
-    }
+    const rows = users.map(user => {
+        const sourceBadge = user.source === "app"
+            ? `<span class="badge badge-blue">App</span>`
+            : `<span class="badge">Website</span>`;
 
-    if (status !== "all" && user._status !== status) {
-      return false;
-    }
+        const verifiedBadge = user.verified
+            ? `<span class="badge badge-green">Verified</span>`
+            : `<span class="badge badge-yellow">Unverified</span>`;
 
-    return true;
-  });
+        return `
+            <tr data-user-uid="${escapeHTML(user.uid)}">
+                <td>
+                    <div class="user-cell">
+                        ${renderAvatar(user)}
+                        <div>
+                            <div class="user-name">
+                                ${escapeHTML(user.full_name)}
+                            </div>
+                            <div class="user-secondary">
+                                @${escapeHTML(user.username || "—")}
+                            </div>
+                        </div>
+                    </div>
+                </td>
 
-  $("filteredUsersCount").textContent =
-    filteredUsers.length.toLocaleString();
+                <td>
+                    <div style="max-width:240px;overflow:hidden;text-overflow:ellipsis">
+                        ${escapeHTML(user.email || "—")}
+                    </div>
+                </td>
 
-  $("usersCountBadge").textContent =
-    filteredUsers.length + " users";
+                <td>${sourceBadge}</td>
+                <td>${verifiedBadge}</td>
 
-  renderUsers();
+                <td>
+                    <div style="max-width:150px;overflow:hidden;text-overflow:ellipsis">
+                        ${escapeHTML(user.uid)}
+                    </div>
+                </td>
 
-  $("usersFooter").textContent =
-    "Showing " +
-    filteredUsers.length +
-    " of " +
-    allUsers.length +
-    " loaded customer records.";
+                <td>
+                    <button class="table-action"
+                        type="button"
+                        data-open-user="${escapeHTML(user.uid)}">
+                        Manage →
+                    </button>
+                </td>
+            </tr>`;
+    }).join("");
+
+    $("desktopUserList").innerHTML = `
+        <table>
+            <thead>
+                <tr>
+                    <th>USER</th>
+                    <th>EMAIL</th>
+                    <th>SOURCE</th>
+                    <th>VERIFICATION</th>
+                    <th>UID</th>
+                    <th>ACTION</th>
+                </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+        </table>`;
 }
 
-function avatarHTML(user, extraClass) {
-  const avatar = user._avatar;
+function renderMobileUsers(users) {
+    if (!users.length) {
+        $("mobileUserList").innerHTML = `
+            <div class="empty-state">
+                <strong>No users found</strong>
+                <div>Try changing the search or filters.</div>
+            </div>`;
+        return;
+    }
 
-  if (
-    avatar &&
-    /^https?:\/\//i.test(avatar)
-  ) {
-    return (
-      '<div class="customer-avatar ' +
-      (extraClass || "") +
-      '">' +
-      '<img src="' + escapeHTML(avatar) +
-      '" alt="" loading="lazy" referrerpolicy="no-referrer" ' +
-      'onerror="this.style.display=\'none\';this.parentElement.textContent=\'' +
-      escapeHTML(getInitials(user._name)) +
-      '\'">' +
-      '</div>'
-    );
-  }
+    $("mobileUserList").innerHTML = users.map(user => {
+        const sourceLabel = user.source === "app" ? "App user" : "Website user";
+        const verifiedLabel = user.verified ? "Verified" : "Not verified";
 
-  return (
-    '<div class="customer-avatar ' +
-    (extraClass || "") +
-    '">' +
-    escapeHTML(getInitials(user._name)) +
-    '</div>'
-  );
+        return `
+            <div class="mobile-user-card"
+                data-open-user="${escapeHTML(user.uid)}">
+
+                ${renderAvatar(user)}
+
+                <div class="mobile-user-info">
+                    <div class="user-name">
+                        ${escapeHTML(user.full_name)}
+                    </div>
+
+                    <div class="user-secondary">
+                        ${escapeHTML(user.email || user.username || user.uid)}
+                    </div>
+
+                    <div class="user-secondary">
+                        ${escapeHTML(user.uid)}
+                    </div>
+                </div>
+
+                <div class="mobile-user-right">
+                    <span class="badge ${user.source === "app" ? "badge-blue" : ""}">
+                        ${escapeHTML(sourceLabel)}
+                    </span>
+                    <small>${escapeHTML(verifiedLabel)}</small>
+                </div>
+            </div>`;
+    }).join("");
 }
 
 function renderUsers() {
-  if (filteredUsers.length === 0) {
-    $("usersTableBody").innerHTML =
-      '<tr><td colspan="6"><div class="empty-state">' +
-      '<div class="empty-icon">⌕</div>' +
-      '<strong>No customers found</strong><br>' +
-      'Try another search or filter.' +
-      '</div></td></tr>';
+    visibleUsers = getFilteredUsers();
 
-    $("mobileUsers").innerHTML =
-      '<div class="empty-state">No matching customers found.</div>';
+    renderDesktopUsers(visibleUsers);
+    renderMobileUsers(visibleUsers);
 
-    return;
-  }
+    $("listCountBadge").textContent =
+        visibleUsers.length + (visibleUsers.length === 1 ? " user" : " users");
 
-  $("usersTableBody").innerHTML = filteredUsers.map(user => {
-    const sourceBadge = user._source === "app"
-      ? '<span class="badge blue">App</span>'
-      : '<span class="badge">Website</span>';
-
-    const statusBadge = user._status === "active"
-      ? '<span class="badge green">Active</span>'
-      : '<span class="badge red">Inactive</span>';
-
-    return `
-      <tr>
-        <td>
-          <div class="customer-cell">
-            ${avatarHTML(user)}
-            <div>
-              <div class="customer-name">${escapeHTML(user._name)}</div>
-              <div class="customer-email">${escapeHTML(user._email || "No email")}</div>
-            </div>
-          </div>
-        </td>
-
-        <td>
-          <div class="uid-text" title="${escapeHTML(user.uid)}">
-            ${escapeHTML(user.uid)}
-          </div>
-        </td>
-
-        <td>${sourceBadge}</td>
-
-        <td>${statusBadge}</td>
-
-        <td>${escapeHTML(formatDate(user._created))}</td>
-
-        <td>
-          <button
-            class="button primary small"
-            onclick="selectUserByKey('${escapeHTML(user._key)}')"
-          >
-            Select User
-          </button>
-        </td>
-      </tr>
-    `;
-  }).join("");
-
-  $("mobileUsers").innerHTML = filteredUsers.map(user => {
-    const sourceBadge = user._source === "app"
-      ? '<span class="badge blue">App</span>'
-      : '<span class="badge">Website</span>';
-
-    const statusBadge = user._status === "active"
-      ? '<span class="badge green">Active</span>'
-      : '<span class="badge red">Inactive</span>';
-
-    return `
-      <div class="mobile-user-card">
-
-        <div class="mobile-user-top">
-          ${avatarHTML(user)}
-
-          <div class="mobile-user-main">
-            <div class="mobile-user-name">
-              ${escapeHTML(user._name)}
-            </div>
-
-            <div class="mobile-user-email">
-              ${escapeHTML(user._email || "No email")}
-            </div>
-          </div>
-        </div>
-
-        <div class="mobile-user-bottom">
-          <div>
-            ${sourceBadge}
-            ${statusBadge}
-
-            <div class="mobile-user-uid" style="margin-top:8px">
-              UID: ${escapeHTML(user.uid)}
-            </div>
-          </div>
-
-          <button
-            class="button primary small"
-            onclick="selectUserByKey('${escapeHTML(user._key)}')"
-          >
-            Select
-          </button>
-        </div>
-
-      </div>
-    `;
-  }).join("");
+    $("resultsText").textContent =
+        "Showing " + visibleUsers.length + " of " + allUsers.length + " users";
 }
 
-function selectUserByKey(key) {
-  const user = allUsers.find(item => item._key === key);
+async function loadUsers() {
+    if (isLoadingUsers) return;
 
-  if (!user) {
-    showToast("Customer record not found.", "error");
-    return;
-  }
+    if (!ADMIN_API_KEY) {
+        $("desktopUserList").innerHTML = `
+            <div class="empty-state">
+                <strong>Connect your API</strong>
+                <div>Enter the admin API key to load the user list.</div>
+                <button type="button" class="btn btn-primary"
+                    style="margin-top:15px" id="connectFromEmpty">
+                    Connect API
+                </button>
+            </div>`;
 
-  selectUser(user);
-}
+        $("mobileUserList").innerHTML = `
+            <div class="empty-state">
+                <strong>Connect your API</strong>
+                <div>Enter the admin API key to load the user list.</div>
+                <button type="button" class="btn btn-primary"
+                    style="margin-top:15px" id="connectFromEmptyMobile">
+                    Connect API
+                </button>
+            </div>`;
 
-function selectUser(user) {
-  selectedUser = user;
-  historyCache = [];
+        $("totalUsers").textContent = "—";
+        $("appUsersCount").textContent = "—";
+        $("websiteUsersCount").textContent = "—";
+        $("resultsText").textContent = "API connection required";
 
-  $("sheetCustomerName").textContent = user._name;
-  $("sheetCustomerEmail").textContent =
-    user._email || "No email available";
-
-  $("sheetCustomerUid").textContent =
-    "UID: " + user.uid;
-
-  const avatar = user._avatar;
-
-  if (avatar && /^https?:\/\//i.test(avatar)) {
-    $("sheetAvatar").innerHTML =
-      '<img src="' + escapeHTML(avatar) +
-      '" alt="" referrerpolicy="no-referrer" ' +
-      'onerror="this.style.display=\'none\'">';
-
-  } else {
-    $("sheetAvatar").textContent =
-      getInitials(user._name);
-  }
-
-  resetNotificationForm();
-
-  switchSheetTab("compose");
-
-  $("customerOverlay").classList.add("open");
-
-  document.body.style.overflow = "hidden";
-}
-
-function closeCustomerSheet() {
-  $("customerOverlay").classList.remove("open");
-
-  document.body.style.overflow = "";
-
-  selectedUser = null;
-  historyRequestNumber++;
-}
-
-function overlayBackdropClick(event) {
-  if (event.target === $("customerOverlay")) {
-    closeCustomerSheet();
-  }
-}
-
-/* =========================================================
-   BOTTOM SHEET TABS
-========================================================= */
-
-function switchSheetTab(tab) {
-  currentSheetTab = tab;
-
-  const compose = tab === "compose";
-  const history = tab === "history";
-
-  $("composePanel").classList.toggle("hidden", !compose);
-  $("historyPanel").classList.toggle("hidden", !history);
-
-  $("composeTab").classList.toggle("active", compose);
-  $("historyTab").classList.toggle("active", history);
-
-  if (history) {
-    loadNotificationHistory();
-  }
-}
-
-/* =========================================================
-   SEND NOTIFICATION
-========================================================= */
-
-function resetNotificationForm() {
-  $("notificationTitle").value = "";
-  $("notificationMessage").value = "";
-  $("notificationCategory").value = "general";
-  $("notificationOrderId").value = "";
-  $("notificationProductId").value = "";
-  $("messageCount").textContent = "0 / 5000";
-}
-
-$("notificationMessage").addEventListener("input", function() {
-  $("messageCount").textContent =
-    this.value.length + " / 5000";
-});
-
-function validateNotificationForm() {
-  const title = $("notificationTitle").value.trim();
-  const message = $("notificationMessage").value.trim();
-  const category = $("notificationCategory").value;
-
-  if (!selectedUser) {
-    throw new Error("Select a customer first.");
-  }
-
-  if (!title) {
-    throw new Error("Notification title is required.");
-  }
-
-  if (!message) {
-    throw new Error("Notification message is required.");
-  }
-
-  if (title.length > 150) {
-    throw new Error("Title cannot exceed 150 characters.");
-  }
-
-  if (message.length > 5000) {
-    throw new Error("Message cannot exceed 5000 characters.");
-  }
-
-  if (!NOTIFICATION_CATEGORIES.includes(category)) {
-    throw new Error("Select a valid notification category.");
-  }
-
-  return {
-    action: "send",
-    uid: selectedUser.uid,
-    title,
-    message,
-    category,
-    orderId: $("notificationOrderId").value.trim(),
-    productId: $("notificationProductId").value.trim()
-  };
-}
-
-async function sendNotification() {
-  if (!ADMIN_API_KEY) {
-    openConnectionDialog();
-    return;
-  }
-
-  let payload;
-
-  try {
-    payload = validateNotificationForm();
-  } catch (error) {
-    showToast(error.message, "error");
-    return;
-  }
-
-  const confirmed = window.confirm(
-    "Send this notification to " +
-    selectedUser._name +
-    "?\n\nCategory: " +
-    payload.category
-  );
-
-  if (!confirmed) {
-    return;
-  }
-
-  const button = $("sendNotificationButton");
-
-  setButtonLoading(button, true, "Sending...");
-
-  try {
-    const result = await notificationAction(payload);
-
-    showToast(
-      "Notification saved successfully for " +
-      selectedUser._name +
-      ".",
-      "success"
-    );
-
-    resetNotificationForm();
-
-    /*
-     * Refresh history so the newly created notification appears.
-     */
-    switchSheetTab("history");
-
-    if (
-      result.notificationId &&
-      result.notification
-    ) {
-      await loadNotificationHistory();
+        return;
     }
 
-  } catch (error) {
-    showToast(error.message, "error");
+    isLoadingUsers = true;
+    $("refreshButton").disabled = true;
+    setUsersLoading();
 
-  } finally {
-    setButtonLoading(button, false);
-  }
+    try {
+        /*
+         * Do not append query parameters here. The existing endpoint
+         * is expected to return the complete user list.
+         */
+        const data = await apiRequest(ENDPOINTS.users, {
+            method: "GET"
+        });
+
+        const users = extractUsers(data);
+
+        allUsers = users;
+
+        const counts = getSourceCounts(data, users);
+
+        /*
+         * Use the actual list length for Total Users.
+         * The backend total can be stale or represent a different subset.
+         */
+        $("totalUsers").textContent =
+            Number.isFinite(Number(data.total))
+                ? String(Math.max(Number(data.total), users.length))
+                : String(users.length);
+
+        $("appUsersCount").textContent = String(counts.appCount);
+        $("websiteUsersCount").textContent = String(counts.websiteCount);
+
+        renderUsers();
+
+        $("lastUpdated").textContent =
+            "Updated " + new Date().toLocaleTimeString();
+
+        setConnection(true, "Connected");
+
+        if (users.length === 0) {
+            $("desktopUserList").innerHTML = `
+                <div class="empty-state">
+                    <strong>API connected, but no users were returned.</strong>
+                    <div style="margin-top:8px">
+                        Check whether the API response contains a populated
+                        <code>users</code>, <code>appUsers</code> or
+                        <code>websiteUsers</code> array.
+                    </div>
+                </div>`;
+
+            $("mobileUserList").innerHTML = `
+                <div class="empty-state">
+                    <strong>API connected, but no users were returned.</strong>
+                    <div style="margin-top:8px">
+                        Check the users API response in Vercel.
+                    </div>
+                </div>`;
+
+            $("resultsText").textContent =
+                "The API returned zero readable users.";
+        }
+
+    } catch (error) {
+        console.error("Load users error:", error);
+
+        allUsers = [];
+        visibleUsers = [];
+
+        $("totalUsers").textContent = "—";
+        $("appUsersCount").textContent = "—";
+        $("websiteUsersCount").textContent = "—";
+
+        const message = escapeHTML(error.message);
+
+        $("desktopUserList").innerHTML = `
+            <div class="error-state">
+                <strong>Could not load users</strong>
+                <div style="margin-top:8px">${message}</div>
+                <button type="button" class="btn btn-primary"
+                    style="margin-top:15px" id="retryFromError">
+                    Try Again
+                </button>
+            </div>`;
+
+        $("mobileUserList").innerHTML = `
+            <div class="error-state">
+                <strong>Could not load users</strong>
+                <div style="margin-top:8px">${message}</div>
+                <button type="button" class="btn btn-primary"
+                    style="margin-top:15px" id="retryFromErrorMobile">
+                    Try Again
+                </button>
+            </div>`;
+
+        $("listCountBadge").textContent = "Unavailable";
+        $("resultsText").textContent = "User list failed to load";
+
+        setConnection(false, "Connection error");
+
+    } finally {
+        isLoadingUsers = false;
+        $("refreshButton").disabled = false;
+    }
 }
 
-/* =========================================================
-   NOTIFICATION HISTORY
-========================================================= */
+/* ---------------- API configuration ---------------- */
 
-function getCategoryLabel(category) {
-  const labels = {
-    general: "General",
-    orders: "Orders",
-    order_status: "Order Status",
-    payments: "Payments",
-    shipping: "Shipping",
-    delivery: "Delivery",
-    cancellations: "Cancellations",
-    returns: "Returns",
-    refunds: "Refunds",
-    products: "Products",
-    stock: "Stock",
-    offers: "Offers",
-    coupons: "Coupons",
-    wishlist: "Wishlist",
-    cart: "Cart",
-    account: "Account",
-    security: "Security",
-    support: "Support",
-    reviews: "Reviews",
-    loyalty: "Loyalty",
-    system: "System"
-  };
-
-  return labels[category] || category || "General";
+function openApiDialog() {
+    $("apiBaseInput").value = API_BASE;
+    $("apiKeyInput").value = ADMIN_API_KEY;
+    $("apiDialogBackdrop").classList.add("open");
+    setTimeout(() => $("apiBaseInput").focus(), 50);
 }
 
-function getCategoryIcon(category) {
-  const icons = {
-    general: "♧",
-    orders: "▤",
-    order_status: "◷",
-    payments: "₹",
-    shipping: "➜",
-    delivery: "✓",
-    cancellations: "×",
-    returns: "↩",
-    refunds: "₹",
-    products: "▣",
-    stock: "▦",
-    offers: "%",
-    coupons: "▧",
-    wishlist: "♡",
-    cart: "🛒",
-    account: "♙",
-    security: "♢",
-    support: "?",
-    reviews: "☆",
-    loyalty: "♛",
-    system: "⚙"
-  };
+function closeApiDialog() {
+    $("apiDialogBackdrop").classList.remove("open");
+}
 
-  return icons[category] || "♧";
+async function saveApiConfiguration(event) {
+    event.preventDefault();
+
+    const base = $("apiBaseInput").value.trim().replace(/\/+$/, "");
+    const key = $("apiKeyInput").value.trim();
+
+    if (!base || !key) {
+        showToast("Backend URL and API key are required.", "error");
+        return;
+    }
+
+    try {
+        const parsed = new URL(base);
+
+        if (parsed.protocol !== "https:" && parsed.hostname !== "localhost") {
+            showToast("Use HTTPS for the backend URL.", "error");
+            return;
+        }
+    } catch (error) {
+        showToast("Enter a valid backend URL.", "error");
+        return;
+    }
+
+    API_BASE = base;
+    ADMIN_API_KEY = key;
+
+    closeApiDialog();
+
+    setConnection(false, "Connecting...");
+
+    await loadUsers();
+}
+
+/* ---------------- User bottom sheet ---------------- */
+
+function openUserSheet(uid) {
+    const user = allUsers.find(item => item.uid === uid);
+
+    if (!user) {
+        showToast("This user is not in the current user list.", "error");
+        return;
+    }
+
+    selectedUser = user;
+
+    $("sheetAvatar").innerHTML = "";
+    $("sheetAvatar").textContent = getInitials(user);
+
+    if (user.avatar) {
+        const img = document.createElement("img");
+        img.alt = "";
+        img.referrerPolicy = "no-referrer";
+        img.src = user.avatar;
+        img.onerror = () => {
+            $("sheetAvatar").innerHTML = "";
+            $("sheetAvatar").textContent = getInitials(user);
+        };
+        $("sheetAvatar").appendChild(img);
+    }
+
+    $("sheetUserName").textContent = user.full_name || "User";
+    $("sheetUserEmail").textContent = user.email || user.username || "No email";
+    $("sheetUserUid").textContent = "UID: " + user.uid;
+
+    hideNotice($("sendNotice"));
+    hideNotice($("historyNotice"));
+
+    $("sheetBackdrop").classList.add("open");
+    $("userSheet").classList.add("open");
+    document.body.style.overflow = "hidden";
+
+    switchSheetTab("send");
+
+    $("notificationForm").reset();
+    $("notificationCategory").value = "orders";
+}
+
+function closeUserSheet() {
+    $("sheetBackdrop").classList.remove("open");
+    $("userSheet").classList.remove("open");
+    document.body.style.overflow = "";
+    selectedUser = null;
+}
+
+function switchSheetTab(tab) {
+    const history = tab === "history";
+
+    $("sendTab").classList.toggle("active", !history);
+    $("historyTab").classList.toggle("active", history);
+
+    $("sendPanel").hidden = history;
+    $("historyPanel").hidden = !history;
+
+    if (history && selectedUser) {
+        loadNotificationHistory();
+    }
+}
+
+/* ---------------- Notifications ---------------- */
+
+function formatCategory(category) {
+    return String(category || "general")
+        .replace(/[_-]+/g, " ")
+        .replace(/\b\w/g, letter => letter.toUpperCase());
+}
+
+function normalizeNotification(raw, id) {
+    if (!raw || typeof raw !== "object") return null;
+
+    return {
+        ...raw,
+        id: String(raw.id || raw.notificationId || id || ""),
+        title: String(raw.title || ""),
+        message: String(raw.message || ""),
+        category: String(raw.category || "general"),
+        createdAt: raw.createdAt || raw.created_at || 0,
+        read: raw.read === true
+    };
+}
+
+function extractNotifications(data) {
+    let raw = data.notifications;
+
+    if (!raw && data.items) {
+        raw = data.items;
+    }
+
+    if (!raw && data.history) {
+        raw = data.history;
+    }
+
+    const result = [];
+
+    if (Array.isArray(raw)) {
+        raw.forEach(item => {
+            const normalized = normalizeNotification(item);
+            if (normalized) result.push(normalized);
+        });
+    } else if (raw && typeof raw === "object") {
+        Object.keys(raw).forEach(id => {
+            const normalized = normalizeNotification(raw[id], id);
+            if (normalized) result.push(normalized);
+        });
+    }
+
+    result.sort((a, b) => {
+        const av = Number(a.createdAt) || Date.parse(a.createdAt) || 0;
+        const bv = Number(b.createdAt) || Date.parse(b.createdAt) || 0;
+        return bv - av;
+    });
+
+    return result;
+}
+
+async function sendNotification(event) {
+    event.preventDefault();
+
+    if (!selectedUser) {
+        showToast("Select a user first.", "error");
+        return;
+    }
+
+    if (isSendingNotification) return;
+
+    const title = $("notificationTitle").value.trim();
+    const message = $("notificationMessage").value.trim();
+    const category = $("notificationCategory").value;
+
+    if (!title || !message) {
+        showNotice(
+            $("sendNotice"),
+            "Notification title and message are required.",
+            "error"
+        );
+        return;
+    }
+
+    if (!CATEGORIES.includes(category)) {
+        showNotice(
+            $("sendNotice"),
+            "Select a valid e-commerce notification category.",
+            "error"
+        );
+        return;
+    }
+
+    isSendingNotification = true;
+    $("sendNotificationButton").disabled = true;
+    $("sendNotificationButton").innerHTML =
+        '<span class="spinner"></span> Sending...';
+
+    hideNotice($("sendNotice"));
+
+    try {
+        const data = await apiRequest(ENDPOINTS.notifications, {
+            method: "POST",
+            body: JSON.stringify({
+                action: "send",
+                uid: selectedUser.uid,
+                title,
+                message,
+                category
+            })
+        });
+
+        showNotice(
+            $("sendNotice"),
+            "Notification sent successfully to " +
+                (selectedUser.full_name || selectedUser.uid) +
+                ". Notification ID: " +
+                (data.notificationId || "created"),
+            "success"
+        );
+
+        showToast("Notification sent successfully.");
+
+        $("notificationForm").reset();
+        $("notificationCategory").value = "orders";
+
+    } catch (error) {
+        console.error("Send notification error:", error);
+
+        showNotice(
+            $("sendNotice"),
+            error.message,
+            "error"
+        );
+    } finally {
+        isSendingNotification = false;
+        $("sendNotificationButton").disabled = false;
+        $("sendNotificationButton").textContent = "Send Notification";
+    }
+}
+
+function renderNotificationHistory() {
+    const category = $("historyCategoryFilter").value;
+
+    const items = notificationHistory.filter(item => {
+        return category === "all" || item.category === category;
+    });
+
+    $("historyCount").textContent =
+        items.length + (items.length === 1
+            ? " notification"
+            : " notifications");
+
+    if (!items.length) {
+        $("notificationList").innerHTML = `
+            <div class="empty-state">
+                <div style="font-size:25px;margin-bottom:8px">♧</div>
+                <strong>No notifications found</strong>
+                <div>There are no notifications for this user in this category.</div>
+            </div>`;
+        return;
+    }
+
+    $("notificationList").innerHTML = items.map(item => {
+        const categoryBadge = escapeHTML(formatCategory(item.category));
+
+        const sourceLabel = item.source === "broadcast"
+            ? "Broadcast"
+            : "Personal";
+
+        const readBadge = item.read
+            ? `<span class="badge badge-green">Read</span>`
+            : `<span class="badge badge-yellow">Unread</span>`;
+
+        return `
+            <article class="notification-card">
+                <div class="notification-card-top">
+                    <div class="notification-title">
+                        ${escapeHTML(item.title || "Notification")}
+                    </div>
+
+                    <span class="badge badge-blue">${categoryBadge}</span>
+                </div>
+
+                <div class="notification-message">
+                    ${escapeHTML(item.message)}
+                </div>
+
+                <div class="notification-meta">
+                    ${readBadge}
+                    <span class="badge">${escapeHTML(sourceLabel)}</span>
+                    <span class="notification-date">
+                        ${escapeHTML(formatDate(item.createdAt))}
+                    </span>
+                </div>
+            </article>`;
+    }).join("");
 }
 
 async function loadNotificationHistory() {
-  if (!selectedUser) {
-    $("notificationHistoryList").innerHTML =
-      '<div class="empty-state">Select a customer first.</div>';
-    return;
-  }
+    if (!selectedUser || isLoadingHistory) return;
 
-  if (!ADMIN_API_KEY) {
-    openConnectionDialog();
-    return;
-  }
-
-  const requestId = ++historyRequestNumber;
-
-  $("notificationHistoryList").innerHTML =
-    '<div class="empty-state">Loading notification history...</div>';
-
-  $("historyCount").textContent = "Loading...";
-
-  const category = $("historyCategoryFilter").value;
-
-  try {
-    const body = {
-      action: "list",
-      uid: selectedUser.uid,
-      limit: 100
-    };
-
-    if (category) {
-      body.category = category;
+    if (!ADMIN_API_KEY) {
+        showNotice(
+            $("historyNotice"),
+            "Connect the API first.",
+            "error"
+        );
+        return;
     }
 
-    const result = await notificationAction(body);
+    isLoadingHistory = true;
 
-    if (requestId !== historyRequestNumber) {
-      return;
+    $("notificationList").innerHTML = `
+        <div class="loading">
+            <span class="spinner"></span>
+            Loading notification history...
+        </div>`;
+
+    hideNotice($("historyNotice"));
+
+    try {
+        const data = await apiRequest(ENDPOINTS.notifications, {
+            method: "POST",
+            body: JSON.stringify({
+                action: "list",
+                uid: selectedUser.uid,
+                limit: 100
+            })
+        });
+
+        notificationHistory = extractNotifications(data);
+
+        renderNotificationHistory();
+
+    } catch (error) {
+        console.error("Notification history error:", error);
+
+        notificationHistory = [];
+
+        $("notificationList").innerHTML = `
+            <div class="error-state">
+                <strong>Could not load notification history</strong>
+                <div style="margin-top:8px">
+                    ${escapeHTML(error.message)}
+                </div>
+            </div>`;
+
+        showNotice(
+            $("historyNotice"),
+            error.message,
+            "error"
+        );
+
+    } finally {
+        isLoadingHistory = false;
     }
-
-    historyCache = Array.isArray(result.notifications)
-      ? result.notifications
-      : [];
-
-    $("historyCount").textContent =
-      result.total +
-      " notifications • " +
-      result.unread +
-      " unread" +
-      (result.total > historyCache.length
-        ? " • Showing " + historyCache.length
-        : "");
-
-    renderNotificationHistory(historyCache);
-
-  } catch (error) {
-    if (requestId !== historyRequestNumber) {
-      return;
-    }
-
-    $("historyCount").textContent = "Unable to load history";
-
-    $("notificationHistoryList").innerHTML =
-      '<div class="empty-state">' +
-      escapeHTML(error.message) +
-      '<br><br>' +
-      '<button class="button" onclick="loadNotificationHistory()">Try Again</button>' +
-      '</div>';
-
-    showToast(error.message, "error");
-  }
 }
 
-function renderNotificationHistory(notifications) {
-  if (!notifications.length) {
-    $("notificationHistoryList").innerHTML =
-      '<div class="empty-state">' +
-      '<div class="empty-icon">♧</div>' +
-      '<strong>No notifications found</strong><br>' +
-      'No notifications match this category.' +
-      '</div>';
+/* ---------------- Navigation and events ---------------- */
 
-    return;
-  }
-
-  $("notificationHistoryList").innerHTML = notifications.map(item => {
-    const id = safeString(item.id);
-    const category = safeString(item.category || "general");
-    const title = safeString(item.title || "Untitled notification");
-    const message = safeString(item.message || "");
-    const read = item.read === true;
-    const source = safeString(item.source || "personal");
-    const createdAt = formatDate(item.createdAt);
-
-    const readBadge = read
-      ? '<span class="badge green">Read</span>'
-      : '<span class="badge orange">Unread</span>';
-
-    const sourceBadge = source === "broadcast"
-      ? '<span class="badge blue">Broadcast</span>'
-      : '<span class="badge">Individual</span>';
-
-    const orderHTML = item.orderId
-      ? '<span class="badge">Order: ' +
-        escapeHTML(item.orderId) +
-        '</span>'
-      : "";
-
-    const productHTML = item.productId
-      ? '<span class="badge">Product: ' +
-        escapeHTML(item.productId) +
-        '</span>'
-      : "";
-
-    let actions = "";
-
-    /*
-     * Broadcast records are shared.
-     * Deleting a broadcast globally is deliberately disabled.
-     */
-    if (source === "personal") {
-      actions += `
-        <button
-          class="button small"
-          onclick="markNotificationRead('${escapeHTML(id)}')"
-          ${read ? "disabled" : ""}
-        >
-          ✓ Mark Read
-        </button>
-      `;
-
-      actions += `
-        <button
-          class="button danger small"
-          onclick="deleteNotification('${escapeHTML(id)}')"
-        >
-          Delete
-        </button>
-      `;
-
-    } else {
-      actions += `
-        <button
-          class="button small"
-          onclick="markNotificationRead('${escapeHTML(id)}')"
-          ${read ? "disabled" : ""}
-        >
-          ✓ Mark Read
-        </button>
-      `;
-    }
-
-    return `
-      <article class="notification-card">
-
-        <div class="notification-card-top">
-
-          <div class="notification-icon">
-            ${escapeHTML(getCategoryIcon(category))}
-          </div>
-
-          <div class="notification-main">
-
-            <div class="notification-title">
-              ${escapeHTML(title)}
-            </div>
-
-            <div class="notification-message">
-              ${escapeHTML(message)}
-            </div>
-
-          </div>
-
-        </div>
-
-        <div class="notification-meta">
-          <span class="badge blue">
-            ${escapeHTML(getCategoryLabel(category))}
-          </span>
-
-          ${readBadge}
-          ${sourceBadge}
-          ${orderHTML}
-          ${productHTML}
-
-          <span class="badge">
-            ${escapeHTML(createdAt)}
-          </span>
-        </div>
-
-        <div class="notification-actions">
-          ${actions}
-        </div>
-
-      </article>
-    `;
-  }).join("");
+function showUsersPage() {
+    $("userSearch").focus();
 }
 
-/* =========================================================
-   MARK READ
-========================================================= */
+function showNotificationsPage() {
+    if (!selectedUser) {
+        showToast("Select a user from the user list first.", "error");
+        return;
+    }
 
-async function markNotificationRead(notificationId) {
-  if (!selectedUser) {
-    return;
-  }
+    openUserSheet(selectedUser.uid);
+    switchSheetTab("history");
+}
 
-  try {
-    await notificationAction({
-      action: "mark_read",
-      uid: selectedUser.uid,
-      notificationId
+$("refreshButton").addEventListener("click", loadUsers);
+$("connectButton").addEventListener("click", openApiDialog);
+$("connectionButton").addEventListener("click", openApiDialog);
+
+$("apiConfigForm").addEventListener("submit", saveApiConfiguration);
+
+$("cancelApiConfig").addEventListener("click", closeApiDialog);
+
+$("apiDialogBackdrop").addEventListener("click", event => {
+    if (event.target === $("apiDialogBackdrop")) {
+        closeApiDialog();
+    }
+});
+
+$("userSearch").addEventListener("input", renderUsers);
+$("sourceFilter").addEventListener("change", renderUsers);
+$("verifiedFilter").addEventListener("change", renderUsers);
+
+$("desktopUserList").addEventListener("click", event => {
+    const button = event.target.closest("[data-open-user]");
+    const row = event.target.closest("tr[data-user-uid]");
+
+    const uid = button
+        ? button.getAttribute("data-open-user")
+        : row
+            ? row.getAttribute("data-user-uid")
+            : null;
+
+    if (uid) openUserSheet(uid);
+});
+
+$("mobileUserList").addEventListener("click", event => {
+    const card = event.target.closest("[data-open-user]");
+
+    if (card) {
+        openUserSheet(card.getAttribute("data-open-user"));
+    }
+});
+
+document.addEventListener("click", event => {
+    if (event.target.closest("#connectFromEmpty") ||
+        event.target.closest("#connectFromEmptyMobile")) {
+        openApiDialog();
+    }
+
+    if (event.target.closest("#retryFromError") ||
+        event.target.closest("#retryFromErrorMobile")) {
+        loadUsers();
+    }
+});
+
+$("sheetBackdrop").addEventListener("click", closeUserSheet);
+$("closeSheet").addEventListener("click", closeUserSheet);
+$("cancelSend").addEventListener("click", closeUserSheet);
+
+$("sendTab").addEventListener("click", () => switchSheetTab("send"));
+$("historyTab").addEventListener("click", () => switchSheetTab("history"));
+
+$("notificationForm").addEventListener("submit", sendNotification);
+
+$("historyCategoryFilter").addEventListener("change", renderNotificationHistory);
+
+$("refreshHistoryButton").addEventListener("click", () => {
+    notificationHistory = [];
+    loadNotificationHistory();
+});
+
+$("navUsers").addEventListener("click", showUsersPage);
+$("mobileNavUsers").addEventListener("click", showUsersPage);
+
+$("navNotifications").addEventListener("click", showNotificationsPage);
+$("mobileNavNotifications").addEventListener("click", showNotificationsPage);
+
+$("mobileNavSettings").addEventListener("click", openApiDialog);
+
+document.querySelectorAll("[data-placeholder]").forEach(button => {
+    button.addEventListener("click", () => {
+        showToast(button.dataset.placeholder + " section is not connected yet.");
     });
-
-    showToast("Notification marked as read.", "success");
-
-    await loadNotificationHistory();
-
-  } catch (error) {
-    showToast(error.message, "error");
-  }
-}
-
-/* =========================================================
-   DELETE NOTIFICATION
-========================================================= */
-
-async function deleteNotification(notificationId) {
-  if (!selectedUser) {
-    return;
-  }
-
-  const item = historyCache.find(
-    notification => notification.id === notificationId
-  );
-
-  if (item && item.source === "broadcast") {
-    showToast(
-      "Shared broadcasts cannot be deleted from an individual customer history.",
-      "error"
-    );
-    return;
-  }
-
-  const confirmed = window.confirm(
-    "Delete this notification for " +
-    selectedUser._name +
-    "?\n\nThis action cannot be undone."
-  );
-
-  if (!confirmed) {
-    return;
-  }
-
-  try {
-    await notificationAction({
-      action: "delete",
-      uid: selectedUser.uid,
-      notificationId
-    });
-
-    showToast("Notification deleted.", "success");
-
-    await loadNotificationHistory();
-
-  } catch (error) {
-    showToast(error.message, "error");
-  }
-}
-
-/* =========================================================
-   EVENTS
-========================================================= */
-
-$("userSearch").addEventListener("input", filterUsers);
-
-$("sourceFilter").addEventListener("change", filterUsers);
-
-$("statusFilter").addEventListener("change", filterUsers);
-
-$("historyCategoryFilter").addEventListener("change", function() {
-  loadNotificationHistory();
 });
 
-$("connectionDialog").addEventListener("click", function(event) {
-  if (event.target === this) {
-    closeConnectionDialog();
-  }
+document.addEventListener("keydown", event => {
+    if (event.key === "Escape") {
+        closeUserSheet();
+        closeApiDialog();
+    }
 });
 
-document.addEventListener("keydown", function(event) {
-  if (event.key === "Escape") {
-    closeCustomerSheet();
-    closeConnectionDialog();
-  }
-});
-
-/* =========================================================
-   STARTUP
-========================================================= */
-
-$("apiUrl").value = DEFAULT_API_URL;
-
-$("notificationCategoryCount").textContent =
-  NOTIFICATION_CATEGORIES.length;
-
-setConnectionStatus(false, "Not connected");
-
-/*
- * The admin API key must be entered each time this page loads.
- * This avoids persisting a powerful secret in browser storage.
- */
-openConnectionDialog();
-
+/* Initial state */
+setConnection(false, "Not connected");
+loadUsers();
 </script>
 
 </body>
