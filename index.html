@@ -1063,14 +1063,6 @@ tbody tr:hover {
         transition-duration: .01ms !important;
     }
 }
-
-[hidden] { display: none !important; }
-#taxList table { width: 100%; border-collapse: collapse; }
-#taxList th, #taxList td { padding: 14px 16px; text-align: left; border-bottom: 1px solid var(--border); }
-#taxList th { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; }
-#taxList td { font-size: 13px; }
-#taxForm input { width: 100%; }
-@media (max-width: 720px) { #taxList { overflow-x: auto; } #taxList th, #taxList td { padding: 12px 10px; } }
 </style>
 </head>
 
@@ -1097,11 +1089,6 @@ tbody tr:hover {
         <button class="nav-item" type="button" id="navNotifications">
             <span class="nav-icon">♧</span>
             <span>Notifications</span>
-        </button>
-
-        <button class="nav-item" type="button" id="navTaxes">
-            <span class="nav-icon">％</span>
-            <span>Cart taxes</span>
         </button>
 
         <div class="nav-label">MANAGEMENT</div>
@@ -1138,8 +1125,8 @@ tbody tr:hover {
 
         <header class="topbar">
             <div>
-                <h1 class="page-title" id="pageTitle">Users</h1>
-                <div class="page-subtitle" id="pageSubtitle">
+                <h1 class="page-title">Users</h1>
+                <div class="page-subtitle">
                     Manage users and send e-commerce notifications.
                 </div>
             </div>
@@ -1239,34 +1226,6 @@ tbody tr:hover {
 
         </section>
 
-        <section class="panel" id="taxesPage" hidden>
-            <div class="panel-header">
-                <div>
-                    <div class="panel-title">Cart taxes &amp; charges</div>
-                    <div class="panel-description">Manage percentage-based charges shown in the customer cart.</div>
-                </div>
-                <button type="button" class="btn" id="refreshTaxesButton">↻ Refresh</button>
-            </div>
-
-            <form id="taxForm" class="toolbar" style="align-items:flex-end;flex-wrap:wrap">
-                <div class="form-group" style="flex:2;min-width:180px;margin:0">
-                    <label for="taxTitleInput">Charge title</label>
-                    <input id="taxTitleInput" type="text" maxlength="60" placeholder="e.g. Handling fee" required>
-                </div>
-                <div class="form-group" style="flex:1;min-width:130px;margin:0">
-                    <label for="taxPercentInput">Percentage (%)</label>
-                    <input id="taxPercentInput" type="number" min="0" max="100" step="0.01" placeholder="2" required>
-                </div>
-                <button class="btn btn-primary" type="submit" id="addTaxButton">Add charge</button>
-            </form>
-
-            <div class="notice" id="taxNotice" style="margin:16px 0"></div>
-            <div class="table-wrap" id="taxList">
-                <div class="loading">Connect the API to load cart charges.</div>
-            </div>
-            <div class="form-hint" style="margin-top:14px">Percentages are applied to the discounted cart subtotal by the customer website. Confirm the tax treatment for your products before using a GST rate.</div>
-        </section>
-
     </main>
 
     <nav class="mobile-nav">
@@ -1277,10 +1236,6 @@ tbody tr:hover {
         <button type="button" id="mobileNavNotifications">
             <span>♧</span>
             Notifications
-        </button>
-        <button type="button" id="mobileNavTaxes">
-            <span>％</span>
-            Cart taxes
         </button>
         <button type="button" id="mobileNavSettings">
             <span>⚙</span>
@@ -1467,6 +1422,34 @@ tbody tr:hover {
     </div>
 </div>
 
+<section class="panel" id="taxSettingsPanel" style="margin:24px 0 30px">
+  <div class="panel-header"><div><div class="panel-title">Cart taxes & charges</div><div class="panel-description">Manage percentage charges displayed automatically in the customer cart.</div></div><button class="btn" id="refreshTaxesButton" type="button">Refresh</button></div>
+  <div style="padding:20px">
+    <div id="taxNotice" class="notice"></div>
+    <div id="taxRows" style="display:grid;gap:10px;margin-bottom:22px"><div class="loading">Connect the admin API to load taxes.</div></div>
+    <form id="addTaxForm" style="display:grid;grid-template-columns:minmax(0,1fr) minmax(110px,160px) auto;gap:10px;align-items:end">
+      <div class="form-group" style="margin:0"><label for="newTaxTitle">Charge title</label><input id="newTaxTitle" maxlength="60" placeholder="e.g. Handling fee" required></div>
+      <div class="form-group" style="margin:0"><label for="newTaxPercent">Percent (%)</label><input id="newTaxPercent" type="number" min="0" max="100" step="0.01" placeholder="2" required></div>
+      <button class="btn btn-primary" type="submit">Add charge</button>
+    </form>
+    <p class="form-hint">Default charges: Shipping 2%, Packaging 3%, Platform fee 1%, Delivery charges 2%, GST 18%. GST rates in India vary by product category (commonly 0%, 5%, 12%, 18% or 28%); configure the legally applicable rate for your products.</p>
+  </div>
+</section>
+<section class="panel" id="discountSettingsPanel" style="margin:24px 0 30px">
+  <div class="panel-header"><div><div class="panel-title">Customer discounts</div><div class="panel-description">Publish a percentage discount for every customer or target one customer by their account email.</div></div><button class="btn" id="refreshDiscountsButton" type="button">Refresh</button></div>
+  <div style="padding:20px">
+    <div id="discountNotice" class="notice"></div>
+    <div id="discountRows" style="display:grid;gap:10px;margin-bottom:22px"><div class="loading">Connect the admin API to load discounts.</div></div>
+    <form id="addDiscountForm" style="display:grid;grid-template-columns:minmax(0,1fr) minmax(150px,220px) minmax(110px,150px) auto;gap:10px;align-items:end">
+      <div class="form-group" style="margin:0"><label for="newDiscountTitle">Discount title</label><input id="newDiscountTitle" maxlength="60" placeholder="e.g. Festival offer" required></div>
+      <div class="form-group" style="margin:0"><label for="newDiscountScope">Apply to</label><select id="newDiscountScope"><option value="all">All users</option><option value="user">Single user</option></select></div>
+      <div class="form-group" style="margin:0"><label for="newDiscountPercent">Discount (%)</label><input id="newDiscountPercent" type="number" min="0.01" max="100" step="0.01" placeholder="10" required></div>
+      <button class="btn btn-primary" type="submit">Add discount</button>
+      <div class="form-group" id="discountEmailGroup" style="margin:0;grid-column:1 / -1;display:none"><label for="newDiscountEmail">Customer account email</label><input id="newDiscountEmail" type="email" maxlength="254" placeholder="customer@example.com"><div class="form-hint">Use the email associated with the customer’s Shoppy account.</div></div>
+    </form>
+    <p class="form-hint">The highest matching discount is applied once to the cart subtotal before percentage charges. A user-specific offer is matched by the signed-in account email.</p>
+  </div>
+</section>
 <div class="toast-container" id="toastContainer"></div>
 
 <script>
@@ -1487,7 +1470,8 @@ const DEFAULT_API_BASE = "https://apisequizeshoplite.vercel.app";
 const ENDPOINTS = {
     users: "/api/admin/users",
     notifications: "/api/admin/notifications",
-    taxes: "/api/admin/taxes"
+    taxes: "/api/admin/taxes",
+    discounts: "/api/admin/discounts"
 };
 
 const CATEGORIES = [
@@ -1519,9 +1503,6 @@ let notificationHistory = [];
 let isLoadingUsers = false;
 let isSendingNotification = false;
 let isLoadingHistory = false;
-let currentAdminPage = "users";
-let currentTaxes = [];
-let isLoadingTaxes = false;
 
 const $ = id => document.getElementById(id);
 
@@ -2201,7 +2182,7 @@ async function saveApiConfiguration(event) {
     setConnection(false, "Connecting...");
 
     await loadUsers();
-    if (currentAdminPage === "taxes") await loadTaxes();
+    await loadTaxes();
 }
 
 /* ---------------- User bottom sheet ---------------- */
@@ -2523,137 +2504,13 @@ async function loadNotificationHistory() {
     }
 }
 
-/* ---------------- Cart taxes API ---------------- */
-
-function showTaxesNotice(message, type = "success") {
-    const node = $("taxNotice");
-    node.className = "notice show " + type;
-    node.textContent = message;
-}
-
-function renderTaxes() {
-    const list = $("taxList");
-    if (!currentTaxes.length) {
-        list.innerHTML = '<div class="empty-state"><strong>No cart charges configured</strong><div>Add a charge using the form above.</div></div>';
-        return;
-    }
-    list.innerHTML = `
-      <table>
-        <thead><tr><th>Charge title</th><th>Rate</th><th>Action</th></tr></thead>
-        <tbody>${currentTaxes.map(tax => `
-          <tr>
-            <td><strong>${escapeHTML(tax.title)}</strong></td>
-            <td>${Number(tax.percent).toLocaleString("en-IN", {maximumFractionDigits: 2})}%</td>
-            <td><button class="btn btn-small" type="button" data-remove-tax="${escapeHTML(tax.id)}">Remove</button></td>
-          </tr>`).join("")}
-        </tbody>
-      </table>`;
-}
-
-async function loadTaxes() {
-    if (isLoadingTaxes) return;
-    if (!ADMIN_API_KEY) {
-        $("taxList").innerHTML = '<div class="empty-state"><strong>Connect your API</strong><div>Open API Settings and enter your admin API key to manage charges.</div></div>';
-        return;
-    }
-    isLoadingTaxes = true;
-    $("refreshTaxesButton").disabled = true;
-    $("taxList").innerHTML = '<div class="loading"><span class="spinner"></span>Loading cart charges...</div>';
-    try {
-        const data = await apiRequest(ENDPOINTS.taxes, { method: "GET" });
-        currentTaxes = Array.isArray(data.taxes) ? data.taxes : [];
-        renderTaxes();
-        hideNotice($("taxNotice"));
-    } catch (error) {
-        $("taxList").innerHTML = `<div class="empty-state"><strong>Unable to load charges</strong><div>${escapeHTML(error.message)}</div></div>`;
-        showTaxesNotice(error.message, "error");
-    } finally {
-        isLoadingTaxes = false;
-        $("refreshTaxesButton").disabled = false;
-    }
-}
-
-async function addTax(event) {
-    event.preventDefault();
-    const title = $("taxTitleInput").value.trim();
-    const percent = Number($("taxPercentInput").value);
-    if (!title || !Number.isFinite(percent) || percent < 0 || percent > 100) {
-        showTaxesNotice("Enter a title and a percentage from 0 to 100.", "error");
-        return;
-    }
-    $("addTaxButton").disabled = true;
-    try {
-        const data = await apiRequest(ENDPOINTS.taxes, {
-            method: "PUT",
-            body: JSON.stringify({ action: "add", title, percent })
-        });
-        currentTaxes = Array.isArray(data.taxes) ? data.taxes : [];
-        renderTaxes();
-        $("taxForm").reset();
-        showTaxesNotice("Cart charge added successfully.", "success");
-    } catch (error) {
-        showTaxesNotice(error.message, "error");
-    } finally {
-        $("addTaxButton").disabled = false;
-    }
-}
-
-async function removeTax(id) {
-    if (!confirm("Remove this cart charge?")) return;
-    try {
-        const data = await apiRequest(ENDPOINTS.taxes, {
-            method: "PUT",
-            body: JSON.stringify({ action: "remove", id })
-        });
-        currentTaxes = Array.isArray(data.taxes) ? data.taxes : [];
-        renderTaxes();
-        showTaxesNotice("Cart charge removed.", "success");
-    } catch (error) {
-        showTaxesNotice(error.message, "error");
-    }
-}
-
-$("taxForm").addEventListener("submit", addTax);
-$("refreshTaxesButton").addEventListener("click", loadTaxes);
-$("taxList").addEventListener("click", event => {
-    const button = event.target.closest("[data-remove-tax]");
-    if (button) removeTax(button.getAttribute("data-remove-tax"));
-});
-
 /* ---------------- Navigation and events ---------------- */
 
-function setAdminPage(page) {
-    currentAdminPage = page;
-    const taxes = page === "taxes";
-    $("taxesPage").hidden = !taxes;
-    document.querySelectorAll(".stats, main > .panel").forEach(node => {
-        if (node.id === "taxesPage") return;
-        node.hidden = taxes;
-    });
-    $("pageTitle").textContent = taxes ? "Cart taxes" : "Users";
-    $("pageSubtitle").textContent = taxes
-      ? "Configure shipping, packaging, platform, delivery and tax percentages."
-      : "Manage users and send e-commerce notifications.";
-    $("refreshButton").hidden = taxes;
-    $("connectButton").textContent = ADMIN_API_KEY ? "API Settings" : "Connect API";
-    ["navUsers", "navNotifications", "navTaxes", "mobileNavUsers", "mobileNavNotifications", "mobileNavTaxes"].forEach(id => {
-        const el = $(id);
-        if (el) el.classList.toggle("active", (page === "taxes" && (id === "navTaxes" || id === "mobileNavTaxes")) || (page === "users" && (id === "navUsers" || id === "mobileNavUsers")));
-    });
-    if (taxes) loadTaxes();
-}
-
 function showUsersPage() {
-    setAdminPage("users");
     $("userSearch").focus();
 }
 
-function showTaxesPage() {
-    setAdminPage("taxes");
-}
-
 function showNotificationsPage() {
-    setAdminPage("users");
     if (!selectedUser) {
         showToast("Select a user from the user list first.", "error");
         return;
@@ -2735,8 +2592,6 @@ $("mobileNavUsers").addEventListener("click", showUsersPage);
 
 $("navNotifications").addEventListener("click", showNotificationsPage);
 $("mobileNavNotifications").addEventListener("click", showNotificationsPage);
-$("navTaxes").addEventListener("click", showTaxesPage);
-$("mobileNavTaxes").addEventListener("click", showTaxesPage);
 
 $("mobileNavSettings").addEventListener("click", openApiDialog);
 
@@ -2756,7 +2611,228 @@ document.addEventListener("keydown", event => {
 /* Initial state */
 setConnection(false, "Not connected");
 loadUsers();
+
+
+/* ---------------- Cart tax and charge settings ---------------- */
+let currentTaxes = [];
+function showTaxNotice(message, type) {
+  const el = $("taxNotice"); if (!el) return;
+  el.textContent = message; el.className = "notice show " + (type || "");
+}
+function renderTaxes() {
+  const host = $("taxRows"); if (!host) return;
+  if (!currentTaxes.length) { host.innerHTML = '<div class="empty-state">No charges configured.</div>'; return; }
+  host.innerHTML = currentTaxes.map((tax, index) => `
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) 110px auto;gap:10px;align-items:center;padding:12px;border:1px solid var(--border);border-radius:12px">
+      <div style="font-weight:700;overflow-wrap:anywhere">${escapeHTML(tax.title)}</div>
+      <div style="color:var(--muted)">${Number(tax.percent)}%</div>
+      <button class="btn btn-danger btn-small" type="button" data-remove-tax="${escapeHTML(tax.id || String(index))}">Remove</button>
+    </div>`).join("");
+  host.querySelectorAll("[data-remove-tax]").forEach(button => button.addEventListener("click", async () => {
+    if (!confirm("Remove this cart charge?")) return;
+    try {
+      const data = await apiRequest(ENDPOINTS.taxes, { method:"PUT", body:JSON.stringify({ action:"remove", id:button.dataset.removeTax }) });
+      currentTaxes = data.taxes || []; renderTaxes(); showTaxNotice("Charge removed. Cart will use the updated charges.", "success");
+    } catch (e) { showTaxNotice(e.message || "Could not remove charge.", "error"); }
+  }));
+}
+async function loadTaxes() {
+  const host = $("taxRows");
+  if (host) host.innerHTML = '<div class="loading"><span class="spinner"></span>Loading charges...</div>';
+  try {
+    const data = await apiRequest(ENDPOINTS.taxes, { method:"GET" });
+    currentTaxes = Array.isArray(data.taxes) ? data.taxes : [];
+    renderTaxes(); showTaxNotice("Charges loaded.", "success");
+  } catch (e) {
+    if (host) host.innerHTML = '<div class="empty-state">Unable to load. Connect the admin API using the API button first.</div>';
+    showTaxNotice(e.message || "Unable to load charges.", "error");
+  }
+}
+$("addTaxForm")?.addEventListener("submit", async event => {
+  event.preventDefault();
+  const title = $("newTaxTitle").value.trim(), percent = Number($("newTaxPercent").value);
+  if (!title || !Number.isFinite(percent) || percent < 0 || percent > 100) { showTaxNotice("Enter a title and a percentage from 0 to 100.", "error"); return; }
+  try {
+    const data = await apiRequest(ENDPOINTS.taxes, { method:"PUT", body:JSON.stringify({ action:"add", title, percent }) });
+    currentTaxes = Array.isArray(data.taxes) ? data.taxes : [];
+    renderTaxes(); $("addTaxForm").reset(); showTaxNotice("Charge added and published to the cart.", "success");
+  } catch (e) { showTaxNotice(e.message || "Could not add charge.", "error"); }
+});
+$("refreshTaxesButton")?.addEventListener("click", loadTaxes);
+
+
+/* Customer discount management */
+let currentDiscounts = [];
+function showDiscountNotice(message, type) { const el = $("discountNotice"); if (!el) return; el.textContent = message; el.className = "notice show " + (type || ""); }
+function renderDiscounts() {
+  const host = $("discountRows"); if (!host) return;
+  if (!currentDiscounts.length) { host.innerHTML = '<div class="empty-state">No discounts configured.</div>'; return; }
+  host.innerHTML = currentDiscounts.map((d, i) => `<div style="display:grid;grid-template-columns:minmax(0,1fr) 100px minmax(120px,220px) auto;gap:10px;align-items:center;padding:12px;border:1px solid var(--border);border-radius:12px"><div style="font-weight:700;overflow-wrap:anywhere">${escapeHTML(d.title)}</div><div style="color:var(--success);font-weight:700">${Number(d.percent)}% off</div><div style="color:var(--muted);overflow-wrap:anywhere">${d.scope === "user" ? "User: " + escapeHTML(d.userEmail || "—") : "All users"}</div><button class="btn btn-danger btn-small" type="button" data-remove-discount="${escapeHTML(d.id || String(i))}">Remove</button></div>`).join("");
+  host.querySelectorAll("[data-remove-discount]").forEach(button => button.addEventListener("click", async () => {
+    if (!confirm("Remove this discount?")) return;
+    try { const data = await apiRequest(ENDPOINTS.discounts, { method:"PUT", body:JSON.stringify({ action:"remove", id:button.dataset.removeDiscount }) }); currentDiscounts = data.discounts || []; renderDiscounts(); showDiscountNotice("Discount removed.", "success"); }
+    catch (e) { showDiscountNotice(e.message || "Could not remove discount.", "error"); }
+  }));
+}
+async function loadDiscounts() {
+  const host = $("discountRows"); if (host) host.innerHTML = '<div class="loading"><span class="spinner"></span>Loading discounts...</div>';
+  try { const data = await apiRequest(ENDPOINTS.discounts, { method:"GET" }); currentDiscounts = Array.isArray(data.discounts) ? data.discounts : []; renderDiscounts(); showDiscountNotice("Discounts loaded.", "success"); }
+  catch (e) { if (host) host.innerHTML = '<div class="empty-state">Unable to load. Connect the admin API using the API button first.</div>'; showDiscountNotice(e.message || "Unable to load discounts.", "error"); }
+}
+$("newDiscountScope")?.addEventListener("change", () => { const single = $("newDiscountScope").value === "user"; $("discountEmailGroup").style.display = single ? "block" : "none"; $("newDiscountEmail").required = single; });
+$("addDiscountForm")?.addEventListener("submit", async event => {
+  event.preventDefault();
+  const title = $("newDiscountTitle").value.trim(), scope = $("newDiscountScope").value, percent = Number($("newDiscountPercent").value), userEmail = $("newDiscountEmail").value.trim().toLowerCase();
+  if (!title || !Number.isFinite(percent) || percent <= 0 || percent > 100) { showDiscountNotice("Enter a title and a discount between 0 and 100%.", "error"); return; }
+  if (scope === "user" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userEmail)) { showDiscountNotice("Enter the customer’s valid account email.", "error"); return; }
+  try { const data = await apiRequest(ENDPOINTS.discounts, { method:"PUT", body:JSON.stringify({ action:"add", title, scope, percent, userEmail: scope === "user" ? userEmail : "" }) }); currentDiscounts = Array.isArray(data.discounts) ? data.discounts : []; renderDiscounts(); $("addDiscountForm").reset(); $("discountEmailGroup").style.display = "none"; $("newDiscountEmail").required = false; showDiscountNotice("Discount published to the customer cart.", "success"); }
+  catch (e) { showDiscountNotice(e.message || "Could not add discount.", "error"); }
+});
+$("refreshDiscountsButton")?.addEventListener("click", loadDiscounts);
+
 </script>
 
 </body>
 </html>
+
+const admin = require("firebase-admin");
+const crypto = require("crypto");
+
+const DATABASE_URL = "https://shoppy-c289d-default-rtdb.asia-southeast1.firebasedatabase.app";
+const DEFAULT_TAXES = [
+  { id: "shipping", title: "Shipping", percent: 2 },
+  { id: "packaging", title: "Packaging", percent: 3 },
+  { id: "platform-fee", title: "Platform fee", percent: 1 },
+  { id: "delivery-charges", title: "Delivery charges", percent: 2 },
+  { id: "gst", title: "GST", percent: 18 }
+];
+
+function db() {
+  if (!admin.apps.length) {
+    const raw = process.env.FIREBASE_SERVICE_ACCOUNT;
+    if (!raw) throw new Error("FIREBASE_SERVICE_ACCOUNT is not configured.");
+    const account = JSON.parse(raw);
+    if (account.private_key) account.private_key = account.private_key.replace(/\\n/g, "\n");
+    admin.initializeApp({ credential: admin.credential.cert(account), databaseURL: DATABASE_URL });
+  }
+  return admin.database();
+}
+function cleanTax(t) {
+  const title = String(t.title || "").trim().slice(0, 60);
+  const percent = Number(t.percent);
+  if (!title || !Number.isFinite(percent) || percent < 0 || percent > 100) return null;
+  return { id: String(t.id || crypto.randomBytes(8).toString("hex")), title, percent: Number(percent.toFixed(2)) };
+}
+function send(res, status, data) { return res.status(status).json(data); }
+
+module.exports = async function handler(req, res) {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, PUT, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.setHeader("Cache-Control", "no-store");
+  if (req.method === "OPTIONS") return res.status(204).end();
+  try {
+    const ref = db().ref("shoppyCartTaxes");
+    if (req.method === "GET") {
+      const snap = await ref.once("value");
+      const saved = snap.val();
+      const taxes = Array.isArray(saved) && saved.length ? saved.map(cleanTax).filter(Boolean) : DEFAULT_TAXES;
+      return send(res, 200, { success: true, taxes });
+    }
+    if (req.method !== "PUT") {
+      res.setHeader("Allow", "GET, PUT, OPTIONS");
+      return send(res, 405, { success: false, message: "Method not allowed." });
+    }
+    const expected = String(process.env.ADMIN_API_KEY || "");
+    const auth = String(req.headers.authorization || "");
+    const provided = auth.startsWith("Bearer ") ? auth.slice(7) : "";
+    if (!expected || !provided || provided.length !== expected.length ||
+        !crypto.timingSafeEqual(Buffer.from(provided), Buffer.from(expected))) {
+      return send(res, 401, { success: false, message: "Unauthorized. Use the configured admin API key." });
+    }
+    const body = typeof req.body === "string" ? JSON.parse(req.body) : (req.body || {});
+    const snap = await ref.once("value");
+    let taxes = snap.val();
+    if (!Array.isArray(taxes) || !taxes.length) taxes = DEFAULT_TAXES.map(t => ({...t}));
+    taxes = taxes.map(cleanTax).filter(Boolean);
+    if (body.action === "add") {
+      const tax = cleanTax({ id: crypto.randomBytes(8).toString("hex"), title: body.title, percent: body.percent });
+      if (!tax) return send(res, 400, { success: false, message: "Enter a valid title and percentage from 0 to 100." });
+      if (taxes.some(t => t.title.toLowerCase() === tax.title.toLowerCase())) return send(res, 409, { success: false, message: "A charge with this title already exists." });
+      taxes.push(tax);
+    } else if (body.action === "remove") {
+      taxes = taxes.filter(t => t.id !== String(body.id));
+    } else {
+      return send(res, 400, { success: false, message: "Unsupported action." });
+    }
+    await ref.set(taxes);
+    return send(res, 200, { success: true, taxes });
+  } catch (error) {
+    console.error("Cart taxes API error:", error);
+    return send(res, 500, { success: false, message: "Could not load or update cart charges." });
+  }
+};
+
+const admin = require("firebase-admin");
+const crypto = require("crypto");
+const DATABASE_URL = "https://shoppy-c289d-default-rtdb.asia-southeast1.firebasedatabase.app";
+function db() {
+  if (!admin.apps.length) {
+    const raw = process.env.FIREBASE_SERVICE_ACCOUNT;
+    if (!raw) throw new Error("FIREBASE_SERVICE_ACCOUNT is not configured.");
+    const account = JSON.parse(raw);
+    if (account.private_key) account.private_key = account.private_key.replace(/\\n/g, "\n");
+    admin.initializeApp({ credential: admin.credential.cert(account), databaseURL: DATABASE_URL });
+  }
+  return admin.database();
+}
+function cleanDiscount(d) {
+  const title = String(d.title || "").trim().slice(0, 60);
+  const percent = Number(d.percent);
+  const scope = d.scope === "user" ? "user" : "all";
+  const userEmail = String(d.userEmail || "").trim().toLowerCase().slice(0, 254);
+  if (!title || !Number.isFinite(percent) || percent <= 0 || percent > 100) return null;
+  if (scope === "user" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userEmail)) return null;
+  return { id: String(d.id || crypto.randomBytes(8).toString("hex")), title, percent: Number(percent.toFixed(2)), scope, userEmail: scope === "user" ? userEmail : "" };
+}
+function send(res, status, data) { return res.status(status).json(data); }
+function authorized(req) {
+  const expected = String(process.env.ADMIN_API_KEY || ""), auth = String(req.headers.authorization || ""), provided = auth.startsWith("Bearer ") ? auth.slice(7) : "";
+  return !!expected && !!provided && provided.length === expected.length && crypto.timingSafeEqual(Buffer.from(provided), Buffer.from(expected));
+}
+module.exports = async function handler(req, res) {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, PUT, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.setHeader("Cache-Control", "no-store");
+  if (req.method === "OPTIONS") return res.status(204).end();
+  try {
+    const ref = db().ref("shoppyCustomerDiscounts");
+    if (req.method === "GET") {
+      const snap = await ref.once("value"), saved = snap.val();
+      const discounts = (Array.isArray(saved) ? saved : saved && typeof saved === "object" ? Object.values(saved) : []).map(cleanDiscount).filter(Boolean);
+      if (authorized(req)) return send(res, 200, { success: true, discounts });
+      const email = String(req.query && req.query.email || "").trim().toLowerCase();
+      const eligible = discounts.filter(d => d.scope === "all" || (email && d.scope === "user" && d.userEmail === email));
+      return send(res, 200, { success: true, discounts: eligible.map(({id,title,percent,scope}) => ({id,title,percent,scope})) });
+    }
+    if (req.method !== "PUT") { res.setHeader("Allow", "GET, PUT, OPTIONS"); return send(res, 405, { success: false, message: "Method not allowed." }); }
+    if (!authorized(req)) return send(res, 401, { success: false, message: "Unauthorized. Use the configured admin API key." });
+    const body = typeof req.body === "string" ? JSON.parse(req.body) : (req.body || {});
+    const snap = await ref.once("value"), saved = snap.val();
+    let discounts = (Array.isArray(saved) ? saved : saved && typeof saved === "object" ? Object.values(saved) : []).map(cleanDiscount).filter(Boolean);
+    if (body.action === "add") {
+      const discount = cleanDiscount({ id: crypto.randomBytes(8).toString("hex"), title: body.title, percent: body.percent, scope: body.scope, userEmail: body.userEmail });
+      if (!discount) return send(res, 400, { success: false, message: "Enter a title, valid discount percent (greater than 0 and up to 100), and a valid email for single-user offers." });
+      if (discounts.some(d => d.title.toLowerCase() === discount.title.toLowerCase() && d.scope === discount.scope && d.userEmail === discount.userEmail)) return send(res, 409, { success: false, message: "A discount with this title and target already exists." });
+      discounts.push(discount);
+    } else if (body.action === "remove") {
+      discounts = discounts.filter(d => d.id !== String(body.id));
+    } else return send(res, 400, { success: false, message: "Unsupported action." });
+    await ref.set(discounts);
+    return send(res, 200, { success: true, discounts });
+  } catch (error) {
+    console.error("Customer discounts API error:", error);
+    return send(res, 500, { success: false, message: "Could not load or update discounts." });
+  }
+};
