@@ -17,18 +17,13 @@ function getDatabase() {
     const raw = process.env.FIREBASE_SERVICE_ACCOUNT;
 
     if (!raw) {
-      throw new Error(
-        "FIREBASE_SERVICE_ACCOUNT is not configured."
-      );
+      throw new Error("FIREBASE_SERVICE_ACCOUNT is not configured.");
     }
 
     const account = JSON.parse(raw);
 
     if (account.private_key) {
-      account.private_key = account.private_key.replace(
-        /\\n/g,
-        "\n"
-      );
+      account.private_key = account.private_key.replace(/\\n/g, "\n");
     }
 
     admin.initializeApp({
@@ -54,16 +49,10 @@ function cleanTax(tax) {
   }
 
   return {
-    id: String(
-      tax.id || crypto.randomBytes(8).toString("hex")
-    ),
+    id: String(tax.id || crypto.randomBytes(8).toString("hex")),
     title,
     percent: Number(percent.toFixed(2))
   };
-}
-
-function send(res, status, data) {
-  return res.status(status).json(data);
 }
 
 module.exports = async function handler(req, res) {
@@ -83,10 +72,8 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const database = getDatabase();
-    const ref = database.ref("shoppyCartTaxes");
+    const ref = getDatabase().ref("shoppyCartTaxes");
 
-    // Customer aur admin panel ke liye charges load karein.
     if (req.method === "GET") {
       const snapshot = await ref.once("value");
       const saved = snapshot.val();
@@ -96,7 +83,7 @@ module.exports = async function handler(req, res) {
           ? saved.map(cleanTax).filter(Boolean)
           : DEFAULT_TAXES;
 
-      return send(res, 200, {
+      return res.status(200).json({
         success: true,
         taxes
       });
@@ -105,23 +92,20 @@ module.exports = async function handler(req, res) {
     if (req.method !== "PUT") {
       res.setHeader("Allow", "GET, PUT, OPTIONS");
 
-      return send(res, 405, {
+      return res.status(405).json({
         success: false,
         message: "Method not allowed."
       });
     }
 
-    // Admin API key verify karein.
     const expected = String(process.env.ADMIN_API_KEY || "");
-    const authorization = String(
-      req.headers.authorization || ""
-    );
+    const authorization = String(req.headers.authorization || "");
 
     const provided = authorization.startsWith("Bearer ")
       ? authorization.slice(7)
       : "";
 
-    const isAuthorized =
+    const authorized =
       expected.length > 0 &&
       provided.length === expected.length &&
       crypto.timingSafeEqual(
@@ -129,17 +113,16 @@ module.exports = async function handler(req, res) {
         Buffer.from(expected)
       );
 
-    if (!isAuthorized) {
-      return send(res, 401, {
+    if (!authorized) {
+      return res.status(401).json({
         success: false,
-        message: "Unauthorized. Use the configured admin API key."
+        message: "Unauthorized."
       });
     }
 
-    const body =
-      typeof req.body === "string"
-        ? JSON.parse(req.body)
-        : req.body || {};
+    const body = typeof req.body === "string"
+      ? JSON.parse(req.body)
+      : (req.body || {});
 
     const snapshot = await ref.once("value");
     let taxes = snapshot.val();
@@ -158,20 +141,16 @@ module.exports = async function handler(req, res) {
       });
 
       if (!tax) {
-        return send(res, 400, {
+        return res.status(400).json({
           success: false,
-          message:
-            "Enter a valid title and percentage from 0 to 100."
+          message: "Enter a valid title and percentage from 0 to 100."
         });
       }
 
-      const duplicate = taxes.some(
-        item =>
-          item.title.toLowerCase() === tax.title.toLowerCase()
-      );
-
-      if (duplicate) {
-        return send(res, 409, {
+      if (taxes.some(item =>
+        item.title.toLowerCase() === tax.title.toLowerCase()
+      )) {
+        return res.status(409).json({
           success: false,
           message: "A charge with this title already exists."
         });
@@ -180,10 +159,10 @@ module.exports = async function handler(req, res) {
       taxes.push(tax);
     } else if (body.action === "remove") {
       taxes = taxes.filter(
-        tax => tax.id !== String(body.id)
+        item => item.id !== String(body.id)
       );
     } else {
-      return send(res, 400, {
+      return res.status(400).json({
         success: false,
         message: "Unsupported action."
       });
@@ -191,14 +170,14 @@ module.exports = async function handler(req, res) {
 
     await ref.set(taxes);
 
-    return send(res, 200, {
+    return res.status(200).json({
       success: true,
       taxes
     });
   } catch (error) {
     console.error("Cart taxes API error:", error);
 
-    return send(res, 500, {
+    return res.status(500).json({
       success: false,
       message: "Could not load or update cart charges."
     });
