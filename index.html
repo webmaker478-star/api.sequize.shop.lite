@@ -1063,6 +1063,48 @@ tbody tr:hover {
         transition-duration: .01ms !important;
     }
 }
+
+/* Keep the tax and discount panels inside the content column. */
+#taxSettingsPanel, #discountSettingsPanel {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    margin: 24px 0 30px;
+}
+#taxSettingsPanel *, #discountSettingsPanel * { min-width: 0; }
+#taxSettingsPanel .panel-header, #discountSettingsPanel .panel-header {
+    min-width: 0;
+    flex-wrap: wrap;
+}
+#taxSettingsPanel .panel-header > div, #discountSettingsPanel .panel-header > div {
+    flex: 1 1 220px;
+    min-width: 0;
+}
+#addTaxForm, #addDiscountForm { width: 100%; min-width: 0; }
+#taxRows > div, #discountRows > div { min-width: 0; max-width: 100%; }
+#taxRows > div > *, #discountRows > div > * { min-width: 0; overflow-wrap: anywhere; }
+@media (max-width: 1000px) {
+    #addTaxForm { grid-template-columns: minmax(0,1fr) minmax(100px,140px) !important; }
+    #addTaxForm > button { grid-column: 1 / -1; width: 100%; }
+    #addDiscountForm { grid-template-columns: minmax(0,1fr) minmax(0,1fr) !important; }
+    #addDiscountForm > button { grid-column: 1 / -1; width: 100%; }
+    #discountRows > div { grid-template-columns: minmax(0,1fr) auto !important; }
+    #discountRows > div > div:nth-child(2), #discountRows > div > div:nth-child(3) { grid-column: 1 / -1; }
+    #discountRows > div > button { grid-column: 2; grid-row: 1; }
+}
+@media (max-width: 720px) {
+    #taxSettingsPanel, #discountSettingsPanel { margin: 18px 0 24px; }
+    #taxSettingsPanel > .panel-header, #discountSettingsPanel > .panel-header { padding: 15px; }
+    #taxSettingsPanel > div[style*="padding:20px"], #discountSettingsPanel > div[style*="padding:20px"] { padding: 14px !important; }
+    #addTaxForm, #addDiscountForm { grid-template-columns: minmax(0,1fr) !important; }
+    #addTaxForm > *, #addDiscountForm > * { grid-column: 1 / -1 !important; width: 100%; }
+    #discountRows > div { grid-template-columns: minmax(0,1fr) auto !important; padding: 10px !important; }
+    #taxRows > div { grid-template-columns: minmax(0,1fr) auto !important; padding: 10px !important; }
+    #taxRows > div > button { grid-column: 2; grid-row: 1 / span 2; }
+    #discountRows > div > button { grid-column: 2; grid-row: 1; }
+}
+
 </style>
 </head>
 
@@ -1225,6 +1267,35 @@ tbody tr:hover {
             </div>
 
         </section>
+
+<section class="panel" id="taxSettingsPanel" style="margin:24px 0 30px">
+  <div class="panel-header"><div><div class="panel-title">Cart taxes & charges</div><div class="panel-description">Manage percentage charges displayed automatically in the customer cart.</div></div><button class="btn" id="refreshTaxesButton" type="button">Refresh</button></div>
+  <div style="padding:20px">
+    <div id="taxNotice" class="notice"></div>
+    <div id="taxRows" style="display:grid;gap:10px;margin-bottom:22px"><div class="loading">Connect the admin API to load taxes.</div></div>
+    <form id="addTaxForm" style="display:grid;grid-template-columns:minmax(0,1fr) minmax(110px,160px) auto;gap:10px;align-items:end">
+      <div class="form-group" style="margin:0"><label for="newTaxTitle">Charge title</label><input id="newTaxTitle" maxlength="60" placeholder="e.g. Handling fee" required></div>
+      <div class="form-group" style="margin:0"><label for="newTaxPercent">Percent (%)</label><input id="newTaxPercent" type="number" min="0" max="100" step="0.01" placeholder="2" required></div>
+      <button class="btn btn-primary" type="submit">Add charge</button>
+    </form>
+    <p class="form-hint">Default charges: Shipping 2%, Packaging 3%, Platform fee 1%, Delivery charges 2%, GST 18%. GST rates in India vary by product category (commonly 0%, 5%, 12%, 18% or 28%); configure the legally applicable rate for your products.</p>
+  </div>
+</section>
+<section class="panel" id="discountSettingsPanel" style="margin:24px 0 30px">
+  <div class="panel-header"><div><div class="panel-title">Customer discounts</div><div class="panel-description">Publish a percentage discount for every customer or target one customer by their account email.</div></div><button class="btn" id="refreshDiscountsButton" type="button">Refresh</button></div>
+  <div style="padding:20px">
+    <div id="discountNotice" class="notice"></div>
+    <div id="discountRows" style="display:grid;gap:10px;margin-bottom:22px"><div class="loading">Connect the admin API to load discounts.</div></div>
+    <form id="addDiscountForm" style="display:grid;grid-template-columns:minmax(0,1fr) minmax(150px,220px) minmax(110px,150px) auto;gap:10px;align-items:end">
+      <div class="form-group" style="margin:0"><label for="newDiscountTitle">Discount title</label><input id="newDiscountTitle" maxlength="60" placeholder="e.g. Festival offer" required></div>
+      <div class="form-group" style="margin:0"><label for="newDiscountScope">Apply to</label><select id="newDiscountScope"><option value="all">All users</option><option value="user">Single user</option></select></div>
+      <div class="form-group" style="margin:0"><label for="newDiscountPercent">Discount (%)</label><input id="newDiscountPercent" type="number" min="0.01" max="100" step="0.01" placeholder="10" required></div>
+      <button class="btn btn-primary" type="submit">Add discount</button>
+      <div class="form-group" id="discountEmailGroup" style="margin:0;grid-column:1 / -1;display:none"><label for="newDiscountEmail">Customer account email</label><input id="newDiscountEmail" type="email" maxlength="254" placeholder="customer@example.com"><div class="form-hint">Use the email associated with the customer’s Shoppy account.</div></div>
+    </form>
+    <p class="form-hint">The highest matching discount is applied once to the cart subtotal before percentage charges. A user-specific offer is matched by the signed-in account email.</p>
+  </div>
+</section>
 
     </main>
 
@@ -1422,34 +1493,6 @@ tbody tr:hover {
     </div>
 </div>
 
-<section class="panel" id="taxSettingsPanel" style="margin:24px 0 30px">
-  <div class="panel-header"><div><div class="panel-title">Cart taxes & charges</div><div class="panel-description">Manage percentage charges displayed automatically in the customer cart.</div></div><button class="btn" id="refreshTaxesButton" type="button">Refresh</button></div>
-  <div style="padding:20px">
-    <div id="taxNotice" class="notice"></div>
-    <div id="taxRows" style="display:grid;gap:10px;margin-bottom:22px"><div class="loading">Connect the admin API to load taxes.</div></div>
-    <form id="addTaxForm" style="display:grid;grid-template-columns:minmax(0,1fr) minmax(110px,160px) auto;gap:10px;align-items:end">
-      <div class="form-group" style="margin:0"><label for="newTaxTitle">Charge title</label><input id="newTaxTitle" maxlength="60" placeholder="e.g. Handling fee" required></div>
-      <div class="form-group" style="margin:0"><label for="newTaxPercent">Percent (%)</label><input id="newTaxPercent" type="number" min="0" max="100" step="0.01" placeholder="2" required></div>
-      <button class="btn btn-primary" type="submit">Add charge</button>
-    </form>
-    <p class="form-hint">Default charges: Shipping 2%, Packaging 3%, Platform fee 1%, Delivery charges 2%, GST 18%. GST rates in India vary by product category (commonly 0%, 5%, 12%, 18% or 28%); configure the legally applicable rate for your products.</p>
-  </div>
-</section>
-<section class="panel" id="discountSettingsPanel" style="margin:24px 0 30px">
-  <div class="panel-header"><div><div class="panel-title">Customer discounts</div><div class="panel-description">Publish a percentage discount for every customer or target one customer by their account email.</div></div><button class="btn" id="refreshDiscountsButton" type="button">Refresh</button></div>
-  <div style="padding:20px">
-    <div id="discountNotice" class="notice"></div>
-    <div id="discountRows" style="display:grid;gap:10px;margin-bottom:22px"><div class="loading">Connect the admin API to load discounts.</div></div>
-    <form id="addDiscountForm" style="display:grid;grid-template-columns:minmax(0,1fr) minmax(150px,220px) minmax(110px,150px) auto;gap:10px;align-items:end">
-      <div class="form-group" style="margin:0"><label for="newDiscountTitle">Discount title</label><input id="newDiscountTitle" maxlength="60" placeholder="e.g. Festival offer" required></div>
-      <div class="form-group" style="margin:0"><label for="newDiscountScope">Apply to</label><select id="newDiscountScope"><option value="all">All users</option><option value="user">Single user</option></select></div>
-      <div class="form-group" style="margin:0"><label for="newDiscountPercent">Discount (%)</label><input id="newDiscountPercent" type="number" min="0.01" max="100" step="0.01" placeholder="10" required></div>
-      <button class="btn btn-primary" type="submit">Add discount</button>
-      <div class="form-group" id="discountEmailGroup" style="margin:0;grid-column:1 / -1;display:none"><label for="newDiscountEmail">Customer account email</label><input id="newDiscountEmail" type="email" maxlength="254" placeholder="customer@example.com"><div class="form-hint">Use the email associated with the customer’s Shoppy account.</div></div>
-    </form>
-    <p class="form-hint">The highest matching discount is applied once to the cart subtotal before percentage charges. A user-specific offer is matched by the signed-in account email.</p>
-  </div>
-</section>
 <div class="toast-container" id="toastContainer"></div>
 
 <script>
