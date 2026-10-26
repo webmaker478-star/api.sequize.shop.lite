@@ -1422,6 +1422,19 @@ tbody tr:hover {
     </div>
 </div>
 
+<section class="panel" id="taxSettingsPanel" style="margin:24px 0 30px">
+  <div class="panel-header"><div><div class="panel-title">Cart taxes & charges</div><div class="panel-description">Manage percentage charges displayed automatically in the customer cart.</div></div><button class="btn" id="refreshTaxesButton" type="button">Refresh</button></div>
+  <div style="padding:20px">
+    <div id="taxNotice" class="notice"></div>
+    <div id="taxRows" style="display:grid;gap:10px;margin-bottom:22px"><div class="loading">Connect the admin API to load taxes.</div></div>
+    <form id="addTaxForm" style="display:grid;grid-template-columns:minmax(0,1fr) minmax(110px,160px) auto;gap:10px;align-items:end">
+      <div class="form-group" style="margin:0"><label for="newTaxTitle">Charge title</label><input id="newTaxTitle" maxlength="60" placeholder="e.g. Handling fee" required></div>
+      <div class="form-group" style="margin:0"><label for="newTaxPercent">Percent (%)</label><input id="newTaxPercent" type="number" min="0" max="100" step="0.01" placeholder="2" required></div>
+      <button class="btn btn-primary" type="submit">Add charge</button>
+    </form>
+    <p class="form-hint">Default charges: Shipping 2%, Packaging 3%, Platform fee 1%, Delivery charges 2%, GST 18%. GST rates in India vary by product category (commonly 0%, 5%, 12%, 18% or 28%); configure the legally applicable rate for your products.</p>
+  </div>
+</section>
 <div class="toast-container" id="toastContainer"></div>
 
 <script>
@@ -1441,7 +1454,8 @@ const DEFAULT_API_BASE = "https://apisequizeshoplite.vercel.app";
 
 const ENDPOINTS = {
     users: "/api/admin/users",
-    notifications: "/api/admin/notifications"
+    notifications: "/api/admin/notifications",
+    taxes: "/api/admin/taxes"
 };
 
 const CATEGORIES = [
@@ -2152,6 +2166,7 @@ async function saveApiConfiguration(event) {
     setConnection(false, "Connecting...");
 
     await loadUsers();
+    await loadTaxes();
 }
 
 /* ---------------- User bottom sheet ---------------- */
@@ -2580,6 +2595,55 @@ document.addEventListener("keydown", event => {
 /* Initial state */
 setConnection(false, "Not connected");
 loadUsers();
+
+
+/* ---------------- Cart tax and charge settings ---------------- */
+let currentTaxes = [];
+function showTaxNotice(message, type) {
+  const el = $("taxNotice"); if (!el) return;
+  el.textContent = message; el.className = "notice show " + (type || "");
+}
+function renderTaxes() {
+  const host = $("taxRows"); if (!host) return;
+  if (!currentTaxes.length) { host.innerHTML = '<div class="empty-state">No charges configured.</div>'; return; }
+  host.innerHTML = currentTaxes.map((tax, index) => `
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) 110px auto;gap:10px;align-items:center;padding:12px;border:1px solid var(--border);border-radius:12px">
+      <div style="font-weight:700;overflow-wrap:anywhere">${escapeHTML(tax.title)}</div>
+      <div style="color:var(--muted)">${Number(tax.percent)}%</div>
+      <button class="btn btn-danger btn-small" type="button" data-remove-tax="${escapeHTML(tax.id || String(index))}">Remove</button>
+    </div>`).join("");
+  host.querySelectorAll("[data-remove-tax]").forEach(button => button.addEventListener("click", async () => {
+    if (!confirm("Remove this cart charge?")) return;
+    try {
+      const data = await apiRequest(ENDPOINTS.taxes, { method:"PUT", body:JSON.stringify({ action:"remove", id:button.dataset.removeTax }) });
+      currentTaxes = data.taxes || []; renderTaxes(); showTaxNotice("Charge removed. Cart will use the updated charges.", "success");
+    } catch (e) { showTaxNotice(e.message || "Could not remove charge.", "error"); }
+  }));
+}
+async function loadTaxes() {
+  const host = $("taxRows");
+  if (host) host.innerHTML = '<div class="loading"><span class="spinner"></span>Loading charges...</div>';
+  try {
+    const data = await apiRequest(ENDPOINTS.taxes, { method:"GET" });
+    currentTaxes = Array.isArray(data.taxes) ? data.taxes : [];
+    renderTaxes(); showTaxNotice("Charges loaded.", "success");
+  } catch (e) {
+    if (host) host.innerHTML = '<div class="empty-state">Unable to load. Connect the admin API using the API button first.</div>';
+    showTaxNotice(e.message || "Unable to load charges.", "error");
+  }
+}
+$("addTaxForm")?.addEventListener("submit", async event => {
+  event.preventDefault();
+  const title = $("newTaxTitle").value.trim(), percent = Number($("newTaxPercent").value);
+  if (!title || !Number.isFinite(percent) || percent < 0 || percent > 100) { showTaxNotice("Enter a title and a percentage from 0 to 100.", "error"); return; }
+  try {
+    const data = await apiRequest(ENDPOINTS.taxes, { method:"PUT", body:JSON.stringify({ action:"add", title, percent }) });
+    currentTaxes = Array.isArray(data.taxes) ? data.taxes : [];
+    renderTaxes(); $("addTaxForm").reset(); showTaxNotice("Charge added and published to the cart.", "success");
+  } catch (e) { showTaxNotice(e.message || "Could not add charge.", "error"); }
+});
+$("refreshTaxesButton")?.addEventListener("click", loadTaxes);
+
 </script>
 
 </body>
