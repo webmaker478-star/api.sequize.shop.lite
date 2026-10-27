@@ -1,6 +1,8 @@
 "use strict";
 
-const { getOrCreateReferralProfile } = require("../../lib/referral");
+const {
+  getOrCreateReferralProfile
+} = require("../../lib/referral");
 
 const {
   sendJson,
@@ -26,8 +28,7 @@ module.exports = async function handler(req, res) {
     });
   }
 
-  // Only the trusted Shoppy server may call this endpoint.
-  // The secret is never sent by the browser.
+  // Verify that the request came from the trusted Shoppy server.
   if (!requireServiceSecret(req)) {
     return sendJson(res, 401, {
       success: false,
@@ -38,16 +39,11 @@ module.exports = async function handler(req, res) {
   try {
     const body = await readBody(req);
 
-    // Support both field names so the existing Shoppy proxy
-    // can send either "uid" or "userId".
-    const rawUid =
+    // UID is supplied by Shoppy's authenticated server.
+    const uid =
       body && typeof body.uid === "string"
-        ? body.uid
-        : body && typeof body.userId === "string"
-          ? body.userId
-          : "";
-
-    const uid = rawUid.trim();
+        ? body.uid.trim()
+        : "";
 
     if (!uid || uid.length > 128) {
       return sendJson(res, 400, {
@@ -56,7 +52,7 @@ module.exports = async function handler(req, res) {
       });
     }
 
-    // Create or retrieve this user's existing referral profile.
+    // Use the existing referral profile helper.
     const profile = await getOrCreateReferralProfile(uid);
 
     if (!profile || typeof profile !== "object") {
@@ -90,7 +86,7 @@ module.exports = async function handler(req, res) {
       parsedLink = null;
     }
 
-    // Do not return an incomplete or unexpected referral link.
+    // Reject an invalid URL or incomplete profile.
     if (
       !parsedLink ||
       parsedLink.protocol !== "https:" ||
