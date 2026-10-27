@@ -1,86 +1,24 @@
 "use strict";
 
-const crypto = require("crypto");
+const { getOrCreateReferralProfile } = require("../../lib/referral");
+
 const {
-  getOrCreateReferralProfile
-} = require("../../lib/referral");
+  sendJson,
+  allowCors,
+  readBody,
+  requireServiceSecret
+} = require("../../lib/referral-api");
 
-function sendJson(res, status, data) {
-  res.setHeader("Content-Type", "application/json; charset=utf-8");
-  res.setHeader("Cache-Control", "private, no-store, max-age=0");
-
-  return res.status(status).json(data);
-}
-
-function verifyReferralToken(token) {
-  const secret = process.env.REFERRAL_TOKEN_SECRET;
-
-  if (!secret || Buffer.byteLength(secret, "utf8") < 32) {
-    throw new Error("Referral token secret is not configured.");
-  }
-
-  if (typeof token !== "string" || token.length > 4096) {
-    return null;
-  }
-
-  const parts = token.split(".");
-
-  if (parts.length !== 2) {
-    return null;
-  }
-
-  const [encodedPayload, receivedSignature] = parts;
-
-  if (!encodedPayload || !receivedSignature) {
-    return null;
-  }
-
-  const expectedSignature = crypto
-    .createHmac("sha256", secret)
-    .update(encodedPayload)
-    .digest("base64url");
-
-  const receivedBuffer = Buffer.from(receivedSignature);
-  const expectedBuffer = Buffer.from(expectedSignature);
-
-  if (
-    receivedBuffer.length !== expectedBuffer.length ||
-    !crypto.timingSafeEqual(receivedBuffer, expectedBuffer)
-  ) {
-    return null;
-  }
-
-  let payload;
-
-  try {
-    payload = JSON.parse(
-      Buffer.from(encodedPayload, "base64url").toString("utf8")
-    );
-  } catch {
-    return null;
-  }
-
-  const now = Math.floor(Date.now() / 1000);
-
-  if (
-    !payload ||
-    typeof payload.uid !== "string" ||
-    !payload.uid ||
-    payload.purpose !== "shoppy-referral" ||
-    !Number.isInteger(payload.exp) ||
-    payload.exp <= now ||
-    !Number.isInteger(payload.iat) ||
-    payload.iat > now + 60
-  ) {
-    return null;
-  }
-
-  return payload;
-}
+const SHOPPY_ORIGIN =
+  "https://shopingweb-zeta.vercel.app";
 
 module.exports = async function handler(req, res) {
+  if (allowCors(req, res)) {
+    return;
+  }
+
   if (req.method !== "POST") {
-    res.setHeader("Allow", "POST");
+    res.setHeader("Allow", "POST, OPTIONS");
 
     return sendJson(res, 405, {
       success: false,
@@ -88,45 +26,109 @@ module.exports = async function handler(req, res) {
     });
   }
 
+  // Only the trusted Shoppy server may call this endpoint.
+  // The secret is never sent by the browser.
+  if (!requireServiceSecret(req)) {
+    return sendJson(res, 401, {
+      success: false,
+      message: "Unauthorized referral service request."
+    });
+  }
+
   try {
-    const authorization = req.headers.authorization || "";
-    const match = authorization.match(/^Bearer\s+(.+)$/i);
+    const body = await readBody(req);
 
-    if (!match) {
-      return sendJson(res, 401, {
+    // Support both field names so the existing Shoppy proxy
+    // can send either "uid" or "userId".
+    const rawUid =
+      body && typeof body.uid === "string"
+        ? body.uid
+        : body && typeof body.userId === "string"
+          ? body.userId
+          : "";
+
+    const uid = rawUid.trim();
+
+    if (!uid || uid.length > 128) {
+      return sendJson(res, 400, {
         success: false,
-        message: "Please sign in to your Shoppy account, then try again."
+        message: "A valid authenticated user ID is required."
       });
     }
 
-    const verified = verifyReferralToken(match[1]);
+    // Create or retrieve this user's existing referral profile.
+    const profile = await getOrCreateReferralProfile(uid);
 
-    if (!verified) {
-      return sendJson(res, 401, {
-        success: false,
-        message: "Your login has expired. Please sign in again."
-      });
-    }
-
-    const profile = await getOrCreateReferralProfile(verified.uid);
-
-    if (!profile || !profile.referralCode || !profile.referralLink) {
+    if (!profile || typeof profile !== "object") {
       return sendJson(res, 500, {
         success: false,
-        message: "Could not create your referral profile."
+        message:
+          "Could not create or retrieve the referral profile."
+      });
+    }
+
+    const referralLink =
+      typeof profile.referralLink === "string"
+        ? profile.referralLink
+        : "";
+
+    const referralCode =
+      typeof profile.referralCode === "string"
+        ? profile.referralCode
+        : "";
+
+    const invitationId =
+      typeof profile.invitationId === "string"
+        ? profile.invitationId
+        : "";
+
+    let parsedLink = null;
+
+    try {
+      parsedLink = new URL(referralLink);
+    } catch {
+      parsedLink = null;
+    }
+
+    // Do not return an incomplete or unexpected referral link.
+    if (
+      !parsedLink ||
+      parsedLink.protocol !== "https:" ||
+      parsedLink.origin !== SHOPPY_ORIGIN ||
+      !referralCode ||
+      !invitationId
+    ) {
+      console.error(
+        "Referral profile returned invalid link or identifiers."
+      );
+
+      return sendJson(res, 500, {
+        success: false,
+        message:
+          "The referral profile is incomplete. Please try again."
       });
     }
 
     return sendJson(res, 200, {
       success: true,
-      profile
+
+      profile: {
+        referralLink,
+        referralCode,
+        invitationId,
+        createdAt: Number(profile.createdAt) || null
+      }
     });
   } catch (error) {
-    console.error("Referral profile API error:", error);
+    console.error(
+      "Referral profile API error:",
+      error && error.message ? error.message : error
+    );
 
     return sendJson(res, 500, {
       success: false,
-      message: "Could not generate your referral link. Please try again."
+      message:
+        "Could not generate your referral link. Please try again."
     });
   }
 };
