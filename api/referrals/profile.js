@@ -53,7 +53,16 @@ module.exports = async function handler(req, res) {
     }
 
     // Use the existing referral profile helper.
-    const profile = await getOrCreateReferralProfile(uid);
+  const result = await getOrCreateReferralProfile(uid);
+
+if (!result || result.success !== true || !result.profile) {
+  return sendJson(res, 500, {
+    success: false,
+    message: "Could not create or retrieve the referral profile."
+  });
+}
+
+const profile = result.profile;
 
     if (!profile || typeof profile !== "object") {
       return sendJson(res, 500, {
