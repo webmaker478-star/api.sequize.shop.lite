@@ -2,7 +2,7 @@
   "name": "appnetick-admin-backend",
   "version": "1.0.0",
   "private": true,
-  "description": "Appnetick Admin Backend API",
+  "description": "Appnetick Admin Backend API with Firebase Cloud Messaging",
   "main": "api/health.js",
   "scripts": {
     "start": "vercel dev"
