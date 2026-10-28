@@ -169,19 +169,22 @@ tbody tr:hover{background:#242424}
 .mobile-nav{display:none}
 .menu-btn{display:none}
 
-/* Liquid glass (iOS style) */
-.nav-shell{position:relative;width:100%;max-width:380px;height:60px;margin:0 auto;pointer-events:auto}
-.glass-layer,.nav-ind{position:absolute;border-radius:999px;pointer-events:none}
-.glass-layer{inset:0;background:rgba(255,255,255,.07);-webkit-backdrop-filter:blur(10px) saturate(1.8) brightness(1.12);backdrop-filter:blur(10px) saturate(1.8) brightness(1.12);box-shadow:inset 0 0 0 1px rgba(255,255,255,.16),inset 2px 3px 5px -2px rgba(255,255,255,.7),inset -2px -3px 5px -2px rgba(255,255,255,.5),inset 0 0 22px rgba(255,255,255,.08),0 14px 34px rgba(0,0,0,.5),0 2px 8px rgba(0,0,0,.3)}
-.lg-refract .glass-layer{-webkit-backdrop-filter:url(#lgPill) blur(1px) saturate(1.8) brightness(1.12);backdrop-filter:url(#lgPill) blur(1px) saturate(1.8) brightness(1.12)}
-.glass-layer::before,.nav-ind::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1.5px;background:conic-gradient(from 215deg,rgba(255,255,255,.95),rgba(255,255,255,.05) 22%,rgba(255,255,255,.05) 48%,rgba(255,255,255,.8) 62%,rgba(255,255,255,.05) 82%,rgba(255,255,255,.95));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);pointer-events:none}
-.glass-layer::after,.nav-ind::after{content:"";position:absolute;inset:0;border-radius:inherit;background:radial-gradient(90% 120% at 15% 0%,rgba(255,255,255,.22),transparent 55%);mix-blend-mode:screen;pointer-events:none}
-.nav-ind{top:6px;left:0;width:72px;height:48px;z-index:1;background:rgba(255,255,255,.13);-webkit-backdrop-filter:blur(3px) saturate(1.9) brightness(1.25);backdrop-filter:blur(3px) saturate(1.9) brightness(1.25);box-shadow:inset 0 0 0 1px rgba(255,255,255,.2),inset 2px 3px 5px -2px rgba(255,255,255,.85),inset -2px -3px 5px -2px rgba(255,255,255,.55),inset 0 0 16px rgba(255,255,255,.14),0 6px 16px rgba(0,0,0,.35);transition:transform .5s cubic-bezier(.34,1.4,.64,1),width .5s cubic-bezier(.34,1.4,.64,1),opacity .2s}
-.lg-refract .nav-ind{-webkit-backdrop-filter:url(#lgInd) blur(1px) saturate(1.9) brightness(1.25);backdrop-filter:url(#lgInd) blur(1px) saturate(1.9) brightness(1.25)}
-.nav-items{position:absolute;inset:0;display:flex;padding:0 6px;z-index:2}
-.nav-items button{flex:1;min-width:0;background:transparent;border:0;color:rgba(255,255,255,.7);display:grid;place-items:center;border-radius:999px;font-size:25px;transition:color .2s,transform .2s;-webkit-tap-highlight-color:transparent}
-.nav-items button.active{color:#fff}
-.nav-items button:active{transform:scale(.88)}
+/* Liquid glass (iOS 26 style, no stroke) */
+:root{--accent:#5aa9ff;--spring:cubic-bezier(.34,1.56,.64,1)}
+.nav-shell{position:relative;width:100%;max-width:420px;height:var(--nav-h,50px);margin:0 auto;pointer-events:auto;touch-action:none;user-select:none;-webkit-user-select:none}
+.glass-layer{position:absolute;inset:0;border-radius:999px;pointer-events:none;background:rgba(255,255,255,.09);-webkit-backdrop-filter:blur(6px) saturate(1.7) brightness(1.1);backdrop-filter:blur(6px) saturate(1.7) brightness(1.1);box-shadow:inset 0 0 16px rgba(255,255,255,.16),inset 3px 4px 10px -5px rgba(255,255,255,.5),inset -3px -4px 10px -5px rgba(255,255,255,.3),0 10px 28px rgba(0,0,0,.4)}
+.lg-refract .glass-layer{-webkit-backdrop-filter:url(#lgPill) blur(.5px) saturate(1.7) brightness(1.1);backdrop-filter:url(#lgPill) blur(.5px) saturate(1.7) brightness(1.1)}
+.nav-ind{position:absolute;top:4px;left:0;width:66px;height:42px;z-index:1;pointer-events:none;transition:transform .5s var(--spring),opacity .2s}
+.nav-ind.dragging{transition:opacity .2s}
+.nav-lens{position:absolute;top:0;left:0;right:0;bottom:0;border-radius:999px;background:rgba(255,255,255,.14);-webkit-backdrop-filter:blur(2px) saturate(1.8) brightness(1.2);backdrop-filter:blur(2px) saturate(1.8) brightness(1.2);box-shadow:inset 0 0 12px rgba(255,255,255,.2),inset 2px 3px 8px -4px rgba(255,255,255,.7),inset -2px -3px 8px -4px rgba(255,255,255,.4),0 4px 14px rgba(0,0,0,.28);transition:top .38s var(--spring),bottom .38s var(--spring),left .38s var(--spring),right .38s var(--spring),background .3s,box-shadow .3s}
+.lg-refract .nav-lens{-webkit-backdrop-filter:url(#lgInd) blur(.5px) saturate(1.9) brightness(1.2);backdrop-filter:url(#lgInd) blur(.5px) saturate(1.9) brightness(1.2)}
+.nav-ind.grown .nav-lens{top:-8px;bottom:-8px;left:-13px;right:-13px;background:rgba(255,255,255,.05);box-shadow:inset 0 0 18px rgba(255,255,255,.28),inset 3px 4px 10px -4px rgba(255,255,255,.8),inset -3px -4px 10px -4px rgba(255,255,255,.5),0 10px 26px rgba(0,0,0,.4)}
+.nav-items{position:absolute;inset:0;display:flex;padding:0 4px;z-index:2;transition:opacity .18s,transform .18s,filter .18s}
+.nav-items.out{opacity:0;transform:translateX(calc(var(--dir,1)*-26px)) scale(.94);filter:blur(4px)}
+.nav-items.in-start{opacity:0;transform:translateX(calc(var(--dir,1)*26px)) scale(.94);filter:blur(4px);transition:none}
+.nav-items button{flex:1;min-width:0;background:transparent;border:0;color:rgba(255,255,255,.72);display:grid;place-items:center;border-radius:999px;font-size:24px;transition:color .2s,transform .3s var(--spring);-webkit-tap-highlight-color:transparent}
+.nav-items button.active,.nav-items button.lit{color:var(--accent)}
+.nav-items.pressing button.active:not(.lit){color:rgba(255,255,255,.72)}
 .title-block{display:flex;align-items:center;gap:12px;min-width:0}
 .menu-btn{width:42px;height:42px;padding:0;font-size:22px;flex-shrink:0}
 
@@ -239,6 +242,8 @@ tbody tr:hover{background:#242424}
   <button class="nav-item" type="button" data-tab="home"><i class="ph ph-house"></i><span>Home</span></button>
   <button class="nav-item" type="button" data-tab="users"><i class="ph ph-users"></i><span>Users</span></button>
   <div class="nav-label">SYSTEMS</div>
+  <button class="nav-item" type="button" data-tab="orders"><i class="ph ph-package"></i><span>Orders</span></button>
+  <button class="nav-item" type="button" data-tab="products"><i class="ph ph-storefront"></i><span>Products</span></button>
   <button class="nav-item" type="button" data-tab="notifications"><i class="ph ph-bell"></i><span>Notifications</span></button>
   <button class="nav-item" type="button" data-tab="block"><i class="ph ph-prohibit"></i><span>Block users</span></button>
   <button class="nav-item" type="button" data-tab="discounts"><i class="ph ph-tag"></i><span>Discounts</span></button>
@@ -280,6 +285,8 @@ tbody tr:hover{background:#242424}
     <div class="panel-title" style="margin:0 0 12px">Quick access</div>
     <div class="quick-grid">
       <button class="quick-card" data-tab="users"><i class="ph ph-users"></i><b>Users</b><span>Browse, search and open any user.</span></button>
+      <button class="quick-card" data-tab="orders"><i class="ph ph-package"></i><b>Orders</b><span>Track and update customer orders.</span></button>
+      <button class="quick-card" data-tab="products"><i class="ph ph-storefront"></i><b>Products</b><span>Add and remove store products.</span></button>
       <button class="quick-card" data-tab="notifications"><i class="ph ph-bell"></i><b>Notifications</b><span>Send to one user or everyone, view history.</span></button>
       <button class="quick-card" data-tab="block"><i class="ph ph-prohibit"></i><b>Block users</b><span>Block or unblock accounts.</span></button>
       <button class="quick-card" data-tab="discounts"><i class="ph ph-tag"></i><b>Discounts</b><span>Global or per-customer offers.</span></button>
@@ -304,6 +311,38 @@ tbody tr:hover{background:#242424}
       <div class="table-wrap" id="desktopUserList"><div class="empty-state">Connect the API to load users.</div></div>
       <div class="mobile-user-list" id="mobileUserList"></div>
       <div class="pagination-info"><span id="resultsText">Waiting for users...</span><span id="lastUpdated"></span></div>
+    </section>
+  </section>
+
+  <!-- ORDERS -->
+  <section class="page" id="page-orders">
+    <section class="panel">
+      <div class="panel-header"><div><div class="panel-title"><i class="ph ph-package"></i> Orders</div><div class="panel-description">Review orders and change their status.</div></div>
+        <div style="display:flex;gap:8px"><select id="ordFilter" style="width:auto" aria-label="Filter orders"><option value="all">All</option><option value="pending">Pending</option><option value="paid">Paid</option><option value="shipped">Shipped</option><option value="delivered">Delivered</option><option value="cancelled">Cancelled</option><option value="refunded">Refunded</option></select><button class="btn btn-small" id="ordRefresh" type="button"><i class="ph ph-arrows-clockwise"></i> Refresh</button></div></div>
+      <div class="panel-body">
+        <div class="notice" id="ordNotice"></div>
+        <div class="item-list" id="ordRows"><div class="loading">Connect the admin API to load orders.</div></div>
+      </div>
+    </section>
+  </section>
+
+  <!-- PRODUCTS -->
+  <section class="page" id="page-products">
+    <section class="panel">
+      <div class="panel-header"><div><div class="panel-title"><i class="ph ph-storefront"></i> Products</div><div class="panel-description">Manage the products shown in your store.</div></div><button class="btn btn-small" id="prodRefresh" type="button"><i class="ph ph-arrows-clockwise"></i> Refresh</button></div>
+      <div class="panel-body">
+        <div class="notice" id="prodNotice"></div>
+        <div class="item-list" id="prodRows"><div class="loading">Connect the admin API to load products.</div></div>
+        <form id="prodForm">
+          <div class="form-row">
+            <div class="form-group"><label for="prodTitle">Product name</label><input id="prodTitle" maxlength="100" required></div>
+            <div class="form-group"><label for="prodPrice">Price (₹)</label><input id="prodPrice" type="number" min="0" step="0.01" required></div>
+            <div class="form-group"><label for="prodStock">Stock</label><input id="prodStock" type="number" min="0" step="1" required></div>
+          </div>
+          <div class="form-group"><label for="prodImage">Image URL (optional)</label><input id="prodImage" type="url" placeholder="https://..."></div>
+          <div class="form-footer"><button class="btn btn-primary" type="submit"><i class="ph ph-plus"></i> Add product</button></div>
+        </form>
+      </div>
     </section>
   </section>
 
@@ -455,25 +494,33 @@ tbody tr:hover{background:#242424}
 <nav class="mobile-nav" id="mobileNav">
   <div class="nav-shell" id="navShell">
     <div class="glass-layer"></div>
-    <div class="nav-ind" id="navIndicator"></div>
-    <div class="nav-items" id="navPill">
-      <button type="button" data-tab="home" aria-label="Home"><i class="ph ph-house"></i></button>
-      <button type="button" data-tab="users" aria-label="Users"><i class="ph ph-users"></i></button>
-      <button type="button" data-tab="notifications" aria-label="Notifications"><i class="ph ph-bell"></i></button>
-      <button type="button" data-tab="discounts" aria-label="Discounts"><i class="ph ph-tag"></i></button>
-      <button type="button" data-tab="support" aria-label="Support"><i class="ph ph-headset"></i></button>
-    </div>
+    <div class="nav-ind" id="navIndicator"><div class="nav-lens"></div></div>
+    <div class="nav-items" id="navPill"></div>
   </div>
 </nav>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
-  <filter id="lgPill" filterUnits="userSpaceOnUse" x="0" y="0" width="300" height="60" color-interpolation-filters="sRGB">
-    <feImage id="lgPillMap" x="0" y="0" width="300" height="60" preserveAspectRatio="none" result="map"/>
-    <feDisplacementMap in="SourceGraphic" in2="map" scale="50" xChannelSelector="R" yChannelSelector="G"/>
+  <filter id="lgPill" x="0" y="0" width="1" height="1" color-interpolation-filters="sRGB">
+    <feImage id="lgPillMap" preserveAspectRatio="none" result="map"/>
+    <feDisplacementMap in="SourceGraphic" in2="map" scale="66" xChannelSelector="R" yChannelSelector="G" result="dr"/>
+    <feColorMatrix in="dr" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/>
+    <feDisplacementMap in="SourceGraphic" in2="map" scale="56" xChannelSelector="R" yChannelSelector="G" result="dg"/>
+    <feColorMatrix in="dg" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/>
+    <feDisplacementMap in="SourceGraphic" in2="map" scale="46" xChannelSelector="R" yChannelSelector="G" result="db"/>
+    <feColorMatrix in="db" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/>
+    <feBlend in="r" in2="g" mode="screen" result="rg"/>
+    <feBlend in="rg" in2="b" mode="screen"/>
   </filter>
-  <filter id="lgInd" filterUnits="userSpaceOnUse" x="0" y="0" width="72" height="48" color-interpolation-filters="sRGB">
-    <feImage id="lgIndMap" x="0" y="0" width="72" height="48" preserveAspectRatio="none" result="map"/>
-    <feDisplacementMap in="SourceGraphic" in2="map" scale="36" xChannelSelector="R" yChannelSelector="G"/>
+  <filter id="lgInd" x="0" y="0" width="1" height="1" color-interpolation-filters="sRGB">
+    <feImage id="lgIndMap" preserveAspectRatio="none" result="map"/>
+    <feDisplacementMap in="SourceGraphic" in2="map" scale="54" xChannelSelector="R" yChannelSelector="G" result="dr"/>
+    <feColorMatrix in="dr" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/>
+    <feDisplacementMap in="SourceGraphic" in2="map" scale="46" xChannelSelector="R" yChannelSelector="G" result="dg"/>
+    <feColorMatrix in="dg" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/>
+    <feDisplacementMap in="SourceGraphic" in2="map" scale="38" xChannelSelector="R" yChannelSelector="G" result="db"/>
+    <feColorMatrix in="db" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/>
+    <feBlend in="r" in2="g" mode="screen" result="rg"/>
+    <feBlend in="rg" in2="b" mode="screen"/>
   </filter>
 </defs></svg>
 
@@ -484,6 +531,8 @@ tbody tr:hover{background:#242424}
   <div class="menu-grid">
     <button type="button" class="menu-item" data-tab="home"><i class="ph ph-house"></i>Home</button>
     <button type="button" class="menu-item" data-tab="users"><i class="ph ph-users"></i>Users</button>
+    <button type="button" class="menu-item" data-tab="orders"><i class="ph ph-package"></i>Orders</button>
+    <button type="button" class="menu-item" data-tab="products"><i class="ph ph-storefront"></i>Products</button>
     <button type="button" class="menu-item" data-tab="notifications"><i class="ph ph-bell"></i>Notifications</button>
     <button type="button" class="menu-item" data-tab="block"><i class="ph ph-prohibit"></i>Block users</button>
     <button type="button" class="menu-item" data-tab="discounts"><i class="ph ph-tag"></i>Discounts</button>
@@ -561,12 +610,16 @@ const ENDPOINTS = {
   discounts: "/api/admin/discounts",
   blocks: "/api/admin/blocks",
   memberships: "/api/admin/memberships",
-  support: "/api/admin/support"
+  support: "/api/admin/support",
+  orders: "/api/admin/orders",
+  products: "/api/admin/products"
 };
 const CATEGORIES = ["orders","payments","shipping","delivery","returns","refunds","cancellations","discounts","promotions","cart","wishlist","account","security","support","system"];
 const TABS = {
   home:{title:"Home",icon:"house",sub:"Overview of your store."},
   users:{title:"Users",icon:"users",sub:"Browse users and open their drawer."},
+  orders:{title:"Orders",icon:"package",sub:"Track and update customer orders."},
+  products:{title:"Products",icon:"storefront",sub:"Manage store products."},
   notifications:{title:"Notifications",icon:"bell",sub:"Send notifications and check history."},
   block:{title:"Block users",icon:"prohibit",sub:"Block or unblock accounts."},
   discounts:{title:"Discounts",icon:"tag",sub:"Publish customer discounts."},
@@ -626,12 +679,13 @@ function showTab(tab){
 }
 function loadTab(tab,force){
   if(!force&&loaded[tab])return;
-  const map={home:()=>loadUsers(),users:()=>loadUsers(),block:loadBlocks,discounts:loadDiscounts,taxes:loadTaxes,memberships:loadMemberships,support:loadTickets,notifications:()=>{}};
+  const map={home:()=>loadUsers(),users:()=>loadUsers(),block:loadBlocks,discounts:loadDiscounts,taxes:loadTaxes,memberships:loadMemberships,support:loadTickets,notifications:()=>{},orders:loadOrders,products:loadProducts};
   if(map[tab]){loaded[tab]=true;map[tab]()}
 }
 document.addEventListener("click",e=>{
-  const b=e.target.closest("[data-tab]");
-  if(b)showTab(b.dataset.tab);
+  const b=e.target.closest("[data-tab]");if(!b)return;
+  if(b.closest("#navPill")&&e.detail!==0)return;   /* pointer taps are handled by the glass nav */
+  showTab(b.dataset.tab);
 });
 $("refreshButton").addEventListener("click",()=>{
   if(!ADMIN_API_KEY){openApiDialog();return}
@@ -1093,11 +1147,61 @@ $("supRows").addEventListener("click",async e=>{
 $("supFilter").addEventListener("change",renderTickets);
 $("supRefresh").addEventListener("click",loadTickets);
 
+/* ---------- Orders ---------- */
+let orders=[];
+const ORDER_STATUSES=["pending","paid","shipped","delivered","cancelled","refunded"];
+const ordNotice=(m,t)=>showNotice($("ordNotice"),m,t);
+function statusBadge(st){const c={pending:"badge-yellow",paid:"badge-blue",shipped:"badge-blue",delivered:"badge-green",cancelled:"badge-red",refunded:"badge-red"}[st]||"";return `<span class="badge ${c}">${escapeHTML(formatCategory(st))}</span>`}
+function renderOrders(){
+  const f=$("ordFilter").value;const items=orders.filter(o=>f==="all"||(o.status||"pending")===f);
+  $("ordRows").innerHTML=items.length?items.map(o=>{const st=o.status||"pending";return `<div class="item-row" style="flex-wrap:wrap"><div class="grow"><b>#${escapeHTML(String(o.id).slice(-8))}</b> ${statusBadge(st)}<div class="meta">${escapeHTML(o.email||o.uid||"—")} • ₹${Number(o.total||0)} • ${escapeHTML(formatDate(o.createdAt))}</div></div><select data-ord-status="${escapeHTML(o.id)}" style="width:auto;min-width:130px">${ORDER_STATUSES.map(x=>`<option value="${x}"${x===st?" selected":""}>${formatCategory(x)}</option>`).join("")}</select><button class="btn btn-primary btn-small" type="button" data-ord-save="${escapeHTML(o.id)}">${icon("check")} Update</button></div>`}).join(""):`<div class="empty-state">${icon("package")}<strong>No orders</strong></div>`;
+}
+async function loadOrders(){
+  $("ordRows").innerHTML=loadingHTML("Loading orders...");
+  try{const d=await apiRequest(ENDPOINTS.orders,{method:"GET"});const raw=d.orders||[];orders=(Array.isArray(raw)?raw:Object.keys(raw).map(k=>({...raw[k],id:raw[k].id||k}))).map(o=>({...o,id:String(o.id||"")}));renderOrders();hideNotice($("ordNotice"))}
+  catch(err){$("ordRows").innerHTML='<div class="empty-state">Unable to load.</div>';ordNotice(err.message+" (Backend route "+ENDPOINTS.orders+" required.)","error");loaded.orders=false}
+}
+$("ordRows").addEventListener("click",async e=>{
+  const b=e.target.closest("[data-ord-save]");if(!b)return;
+  const id=b.dataset.ordSave,sel=$("ordRows").querySelector('[data-ord-status="'+(window.CSS&&CSS.escape?CSS.escape(id):id)+'"]');
+  try{await apiRequest(ENDPOINTS.orders,{method:"PUT",body:JSON.stringify({action:"status",id,status:sel.value})});const o=orders.find(x=>x.id===id);if(o)o.status=sel.value;renderOrders();ordNotice("Order status updated.","success")}
+  catch(err){ordNotice(err.message,"error")}
+});
+$("ordFilter").addEventListener("change",renderOrders);
+$("ordRefresh").addEventListener("click",loadOrders);
+
+/* ---------- Products ---------- */
+let products=[];
+const prodNotice=(m,t)=>showNotice($("prodNotice"),m,t);
+function renderProducts(){
+  $("prodRows").innerHTML=products.length?products.map((p,i)=>`<div class="item-row"><div class="grow"><b>${escapeHTML(p.title)}</b><div class="meta">₹${Number(p.price)} • Stock ${Number(p.stock)}</div></div><button class="btn btn-danger btn-small" type="button" data-remove-prod="${escapeHTML(p.id||String(i))}">${icon("trash")} Remove</button></div>`).join(""):`<div class="empty-state">${icon("storefront")}<strong>No products yet</strong></div>`;
+}
+async function loadProducts(){
+  $("prodRows").innerHTML=loadingHTML("Loading products...");
+  try{const d=await apiRequest(ENDPOINTS.products,{method:"GET"});products=Array.isArray(d.products)?d.products:[];renderProducts();hideNotice($("prodNotice"))}
+  catch(err){$("prodRows").innerHTML='<div class="empty-state">Unable to load.</div>';prodNotice(err.message+" (Backend route "+ENDPOINTS.products+" required.)","error");loaded.products=false}
+}
+$("prodRows").addEventListener("click",async e=>{
+  const b=e.target.closest("[data-remove-prod]");if(!b||!confirm("Remove this product?"))return;
+  try{const d=await apiRequest(ENDPOINTS.products,{method:"PUT",body:JSON.stringify({action:"remove",id:b.dataset.removeProd})});products=d.products||[];renderProducts();prodNotice("Product removed.","success")}
+  catch(err){prodNotice(err.message,"error")}
+});
+$("prodForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const title=$("prodTitle").value.trim(),price=Number($("prodPrice").value),stock=Number($("prodStock").value),image=$("prodImage").value.trim();
+  if(!title||!Number.isFinite(price)||price<0||!Number.isInteger(stock)||stock<0){prodNotice("Enter a name, a valid price and stock.","error");return}
+  try{const d=await apiRequest(ENDPOINTS.products,{method:"PUT",body:JSON.stringify({action:"add",title,price,stock,image})});products=Array.isArray(d.products)?d.products:[];renderProducts();$("prodForm").reset();prodNotice("Product added.","success")}
+  catch(err){prodNotice(err.message,"error")}
+});
+$("prodRefresh").addEventListener("click",loadProducts);
+
 /* ---------- Mobile nav (liquid glass) + menu ---------- */
-const MAIN_TABS=["home","users","notifications","discounts","support"];
+const NAV_SETS=[["home","users","orders","products","notifications"],["block","discounts","taxes","memberships","support"]];
+const PAD=4,NAV_N=5;
 const IS_CHROMIUM=!!(navigator.userAgentData&&navigator.userAgentData.brands&&navigator.userAgentData.brands.some(b=>/Chromium|Google Chrome/.test(b.brand)));
 if(IS_CHROMIUM)document.documentElement.classList.add("lg-refract");
-const mapCache={},XLINK="http://www.w3.org/1999/xlink";
+const XLINK="http://www.w3.org/1999/xlink";
+let navSet=0,navDrag=null,navSwapTimer=null;
 function makeMap(w,h,bezel){
   const k=2,W=w*k,H=h*k,B=bezel*k,r=H/2;
   const c=document.createElement("canvas");c.width=W;c.height=H;
@@ -1110,24 +1214,92 @@ function makeMap(w,h,bezel){
   }
   ctx.putImageData(img,0,0);return c.toDataURL("image/png");
 }
-function setMap(id,w,h,bezel){
-  w=Math.round(w);h=Math.round(h);if(!w||!h)return;
-  const key=w+"x"+h;if(mapCache[id]===key)return;mapCache[id]=key;
-  const f=$(id),im=$(id+"Map"),url=makeMap(w,h,bezel);
-  [f,im].forEach(e=>{e.setAttribute("width",w);e.setAttribute("height",h)});
-  im.setAttribute("href",url);im.setAttributeNS(XLINK,"href",url);
+function loadGlassMaps(){
+  if(!IS_CHROMIUM)return;
+  [["lgPillMap",360,50,16],["lgIndMap",66,42,14]].forEach(([id,w,h,b])=>{const url=makeMap(w,h,b),im=$(id);im.setAttribute("href",url);im.setAttributeNS(XLINK,"href",url)});
 }
+function setIndexFor(tab){return NAV_SETS.findIndex(x=>x.includes(tab))}
+function navButtons(){return [].slice.call($("navPill").querySelectorAll("button"))}
+function renderNav(idx){
+  navSet=idx;
+  $("navPill").innerHTML=NAV_SETS[idx].map(t=>`<button type="button" data-tab="${t}" aria-label="${escapeHTML(TABS[t].title)}"><i class="ph ph-${TABS[t].icon}"></i></button>`).join("");
+  navButtons().forEach(b=>b.classList.toggle("active",b.dataset.tab===currentTab));
+}
+/* Equal gap on every side: indicator = one slot, inset PAD from top, bottom, left and right. */
+function navMetrics(){
+  const shell=$("navShell"),W=shell.offsetWidth;if(!W)return null;
+  const bw=(W-PAD*2)/NAV_N,h=Math.min(42,Math.floor(bw/1.4));   /* always a horizontal capsule */
+  shell.style.setProperty("--nav-h",(h+PAD*2)+"px");
+  const ind=$("navIndicator");ind.style.width=bw+"px";ind.style.height=h+"px";
+  return {W,bw,h};
+}
+function setIndX(x){$("navIndicator").style.transform="translateX("+x+"px)"}
 function positionIndicator(){
-  const shell=$("navShell"),ind=$("navIndicator"),items=$("navPill");
-  if(!shell.offsetWidth){return}
-  const act=items.querySelector("button.active"),ref=act||items.querySelector("button");
-  const h=48,bw=ref.offsetWidth,w=Math.max(bw,Math.round(h*1.5));   /* always a horizontal capsule */
-  const center=ref.offsetLeft+bw/2;
-  const x=Math.max(3,Math.min(Math.round(center-w/2),shell.offsetWidth-3-w));
-  ind.style.opacity=act?"1":"0";ind.style.width=w+"px";ind.style.transform="translateX("+x+"px)";
-  if(IS_CHROMIUM){setMap("lgPill",shell.offsetWidth,shell.offsetHeight,18);setMap("lgInd",w,h,14)}
+  const m=navMetrics();if(!m)return;
+  const idx=NAV_SETS[navSet].indexOf(currentTab),ind=$("navIndicator");
+  ind.classList.remove("dragging");
+  if(idx<0){ind.style.opacity="0";return}
+  ind.style.opacity="1";setIndX(PAD+idx*m.bw);lightIcons(null,m);
 }
-function updateMobileNav(tab){positionIndicator()}
+function lightIcons(center,m){
+  m=m||navMetrics();if(!m)return;
+  $("navPill").classList.toggle("pressing",center!=null);
+  navButtons().forEach((b,i)=>{
+    if(center==null){b.style.transform="";b.classList.remove("lit");return}
+    const bc=PAD+i*m.bw+m.bw/2,f=Math.max(0,1-Math.abs(center-bc)/(m.bw*.9));
+    b.style.transform="scale("+(1+.32*f)+")";b.classList.toggle("lit",f>.55);
+  });
+}
+function swapNavSet(idx){
+  const box=$("navPill"),ind=$("navIndicator");
+  if(!$("navShell").offsetWidth){renderNav(idx);return}
+  clearTimeout(navSwapTimer);
+  box.style.setProperty("--dir",idx>navSet?1:-1);
+  ind.classList.add("grown");box.classList.add("out");
+  navSwapTimer=setTimeout(()=>{
+    renderNav(idx);box.classList.remove("out");box.classList.add("in-start");void box.offsetWidth;box.classList.remove("in-start");
+    positionIndicator();setTimeout(()=>ind.classList.remove("grown"),260);
+  },190);
+}
+function updateMobileNav(tab){
+  const idx=setIndexFor(tab);
+  if(idx>=0&&idx!==navSet)swapNavSet(idx);
+  else{navButtons().forEach(b=>b.classList.toggle("active",b.dataset.tab===tab));positionIndicator()}
+}
+/* Press, hold and drag the glass lens; release to select */
+(function(){
+  const shell=$("navShell"),ind=$("navIndicator");
+  shell.addEventListener("pointerdown",e=>{
+    if(e.button>0||!e.isPrimary)return;
+    const m=navMetrics();if(!m)return;
+    const rect=shell.getBoundingClientRect(),ir=ind.getBoundingClientRect(),px=e.clientX-rect.left;
+    const onInd=ind.style.opacity!=="0"&&e.clientX>=ir.left&&e.clientX<=ir.right;
+    const cur=ir.left-rect.left+m.bw/2;
+    navDrag={pid:e.pointerId,sx:e.clientX,m,rect,moved:false,off:onInd?px-cur:0,center:cur};
+    try{shell.setPointerCapture(e.pointerId)}catch(err){}
+    ind.style.opacity="1";ind.classList.add("grown");follow(px-navDrag.off,false);
+  });
+  function follow(c,instant){
+    const m=navDrag.m;c=Math.max(PAD+m.bw/2,Math.min(c,m.W-PAD-m.bw/2));navDrag.center=c;
+    ind.classList.toggle("dragging",instant);setIndX(c-m.bw/2);lightIcons(c,m);
+  }
+  shell.addEventListener("pointermove",e=>{
+    if(!navDrag||e.pointerId!==navDrag.pid)return;
+    if(!navDrag.moved&&Math.abs(e.clientX-navDrag.sx)>3)navDrag.moved=true;
+    follow(e.clientX-navDrag.rect.left-navDrag.off,navDrag.moved);
+  });
+  function end(e,cancel){
+    if(!navDrag||e.pointerId!==navDrag.pid)return;
+    const m=navDrag.m,idx=Math.max(0,Math.min(NAV_N-1,Math.round((navDrag.center-PAD-m.bw/2)/m.bw)));
+    navDrag=null;ind.classList.remove("grown","dragging");lightIcons(null,m);
+    const tab=NAV_SETS[navSet][idx];
+    if(cancel||tab===currentTab)positionIndicator();else showTab(tab);
+  }
+  shell.addEventListener("pointerup",e=>end(e,false));
+  shell.addEventListener("pointercancel",e=>end(e,true));
+})();
+window.addEventListener("resize",positionIndicator);
+window.addEventListener("load",()=>requestAnimationFrame(positionIndicator));
 function openMenu(){$("menuBackdrop").classList.add("open");$("menuSheet").classList.add("open");document.body.style.overflow="hidden"}
 function closeMenu(){$("menuBackdrop").classList.remove("open");$("menuSheet").classList.remove("open");if(!$("userSheet").classList.contains("open"))document.body.style.overflow=""}
 $("topMenuBtn").addEventListener("click",openMenu);
@@ -1143,7 +1315,9 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeUserSheet();cl
 $("nCategory").value="orders";
 setAudience("user");
 setConnection(false,"Not connected");
-showTab((location.hash||"#home").slice(1));
+const startTab=(location.hash||"#home").slice(1),firstTab=TABS[startTab]?startTab:"home";
+currentTab=firstTab;loadGlassMaps();renderNav(Math.max(0,setIndexFor(firstTab)));
+showTab(firstTab);
 loadUsers();
 </script>
 </body>
