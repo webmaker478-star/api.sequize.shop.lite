@@ -324,6 +324,8 @@ tbody tr:hover{background:var(--surface2)}
           </div>
           <div class="form-group"><label for="nTitle">Title</label><input id="nTitle" maxlength="150" required placeholder="Example: Your order has been shipped"></div>
           <div class="form-group"><label for="nMessage">Message</label><textarea id="nMessage" maxlength="5000" required placeholder="Write the notification message..."></textarea><div class="form-hint" id="nCounter">0 / 5000</div></div>
+          <div class="form-group"><label for="nDelivery">Delivery method</label><select id="nDelivery"><option value="web">Web / in-app notification only</option><option value="both">Web / in-app + FCM push to all registered devices</option><option value="fcm">FCM push only — all registered devices</option></select><div class="form-hint">Web notifications are saved through the Admin Notifications API. FCM push currently broadcasts to every registered token; it cannot target one specific user yet.</div></div>
+          <div class="form-group" id="fcmKeyGroup" hidden><label for="fcmAdminKey">FCM Admin API Key</label><input id="fcmAdminKey" type="password" autocomplete="off" placeholder="Enter FCM_ADMIN_API_KEY"><div class="form-hint">Used only in this page's memory. Do not put this key into the HTML source.</div></div>
           <div class="form-footer"><button type="submit" class="btn btn-primary" id="nSendBtn"><i class="ph ph-paper-plane-tilt"></i> Send notification</button></div>
         </form>
       </div>
@@ -523,6 +525,7 @@ tbody tr:hover{background:var(--surface2)}
 <script>
 "use strict";
 const DEFAULT_API_BASE = "https://apisequizeshoplite.vercel.app";
+const FCM_ENDPOINT = "/api/notifications";
 const ENDPOINTS = {users:"/api/admin/users",notifications:"/api/admin/notifications",taxes:"/api/admin/taxes",discounts:"/api/admin/discounts",blocks:"/api/admin/blocks",memberships:"/api/admin/memberships",support:"/api/admin/support",orders:"/api/admin/orders",products:"/api/admin/products"};
 const CATEGORIES = ["orders","payments","shipping","delivery","returns","refunds","cancellations","discounts","promotions","cart","wishlist","account","security","support","system"];
 const TABS = {
@@ -538,7 +541,7 @@ const TABS = {
   support:{title:"Support",icon:"headset",sub:"Handle customer tickets."}
 };
 
-let API_BASE = DEFAULT_API_BASE, ADMIN_API_KEY = "";
+let API_BASE = DEFAULT_API_BASE, ADMIN_API_KEY = "", FCM_ADMIN_API_KEY = "";
 let allUsers = [], visibleUsers = [], selectedUser = null;
 let currentTab = "home";
 let busy = {};
@@ -750,23 +753,74 @@ $("nMessage").addEventListener("input",()=>{$("nCounter").textContent=$("nMessag
 function renderSentLog(){
   $("sentLog").innerHTML=sentLog.length?sentLog.map(s=>`<article class="notification-card"><div class="notification-card-top"><div class="notification-title">${escapeHTML(s.title)}</div><span class="badge badge-blue">${escapeHTML(formatCategory(s.category))}</span></div><div class="notification-message">${escapeHTML(s.message)}</div><div class="notification-meta"><span class="badge">${icon("paper-plane-tilt")} ${escapeHTML(s.to)}</span><span class="notification-date">${escapeHTML(s.time)}</span></div></article>`).join(""):'<div class="empty-state">Nothing sent yet.</div>';
 }
+function updateDeliveryControls(){
+  const delivery=$("nDelivery").value;
+  $("fcmKeyGroup").hidden=delivery==="web";
+}
+$("nDelivery").addEventListener("change",updateDeliveryControls);
+
+async function sendFcmNotification(title,message){
+  const key=$("fcmAdminKey").value.trim()||FCM_ADMIN_API_KEY;
+  if(!key)throw new Error("Enter the FCM_ADMIN_API_KEY before sending an FCM push notification.");
+  const response=await fetch(API_BASE+FCM_ENDPOINT,{
+    method:"POST",
+    headers:{"Authorization":"Bearer "+key,"Content-Type":"application/json","Accept":"application/json"},
+    cache:"no-store",
+    body:JSON.stringify({action:"send-notification",title,body:message})
+  });
+  const raw=await response.text();let data;
+  try{data=raw?JSON.parse(raw):{}}catch(e){throw new Error("FCM API returned an invalid response.")}
+  if(!response.ok||data.success===false)throw new Error(data.message||data.error||("FCM push failed with HTTP "+response.status));
+  FCM_ADMIN_API_KEY=key;
+  return data;
+}
+
 $("nForm").addEventListener("submit",async e=>{
   e.preventDefault();
   if(busy.nSend)return;
   const title=$("nTitle").value.trim(),message=$("nMessage").value.trim(),category=$("nCategory").value;
+  const delivery=$("nDelivery").value;
   const notice=$("nSendNotice");
   if(!title||!message){showNotice(notice,"Title and message are required.","error");return}
   if(audience==="user"&&!nPicker.selected){showNotice(notice,"Select a recipient first.","error");return}
-  if(audience==="all"&&!confirm("Send this notification to ALL users?"))return;
+  if(audience==="user"&&delivery!=="web"){
+    showNotice(notice,"FCM currently sends to ALL registered devices, not a single user's device. Choose 'All users' to use FCM, or select web / in-app only for a single user.","error");return;
+  }
+  if(delivery!=="web"&&!($("fcmAdminKey").value.trim()||FCM_ADMIN_API_KEY)){
+    showNotice(notice,"Enter the FCM Admin API Key first.","error");$("fcmAdminKey").focus();return;
+  }
+  if(audience==="all"&&!confirm(delivery==="web"?"Send this web / in-app notification to ALL users?":delivery==="both"?"Save the web notification for ALL users AND send an FCM push to ALL registered devices?":"Send an FCM push to ALL registered devices?"))return;
   busy.nSend=true;const btn=$("nSendBtn");btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Sending...';hideNotice(notice);
+  let webResult=null, fcmResult=null, webError=null, fcmError=null;
+  const to=audience==="all"?"All users":(nPicker.selected.full_name||nPicker.selected.uid);
   try{
-    const body=audience==="all"?{action:"broadcast",title,message,category}:{action:"send",uid:nPicker.selected.uid,title,message,category};
-    const data=await apiRequest(ENDPOINTS.notifications,{method:"POST",body:JSON.stringify(body)});
-    const to=audience==="all"?"All users":(nPicker.selected.full_name||nPicker.selected.uid);
-    showNotice(notice,"Sent to "+to+". ID: "+(data.notificationId||"created"),"success");showToast("Notification sent.");
-    sentLog.unshift({title,message,category,to,time:new Date().toLocaleTimeString()});renderSentLog();
-    $("nTitle").value="";$("nMessage").value="";$("nCounter").textContent="0 / 5000";
-  }catch(err){showNotice(notice,err.message+(audience==="all"?" (Broadcast needs backend action \"broadcast\".)":""),"error")}
+    if(delivery!=="fcm"){
+      const body=audience==="all"?{action:"broadcast",title,message,category}:{action:"send",uid:nPicker.selected.uid,title,message,category};
+      try{webResult=await apiRequest(ENDPOINTS.notifications,{method:"POST",body:JSON.stringify(body)})}
+      catch(err){webError=err}
+    }
+    if(delivery!=="web"){
+      try{fcmResult=await sendFcmNotification(title,message)}
+      catch(err){fcmError=err}
+    }
+    const webOK=delivery==="fcm"||!!webResult;
+    const fcmOK=delivery==="web"||!!fcmResult;
+    if(webOK&&fcmOK){
+      const details=[];
+      if(webResult)details.push("web/in-app saved (ID: "+(webResult.notificationId||"created")+")");
+      if(fcmResult){const sent=fcmResult.successCount??fcmResult.successes??fcmResult.sent??"accepted";details.push("FCM push processed (success count: "+sent+")")}
+      showNotice(notice,"Completed for "+to+". "+details.join("; ")+".","success");showToast("Notification delivery completed.");
+      sentLog.unshift({title,message,category,to:to+" · "+(delivery==="both"?"Web + FCM":delivery==="fcm"?"FCM push":"Web / in-app"),time:new Date().toLocaleTimeString()});renderSentLog();
+      $("nTitle").value="";$("nMessage").value="";$("nCounter").textContent="0 / 5000";
+    }else{
+      const problems=[];
+      if(webError)problems.push("Web/in-app: "+webError.message);
+      if(fcmError)problems.push("FCM: "+fcmError.message);
+      const partial=!!webResult||!!fcmResult;
+      showNotice(notice,(partial?"Partial delivery: ":"Delivery failed: ")+problems.join(" | "),"error");
+      if(partial){sentLog.unshift({title,message,category,to:to+" · partial delivery",time:new Date().toLocaleTimeString()});renderSentLog()}
+    }
+  }catch(err){showNotice(notice,err.message,"error")}
   finally{busy.nSend=false;btn.disabled=false;btn.innerHTML=icon("paper-plane-tilt")+" Send notification"}
 });
 function normalizeNotification(raw,id){
