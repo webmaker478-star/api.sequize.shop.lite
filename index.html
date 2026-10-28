@@ -4,2736 +4,1147 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#111111">
-
 <title>Appnetick Admin Panel</title>
-
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
 <style>
-:root {
-    --bg: #111111;
-    --surface: #1b1b1b;
-    --surface2: #242424;
-    --surface3: #2b2b2b;
-    --border: #363636;
-    --text: #ffffff;
-    --muted: #a0a0a0;
-    --primary: #2979ff;
-    --success: #27c98b;
-    --danger: #ff5b65;
-    --warning: #ffb547;
-    --radius: 16px;
-}
-
-* {
-    box-sizing: border-box;
-}
-
-html {
-    scroll-behavior: smooth;
-}
-
-body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--text);
-    font-family: Inter, -apple-system, BlinkMacSystemFont,
-        "Segoe UI", Roboto, Arial, sans-serif;
-    font-size: 14px;
-}
-
-button,
-input,
-textarea,
-select {
-    font: inherit;
-}
-
-button {
-    cursor: pointer;
-}
-
-button:disabled {
-    opacity: .55;
-    cursor: not-allowed;
-}
-
-input,
-textarea,
-select {
-    width: 100%;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    color: var(--text);
-    padding: 12px 13px;
-    outline: none;
-}
-
-input:focus,
-textarea:focus,
-select:focus {
-    border-color: var(--primary);
-}
-
-textarea {
-    min-height: 120px;
-    resize: vertical;
-}
-
-select option {
-    background: var(--surface);
-    color: white;
-}
-
-button:focus-visible {
-    outline: 2px solid var(--primary);
-    outline-offset: 2px;
-}
-
-.app {
-    min-height: 100vh;
-}
-
-.sidebar {
-    position: fixed;
-    inset: 0 auto 0 0;
-    width: 240px;
-    background: #171717;
-    border-right: 1px solid var(--border);
-    padding: 24px 16px;
-    display: flex;
-    flex-direction: column;
-    z-index: 20;
-}
-
-.brand {
-    display: flex;
-    align-items: center;
-    gap: 11px;
-    padding: 4px 10px 28px;
-    font-size: 19px;
-    font-weight: 800;
-    letter-spacing: -.5px;
-}
-
-.brand-logo {
-    width: 36px;
-    height: 36px;
-    border-radius: 12px;
-    background: var(--primary);
-    display: grid;
-    place-items: center;
-    font-weight: 900;
-}
-
-.brand small {
-    display: block;
-    font-size: 10px;
-    color: var(--muted);
-    font-weight: 500;
-    margin-top: 3px;
-    letter-spacing: .5px;
-}
-
-.nav-label {
-    color: #737373;
-    font-size: 10px;
-    font-weight: 800;
-    letter-spacing: 1.3px;
-    padding: 12px 12px 9px;
-}
-
-.nav-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    width: 100%;
-    padding: 12px;
-    margin: 3px 0;
-    border: 0;
-    background: transparent;
-    color: #aaa;
-    border-radius: 11px;
-    text-align: left;
-}
-
-.nav-item .nav-icon {
-    width: 22px;
-    text-align: center;
-    font-size: 17px;
-}
-
-.nav-item.active {
-    color: white;
-    background: #252525;
-}
-
-.nav-item.active .nav-icon {
-    color: var(--primary);
-}
-
-.sidebar-bottom {
-    margin-top: auto;
-}
-
-.connection-indicator {
-    padding: 13px;
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    margin: 12px 2px;
-    color: var(--muted);
-    font-size: 12px;
-    line-height: 1.7;
-}
-
-.status-dot {
-    display: inline-block;
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--warning);
-    margin-right: 6px;
-}
-
-.status-dot.online {
-    background: var(--success);
-}
-
-.status-dot.offline {
-    background: var(--danger);
-}
-
-.main {
-    margin-left: 240px;
-    min-height: 100vh;
-    padding: 28px 30px 50px;
-}
-
-.topbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 30px;
-}
-
-.page-title {
-    font-size: 25px;
-    font-weight: 800;
-    letter-spacing: -.7px;
-    margin: 0;
-}
-
-.page-subtitle {
-    color: var(--muted);
-    margin-top: 7px;
-    font-size: 13px;
-}
-
-.topbar-actions {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.btn {
-    border: 1px solid var(--border);
-    background: var(--surface2);
-    color: white;
-    padding: 11px 15px;
-    border-radius: 10px;
-    font-weight: 650;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 7px;
-}
-
-.btn:hover {
-    filter: brightness(1.13);
-}
-
-.btn-primary {
-    background: var(--primary);
-    border-color: var(--primary);
-}
-
-.btn-danger {
-    color: white;
-    background: #3a2022;
-    border-color: #613034;
-}
-
-.btn-small {
-    padding: 8px 11px;
-    font-size: 12px;
-}
-
-.stats {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 16px;
-    margin-bottom: 25px;
-}
-
-.stat-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 21px;
-    min-width: 0;
-}
-
-.stat-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 8px;
-    color: var(--muted);
-    font-size: 12px;
-}
-
-.stat-icon {
-    width: 36px;
-    height: 36px;
-    display: grid;
-    place-items: center;
-    border-radius: 11px;
-    background: #242e40;
-    color: #7eafff;
-    font-size: 18px;
-}
-
-.stat-number {
-    font-size: 30px;
-    font-weight: 800;
-    letter-spacing: -1px;
-    margin-top: 18px;
-    overflow-wrap: anywhere;
-}
-
-.stat-caption {
-    color: var(--muted);
-    font-size: 11px;
-    margin-top: 5px;
-}
-
-.panel {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
-}
-
-.panel-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 14px;
-    padding: 20px;
-    border-bottom: 1px solid var(--border);
-}
-
-.panel-title {
-    font-size: 16px;
-    font-weight: 750;
-}
-
-.panel-description {
-    color: var(--muted);
-    font-size: 12px;
-    margin-top: 5px;
-}
-
-.toolbar {
-    padding: 16px 20px;
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    border-bottom: 1px solid var(--border);
-}
-
-.search-wrap {
-    position: relative;
-    flex: 1;
-    min-width: 150px;
-}
-
-.search-wrap input {
-    padding-left: 38px;
-}
-
-.search-icon {
-    position: absolute;
-    left: 13px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--muted);
-}
-
-.toolbar select {
-    width: auto;
-    min-width: 135px;
-}
-
-.table-wrap {
-    width: 100%;
-    overflow-x: auto;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    white-space: nowrap;
-}
-
-th {
-    color: var(--muted);
-    background: #202020;
-    text-align: left;
-    padding: 14px 18px;
-    font-size: 11px;
-    font-weight: 750;
-    letter-spacing: .4px;
-}
-
-td {
-    padding: 15px 18px;
-    border-top: 1px solid #303030;
-    vertical-align: middle;
-}
-
-tbody tr {
-    transition: background .15s;
-    cursor: pointer;
-}
-
-tbody tr:hover {
-    background: #242424;
-}
-
-.user-cell {
-    display: flex;
-    align-items: center;
-    gap: 11px;
-    min-width: 190px;
-}
-
-.avatar {
-    width: 39px;
-    height: 39px;
-    border-radius: 50%;
-    object-fit: cover;
-    background: #303030;
-    display: grid;
-    place-items: center;
-    color: white;
-    font-weight: 750;
-    flex-shrink: 0;
-    overflow: hidden;
-}
-
-.avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.user-name {
-    font-weight: 700;
-    font-size: 13px;
-    max-width: 220px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.user-secondary {
-    font-size: 11px;
-    color: var(--muted);
-    margin-top: 5px;
-    max-width: 230px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 6px 9px;
-    border-radius: 20px;
-    font-size: 10px;
-    font-weight: 750;
-    background: #292929;
-    color: #ccc;
-}
-
-.badge-blue {
-    background: #1d2d48;
-    color: #8eb9ff;
-}
-
-.badge-green {
-    background: #18372c;
-    color: #6ee0b3;
-}
-
-.badge-yellow {
-    background: #3b3020;
-    color: #ffd18b;
-}
-
-.badge-red {
-    background: #3c2224;
-    color: #ff9ba1;
-}
-
-.table-action {
-    color: #8eb9ff;
-    font-weight: 700;
-    background: transparent;
-    border: 0;
-}
-
-.loading,
-.empty-state,
-.error-state {
-    padding: 45px 20px;
-    text-align: center;
-    color: var(--muted);
-    line-height: 1.7;
-}
-
-.error-state {
-    color: #ff999f;
-}
-
-.spinner {
-    display: inline-block;
-    width: 19px;
-    height: 19px;
-    border: 2px solid #555;
-    border-top-color: var(--primary);
-    border-radius: 50%;
-    animation: spin .7s linear infinite;
-    vertical-align: middle;
-    margin-right: 7px;
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
-
-.mobile-user-list {
-    display: none;
-}
-
-.pagination-info {
-    padding: 15px 20px;
-    color: var(--muted);
-    font-size: 12px;
-    border-top: 1px solid var(--border);
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-}
-
-/* Bottom sheet */
-
-.sheet-backdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,.65);
-    z-index: 100;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity .22s, visibility .22s;
-}
-
-.sheet-backdrop.open {
-    opacity: 1;
-    visibility: visible;
-}
-
-.bottom-sheet {
-    position: fixed;
-    z-index: 101;
-    bottom: 0;
-    right: 0;
-    width: min(660px, 100%);
-    max-height: 92vh;
-    overflow-y: auto;
-    background: #1b1b1b;
-    border: 1px solid #3a3a3a;
-    border-bottom: 0;
-    border-radius: 22px 22px 0 0;
-    padding: 0 22px 25px;
-    transform: translateY(105%);
-    transition: transform .28s ease;
-    visibility: hidden;
-}
-
-.bottom-sheet.open {
-    transform: translateY(0);
-    visibility: visible;
-}
-
-.sheet-handle {
-    width: 42px;
-    height: 4px;
-    border-radius: 10px;
-    background: #555;
-    margin: 10px auto 19px;
-}
-
-.sheet-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 15px;
-    padding-bottom: 18px;
-    border-bottom: 1px solid var(--border);
-}
-
-.sheet-user {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    min-width: 0;
-}
-
-.sheet-user .avatar {
-    width: 46px;
-    height: 46px;
-}
-
-.sheet-user-info {
-    min-width: 0;
-}
-
-.sheet-user-info h2 {
-    margin: 0;
-    font-size: 17px;
-    overflow-wrap: anywhere;
-}
-
-.sheet-user-info p {
-    color: var(--muted);
-    margin: 5px 0 0;
-    font-size: 12px;
-    overflow-wrap: anywhere;
-}
-
-.icon-btn {
-    width: 35px;
-    height: 35px;
-    flex-shrink: 0;
-    background: var(--surface3);
-    border: 1px solid var(--border);
-    color: white;
-    border-radius: 10px;
-    font-size: 18px;
-}
-
-.sheet-tabs {
-    display: flex;
-    gap: 8px;
-    padding: 17px 0;
-}
-
-.sheet-tab {
-    flex: 1;
-    border: 1px solid var(--border);
-    color: var(--muted);
-    background: #242424;
-    padding: 11px;
-    border-radius: 10px;
-    font-weight: 700;
-}
-
-.sheet-tab.active {
-    background: #1d3151;
-    border-color: #315b96;
-    color: #a9ccff;
-}
-
-.form-group {
-    margin-bottom: 16px;
-}
-
-.form-group label {
-    display: block;
-    font-size: 12px;
-    font-weight: 700;
-    margin-bottom: 8px;
-}
-
-.form-hint {
-    font-size: 11px;
-    color: var(--muted);
-    margin-top: 7px;
-    line-height: 1.5;
-}
-
-.form-footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    padding-top: 3px;
-}
-
-.notice {
-    padding: 12px 14px;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    margin-bottom: 15px;
-    font-size: 12px;
-    line-height: 1.6;
-    display: none;
-    overflow-wrap: anywhere;
-}
-
-.notice.show {
-    display: block;
-}
-
-.notice.success {
-    background: #18372c;
-    color: #8ce5c0;
-    border-color: #285c48;
-}
-
-.notice.error {
-    background: #3c2224;
-    color: #ffafb3;
-    border-color: #643236;
-}
-
-.history-toolbar {
-    display: flex;
-    gap: 9px;
-    margin-bottom: 14px;
-}
-
-.history-toolbar select {
-    flex: 1;
-    min-width: 0;
-}
-
-.notification-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.notification-card {
-    padding: 15px;
-    border: 1px solid var(--border);
-    background: #222;
-    border-radius: 12px;
-}
-
-.notification-card-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 12px;
-}
-
-.notification-title {
-    font-weight: 750;
-    line-height: 1.5;
-    overflow-wrap: anywhere;
-}
-
-.notification-message {
-    color: #c0c0c0;
-    font-size: 12px;
-    line-height: 1.7;
-    margin-top: 8px;
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
-}
-
-.notification-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 7px;
-    margin-top: 12px;
-    align-items: center;
-}
-
-.notification-date {
-    font-size: 10px;
-    color: var(--muted);
-}
-
-.history-count {
-    color: var(--muted);
-    font-size: 12px;
-    margin-bottom: 12px;
-}
-
-.toast-container {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 200;
-    display: flex;
-    flex-direction: column;
-    gap: 9px;
-    width: min(350px, calc(100% - 40px));
-}
-
-.toast {
-    padding: 14px 16px;
-    border-radius: 12px;
-    background: #242424;
-    border: 1px solid var(--border);
-    box-shadow: 0 10px 35px rgba(0,0,0,.3);
-    font-size: 13px;
-    line-height: 1.5;
-    overflow-wrap: anywhere;
-}
-
-.toast.success {
-    border-color: #285c48;
-}
-
-.toast.error {
-    border-color: #643236;
-}
-
-.dialog-backdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,.7);
-    z-index: 150;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-}
-
-.dialog-backdrop.open {
-    display: flex;
-}
-
-.dialog {
-    width: min(440px, 100%);
-    padding: 24px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 18px;
-}
-
-.dialog h2 {
-    margin: 0 0 8px;
-    font-size: 19px;
-}
-
-.dialog p {
-    color: var(--muted);
-    font-size: 12px;
-    line-height: 1.7;
-}
-
-.dialog-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-top: 18px;
-}
-
-.mobile-nav {
-    display: none;
-}
-
-@media (max-width: 1000px) {
-    .sidebar {
-        width: 210px;
-    }
-
-    .main {
-        margin-left: 210px;
-        padding: 24px 20px 40px;
-    }
-
-    .stats {
-        gap: 10px;
-    }
-
-    .stat-card {
-        padding: 16px;
-    }
-
-    .stat-number {
-        font-size: 25px;
-    }
-}
-
-@media (max-width: 720px) {
-    .sidebar {
-        display: none;
-    }
-
-    .main {
-        margin-left: 0;
-        padding: 20px 14px 95px;
-    }
-
-    .topbar {
-        align-items: flex-start;
-        margin-bottom: 23px;
-    }
-
-    .page-title {
-        font-size: 22px;
-    }
-
-    .page-subtitle {
-        line-height: 1.5;
-    }
-
-    .topbar-actions {
-        gap: 7px;
-    }
-
-    .topbar-actions .btn {
-        padding: 10px 11px;
-        font-size: 12px;
-    }
-
-    .stats {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 10px;
-        margin-bottom: 20px;
-    }
-
-    .stat-card {
-        padding: 15px;
-    }
-
-    .stat-card:last-child {
-        grid-column: 1 / -1;
-    }
-
-    .stat-number {
-        font-size: 26px;
-        margin-top: 12px;
-    }
-
-    .panel-header {
-        padding: 16px;
-    }
-
-    .toolbar {
-        padding: 13px;
-        flex-wrap: wrap;
-    }
-
-    .search-wrap {
-        flex-basis: 100%;
-    }
-
-    .toolbar select {
-        flex: 1;
-        min-width: 0;
-        width: 0;
-    }
-
-    .table-wrap {
-        display: none;
-    }
-
-    .mobile-user-list {
-        display: block;
-    }
-
-    .mobile-user-card {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 15px;
-        border-bottom: 1px solid #303030;
-        cursor: pointer;
-    }
-
-    .mobile-user-card:active {
-        background: #292929;
-    }
-
-    .mobile-user-card .avatar {
-        width: 43px;
-        height: 43px;
-    }
-
-    .mobile-user-info {
-        flex: 1;
-        min-width: 0;
-    }
-
-    .mobile-user-info .user-name,
-    .mobile-user-info .user-secondary {
-        max-width: 100%;
-    }
-
-    .mobile-user-right {
-        text-align: right;
-        flex-shrink: 0;
-    }
-
-    .mobile-user-right small {
-        display: block;
-        color: var(--muted);
-        margin-top: 6px;
-        font-size: 10px;
-    }
-
-    .pagination-info {
-        padding: 13px 15px;
-    }
-
-    .bottom-sheet {
-        padding-left: 16px;
-        padding-right: 16px;
-        max-height: 94vh;
-    }
-
-    .sheet-header {
-        gap: 8px;
-    }
-
-    .sheet-user-info h2 {
-        font-size: 15px;
-    }
-
-    .sheet-tabs {
-        padding: 14px 0;
-    }
-
-    .mobile-nav {
-        display: flex;
-        position: fixed;
-        z-index: 30;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 68px;
-        background: rgba(24,24,24,.97);
-        border-top: 1px solid var(--border);
-        padding: 5px 7px env(safe-area-inset-bottom, 0);
-        justify-content: space-around;
-        backdrop-filter: blur(15px);
-    }
-
-    .mobile-nav button {
-        flex: 1;
-        background: transparent;
-        border: 0;
-        color: #999;
-        font-size: 10px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 5px;
-    }
-
-    .mobile-nav button span {
-        font-size: 19px;
-    }
-
-    .mobile-nav button.active {
-        color: #8eb9ff;
-    }
-
-    .toast-container {
-        top: 12px;
-        right: 12px;
-        width: calc(100% - 24px);
-    }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
-        scroll-behavior: auto !important;
-        animation-duration: .01ms !important;
-        transition-duration: .01ms !important;
-    }
-}
-
-/* Keep the tax and discount panels inside the content column. */
-#taxSettingsPanel, #discountSettingsPanel {
-    display: block;
-    width: 100%;
-    max-width: 100%;
-    min-width: 0;
-    margin: 24px 0 30px;
-}
-#taxSettingsPanel *, #discountSettingsPanel * { min-width: 0; }
-#taxSettingsPanel .panel-header, #discountSettingsPanel .panel-header {
-    min-width: 0;
-    flex-wrap: wrap;
-}
-#taxSettingsPanel .panel-header > div, #discountSettingsPanel .panel-header > div {
-    flex: 1 1 220px;
-    min-width: 0;
-}
-#addTaxForm, #addDiscountForm { width: 100%; min-width: 0; }
-#taxRows > div, #discountRows > div { min-width: 0; max-width: 100%; }
-#taxRows > div > *, #discountRows > div > * { min-width: 0; overflow-wrap: anywhere; }
-@media (max-width: 1000px) {
-    #addTaxForm { grid-template-columns: minmax(0,1fr) minmax(100px,140px) !important; }
-    #addTaxForm > button { grid-column: 1 / -1; width: 100%; }
-    #addDiscountForm { grid-template-columns: minmax(0,1fr) minmax(0,1fr) !important; }
-    #addDiscountForm > button { grid-column: 1 / -1; width: 100%; }
-    #discountRows > div { grid-template-columns: minmax(0,1fr) auto !important; }
-    #discountRows > div > div:nth-child(2), #discountRows > div > div:nth-child(3) { grid-column: 1 / -1; }
-    #discountRows > div > button { grid-column: 2; grid-row: 1; }
-}
-@media (max-width: 720px) {
-    #taxSettingsPanel, #discountSettingsPanel { margin: 18px 0 24px; }
-    #taxSettingsPanel > .panel-header, #discountSettingsPanel > .panel-header { padding: 15px; }
-    #taxSettingsPanel > div[style*="padding:20px"], #discountSettingsPanel > div[style*="padding:20px"] { padding: 14px !important; }
-    #addTaxForm, #addDiscountForm { grid-template-columns: minmax(0,1fr) !important; }
-    #addTaxForm > *, #addDiscountForm > * { grid-column: 1 / -1 !important; width: 100%; }
-    #discountRows > div { grid-template-columns: minmax(0,1fr) auto !important; padding: 10px !important; }
-    #taxRows > div { grid-template-columns: minmax(0,1fr) auto !important; padding: 10px !important; }
-    #taxRows > div > button { grid-column: 2; grid-row: 1 / span 2; }
-    #discountRows > div > button { grid-column: 2; grid-row: 1; }
-}
-
+:root{--bg:#111;--surface:#1b1b1b;--surface2:#242424;--surface3:#2b2b2b;--border:#363636;--text:#fff;--muted:#a0a0a0;--primary:#2979ff;--success:#27c98b;--danger:#ff5b65;--warning:#ffb547;--radius:16px;--drawer-w:480px}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;font-size:14px}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+button:disabled{opacity:.55;cursor:not-allowed}
+input,textarea,select{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);padding:12px 13px;outline:none}
+input:focus,textarea:focus,select:focus{border-color:var(--primary)}
+textarea{min-height:120px;resize:vertical}
+select option{background:var(--surface);color:#fff}
+button:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+i.ph{line-height:1;vertical-align:middle}
+
+.sidebar{position:fixed;inset:0 auto 0 0;width:240px;background:#171717;border-right:1px solid var(--border);padding:24px 16px;display:flex;flex-direction:column;z-index:20;overflow-y:auto}
+.brand{display:flex;align-items:center;gap:11px;padding:4px 10px 24px;font-size:19px;font-weight:800;letter-spacing:-.5px}
+.brand-logo{width:36px;height:36px;border-radius:12px;background:var(--primary);display:grid;place-items:center;font-weight:900}
+.brand small{display:block;font-size:10px;color:var(--muted);font-weight:500;margin-top:3px;letter-spacing:.5px}
+.nav-label{color:#737373;font-size:10px;font-weight:800;letter-spacing:1.3px;padding:12px 12px 9px}
+.nav-item{display:flex;align-items:center;gap:12px;width:100%;padding:11px 12px;margin:2px 0;border:0;background:transparent;color:#aaa;border-radius:11px;text-align:left}
+.nav-item i{font-size:19px;width:22px}
+.nav-item:hover{background:#1f1f1f;color:#fff}
+.nav-item.active{color:#fff;background:#252525}
+.nav-item.active i{color:var(--primary)}
+.sidebar-bottom{margin-top:auto}
+.connection-indicator{padding:13px;border:1px solid var(--border);border-radius:12px;margin:12px 2px;color:var(--muted);font-size:12px;line-height:1.7}
+.status-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--warning);margin-right:6px}
+.status-dot.online{background:var(--success)}
+.status-dot.offline{background:var(--danger)}
+
+.main{margin-left:240px;min-height:100vh;padding:28px 30px 50px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:26px}
+.page-title{font-size:25px;font-weight:800;letter-spacing:-.7px;margin:0;display:flex;align-items:center;gap:10px}
+.page-subtitle{color:var(--muted);margin-top:7px;font-size:13px}
+.topbar-actions{display:flex;align-items:center;gap:10px}
+.page{display:none}
+.page.active{display:block}
+
+.btn{border:1px solid var(--border);background:var(--surface2);color:#fff;padding:11px 15px;border-radius:10px;font-weight:650;display:inline-flex;align-items:center;justify-content:center;gap:7px}
+.btn:hover{filter:brightness(1.13)}
+.btn-primary{background:var(--primary);border-color:var(--primary)}
+.btn-danger{background:#3a2022;border-color:#613034}
+.btn-success{background:#18372c;border-color:#285c48}
+.btn-small{padding:8px 11px;font-size:12px}
+
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:25px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:21px;min-width:0}
+.stat-head{display:flex;justify-content:space-between;align-items:center;gap:8px;color:var(--muted);font-size:12px}
+.stat-icon{width:36px;height:36px;display:grid;place-items:center;border-radius:11px;background:#242e40;color:#7eafff;font-size:19px}
+.stat-number{font-size:30px;font-weight:800;letter-spacing:-1px;margin-top:18px}
+.stat-caption{color:var(--muted);font-size:11px;margin-top:5px}
+
+.quick-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.quick-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;text-align:left;color:#fff;display:flex;flex-direction:column;gap:8px}
+.quick-card:hover{border-color:#4a4a4a;background:#202020}
+.quick-card i{font-size:24px;color:var(--primary)}
+.quick-card b{font-size:14px}
+.quick-card span{color:var(--muted);font-size:12px;line-height:1.5}
+
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:22px}
+.panel-header{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:20px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.panel-title{font-size:16px;font-weight:750}
+.panel-description{color:var(--muted);font-size:12px;margin-top:5px}
+.panel-body{padding:20px}
+.toolbar{padding:16px 20px;display:flex;gap:10px;align-items:center;border-bottom:1px solid var(--border)}
+.search-wrap{position:relative;flex:1;min-width:150px}
+.search-wrap input{padding-left:38px}
+.search-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:16px}
+.toolbar select{width:auto;min-width:135px}
+.table-wrap{width:100%;overflow-x:auto}
+table{width:100%;border-collapse:collapse;white-space:nowrap}
+th{color:var(--muted);background:#202020;text-align:left;padding:14px 18px;font-size:11px;font-weight:750;letter-spacing:.4px}
+td{padding:15px 18px;border-top:1px solid #303030;vertical-align:middle}
+tbody tr{transition:background .15s;cursor:pointer}
+tbody tr:hover{background:#242424}
+.user-cell{display:flex;align-items:center;gap:11px;min-width:190px}
+.avatar{width:39px;height:39px;border-radius:50%;background:#303030;display:grid;place-items:center;color:#fff;font-weight:750;flex-shrink:0;overflow:hidden}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.user-name{font-weight:700;font-size:13px;max-width:220px;overflow:hidden;text-overflow:ellipsis}
+.user-secondary{font-size:11px;color:var(--muted);margin-top:5px;max-width:230px;overflow:hidden;text-overflow:ellipsis}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:6px 9px;border-radius:20px;font-size:10px;font-weight:750;background:#292929;color:#ccc}
+.badge-blue{background:#1d2d48;color:#8eb9ff}
+.badge-green{background:#18372c;color:#6ee0b3}
+.badge-yellow{background:#3b3020;color:#ffd18b}
+.badge-red{background:#3c2224;color:#ff9ba1}
+.table-action{color:#8eb9ff;font-weight:700;background:transparent;border:0;display:inline-flex;align-items:center;gap:4px}
+.loading,.empty-state,.error-state{padding:40px 20px;text-align:center;color:var(--muted);line-height:1.7}
+.error-state{color:#ff999f}
+.empty-state i{font-size:30px;display:block;margin-bottom:8px}
+.spinner{display:inline-block;width:18px;height:18px;border:2px solid #555;border-top-color:var(--primary);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:7px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.mobile-user-list{display:none}
+.pagination-info{padding:15px 20px;color:var(--muted);font-size:12px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:10px}
+
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:12px;font-weight:700;margin-bottom:8px}
+.form-hint{font-size:11px;color:var(--muted);margin-top:7px;line-height:1.5}
+.form-footer{display:flex;justify-content:flex-end;gap:10px;padding-top:3px}
+.form-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;align-items:end}
+.notice{padding:12px 14px;border:1px solid var(--border);border-radius:10px;margin-bottom:15px;font-size:12px;line-height:1.6;display:none;overflow-wrap:anywhere}
+.notice.show{display:block}
+.notice.success{background:#18372c;color:#8ce5c0;border-color:#285c48}
+.notice.error{background:#3c2224;color:#ffafb3;border-color:#643236}
+.item-list{display:grid;gap:10px;margin-bottom:22px}
+.item-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;border:1px solid var(--border);border-radius:12px;background:#202020}
+.item-row .grow{flex:1;min-width:0;overflow-wrap:anywhere}
+.item-row .meta{color:var(--muted);font-size:12px;margin-top:4px}
+.seg{display:flex;gap:8px;margin-bottom:16px}
+.seg button{flex:1;border:1px solid var(--border);color:var(--muted);background:#242424;padding:11px;border-radius:10px;font-weight:700;display:flex;gap:7px;align-items:center;justify-content:center}
+.seg button.active{background:#1d3151;border-color:#315b96;color:#a9ccff}
+.picker-list{max-height:180px;overflow-y:auto;border:1px solid var(--border);border-radius:10px;margin-top:8px;background:#202020}
+.picker-item{padding:10px 12px;border-bottom:1px solid #2c2c2c;cursor:pointer;font-size:12px}
+.picker-item:hover,.picker-item.sel{background:#1d3151}
+.picker-item small{color:var(--muted);display:block;margin-top:3px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:8px 10px;background:#1d2d48;border-radius:10px;color:#a9ccff;font-size:12px;margin-top:8px}
+.chip button{background:transparent;border:0;color:inherit;font-size:14px;padding:0}
+
+.notification-list{display:flex;flex-direction:column;gap:10px}
+.notification-card{padding:15px;border:1px solid var(--border);background:#222;border-radius:12px}
+.notification-card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.notification-title{font-weight:750;line-height:1.5;overflow-wrap:anywhere}
+.notification-message{color:#c0c0c0;font-size:12px;line-height:1.7;margin-top:8px;white-space:pre-wrap;overflow-wrap:anywhere}
+.notification-meta{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px;align-items:center}
+.notification-date{font-size:10px;color:var(--muted)}
+.history-count{color:var(--muted);font-size:12px;margin-bottom:12px}
+.history-toolbar{display:flex;gap:9px;margin-bottom:14px}
+.history-toolbar select{flex:1;min-width:0}
+
+/* Resizable drawer */
+.sheet-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:100;opacity:0;visibility:hidden;transition:opacity .22s,visibility .22s}
+.sheet-backdrop.open{opacity:1;visibility:visible}
+.drawer{position:fixed;z-index:101;top:0;right:0;bottom:0;width:var(--drawer-w);min-width:360px;max-width:92vw;background:#1b1b1b;border-left:1px solid #3a3a3a;overflow-y:auto;padding:0 22px 25px;transform:translateX(105%);transition:transform .28s ease;visibility:hidden}
+.drawer.open{transform:translateX(0);visibility:visible}
+.drawer.resizing{transition:none;user-select:none}
+.drawer-resizer{position:absolute;left:0;top:0;bottom:0;width:8px;cursor:col-resize;z-index:5}
+.drawer-resizer::after{content:"";position:absolute;left:2px;top:50%;width:4px;height:48px;margin-top:-24px;border-radius:4px;background:#555;opacity:0;transition:opacity .15s}
+.drawer-resizer:hover::after,.drawer.resizing .drawer-resizer::after{opacity:1;background:var(--primary)}
+.sheet-handle{display:none;width:42px;height:4px;border-radius:10px;background:#555;margin:10px auto 6px}
+.sheet-header{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;padding:24px 0 18px;border-bottom:1px solid var(--border)}
+.sheet-user{display:flex;align-items:center;gap:12px;min-width:0}
+.sheet-user .avatar{width:46px;height:46px}
+.sheet-user-info{min-width:0}
+.sheet-user-info h2{margin:0;font-size:17px;overflow-wrap:anywhere}
+.sheet-user-info p{color:var(--muted);margin:5px 0 0;font-size:12px;overflow-wrap:anywhere}
+.icon-btn{width:35px;height:35px;flex-shrink:0;background:var(--surface3);border:1px solid var(--border);color:#fff;border-radius:10px;font-size:18px;display:grid;place-items:center}
+.sheet-tabs{display:flex;gap:8px;padding:17px 0}
+.sheet-tab{flex:1;border:1px solid var(--border);color:var(--muted);background:#242424;padding:10px 6px;border-radius:10px;font-weight:700;font-size:12px;display:flex;gap:6px;align-items:center;justify-content:center}
+.sheet-tab.active{background:#1d3151;border-color:#315b96;color:#a9ccff}
+
+.toast-container{position:fixed;top:20px;right:20px;z-index:200;display:flex;flex-direction:column;gap:9px;width:min(350px,calc(100% - 40px))}
+.toast{padding:14px 16px;border-radius:12px;background:#242424;border:1px solid var(--border);box-shadow:0 10px 35px rgba(0,0,0,.3);font-size:13px;line-height:1.5;overflow-wrap:anywhere}
+.toast.success{border-color:#285c48}
+.toast.error{border-color:#643236}
+.dialog-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:150;display:none;align-items:center;justify-content:center;padding:20px}
+.dialog-backdrop.open{display:flex}
+.dialog{width:min(440px,100%);padding:24px;background:var(--surface);border:1px solid var(--border);border-radius:18px}
+.dialog h2{margin:0 0 8px;font-size:19px}
+.dialog p{color:var(--muted);font-size:12px;line-height:1.7}
+.dialog-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}
+.mobile-nav{display:none}
+.menu-btn{display:none}
+
+/* Liquid glass (iOS style) */
+.nav-shell{position:relative;width:100%;max-width:380px;height:60px;margin:0 auto;pointer-events:auto}
+.glass-layer,.nav-ind{position:absolute;border-radius:999px;pointer-events:none}
+.glass-layer{inset:0;background:rgba(255,255,255,.07);-webkit-backdrop-filter:blur(10px) saturate(1.8) brightness(1.12);backdrop-filter:blur(10px) saturate(1.8) brightness(1.12);box-shadow:inset 0 0 0 1px rgba(255,255,255,.16),inset 2px 3px 5px -2px rgba(255,255,255,.7),inset -2px -3px 5px -2px rgba(255,255,255,.5),inset 0 0 22px rgba(255,255,255,.08),0 14px 34px rgba(0,0,0,.5),0 2px 8px rgba(0,0,0,.3)}
+.lg-refract .glass-layer{-webkit-backdrop-filter:url(#lgPill) blur(1px) saturate(1.8) brightness(1.12);backdrop-filter:url(#lgPill) blur(1px) saturate(1.8) brightness(1.12)}
+.glass-layer::before,.nav-ind::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1.5px;background:conic-gradient(from 215deg,rgba(255,255,255,.95),rgba(255,255,255,.05) 22%,rgba(255,255,255,.05) 48%,rgba(255,255,255,.8) 62%,rgba(255,255,255,.05) 82%,rgba(255,255,255,.95));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);pointer-events:none}
+.glass-layer::after,.nav-ind::after{content:"";position:absolute;inset:0;border-radius:inherit;background:radial-gradient(90% 120% at 15% 0%,rgba(255,255,255,.22),transparent 55%);mix-blend-mode:screen;pointer-events:none}
+.nav-ind{top:6px;left:0;width:72px;height:48px;z-index:1;background:rgba(255,255,255,.13);-webkit-backdrop-filter:blur(3px) saturate(1.9) brightness(1.25);backdrop-filter:blur(3px) saturate(1.9) brightness(1.25);box-shadow:inset 0 0 0 1px rgba(255,255,255,.2),inset 2px 3px 5px -2px rgba(255,255,255,.85),inset -2px -3px 5px -2px rgba(255,255,255,.55),inset 0 0 16px rgba(255,255,255,.14),0 6px 16px rgba(0,0,0,.35);transition:transform .5s cubic-bezier(.34,1.4,.64,1),width .5s cubic-bezier(.34,1.4,.64,1),opacity .2s}
+.lg-refract .nav-ind{-webkit-backdrop-filter:url(#lgInd) blur(1px) saturate(1.9) brightness(1.25);backdrop-filter:url(#lgInd) blur(1px) saturate(1.9) brightness(1.25)}
+.nav-items{position:absolute;inset:0;display:flex;padding:0 6px;z-index:2}
+.nav-items button{flex:1;min-width:0;background:transparent;border:0;color:rgba(255,255,255,.7);display:grid;place-items:center;border-radius:999px;font-size:25px;transition:color .2s,transform .2s;-webkit-tap-highlight-color:transparent}
+.nav-items button.active{color:#fff}
+.nav-items button:active{transform:scale(.88)}
+.title-block{display:flex;align-items:center;gap:12px;min-width:0}
+.menu-btn{width:42px;height:42px;padding:0;font-size:22px;flex-shrink:0}
+
+/* Mobile menu sheet */
+.menu-sheet{position:fixed;z-index:101;left:0;right:0;bottom:0;max-height:88vh;overflow-y:auto;background:rgba(27,27,27,.92);-webkit-backdrop-filter:blur(30px) saturate(1.6);backdrop-filter:blur(30px) saturate(1.6);border-top:1px solid rgba(255,255,255,.14);border-radius:28px 28px 0 0;padding:0 18px calc(24px + env(safe-area-inset-bottom,0px));transform:translateY(105%);transition:transform .3s ease;visibility:hidden}
+.menu-sheet.open{transform:translateY(0);visibility:visible}
+.menu-head{display:flex;justify-content:space-between;align-items:center;padding:6px 0 14px}
+.menu-head b{font-size:17px}
+.menu-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.menu-item{display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 8px;border-radius:20px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.05);color:#ddd;font-size:12px;font-weight:600;text-align:center}
+.menu-item i{font-size:26px;color:#8eb9ff}
+.menu-item.active{background:rgba(41,121,255,.22);border-color:rgba(120,170,255,.45);color:#fff}
+.menu-item:active{transform:scale(.96)}
+
+@media (max-width:1000px){
+.sidebar{width:210px}.main{margin-left:210px;padding:24px 20px 40px}
+.stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:720px){
+.sidebar{display:none}
+.main{margin-left:0;padding:20px 14px 125px}
+.topbar{align-items:flex-start}
+.page-title{font-size:22px}
+.topbar-actions .btn{padding:10px 11px;font-size:12px}
+.stats{gap:10px}.stat-card{padding:15px}.stat-number{font-size:26px;margin-top:12px}
+.toolbar{padding:13px;flex-wrap:wrap}
+.search-wrap{flex-basis:100%}
+.toolbar select{flex:1;min-width:0;width:0}
+.table-wrap{display:none}
+.mobile-user-list{display:block}
+.mobile-user-card{display:flex;align-items:center;gap:12px;padding:15px;border-bottom:1px solid #303030;cursor:pointer}
+.mobile-user-card:active{background:#292929}
+.mobile-user-info{flex:1;min-width:0}
+.mobile-user-info .user-name,.mobile-user-info .user-secondary{max-width:100%}
+.mobile-user-right{text-align:right;flex-shrink:0}
+.mobile-user-right small{display:block;color:var(--muted);margin-top:6px;font-size:10px}
+.drawer{top:auto;left:0;width:100%!important;min-width:0;max-width:100%;max-height:92vh;border-left:0;border-top:1px solid #3a3a3a;border-radius:22px 22px 0 0;padding:0 16px 25px;transform:translateY(105%)}
+.drawer.open{transform:translateY(0)}
+.drawer-resizer{display:none}
+.sheet-handle{display:block}
+.sheet-header{padding-top:12px}
+.mobile-nav{display:flex;position:fixed;z-index:30;left:14px;right:14px;bottom:calc(12px + env(safe-area-inset-bottom,0px));pointer-events:none}
+.menu-btn{display:inline-flex}
+.topbar-actions .btn span{display:none}
+.toast-container{top:12px;right:12px;width:calc(100% - 24px)}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
 </head>
-
 <body>
 
-<div class="app">
-
-    <aside class="sidebar">
-        <div class="brand">
-            <div class="brand-logo">A</div>
-            <div>
-                Appnetick
-                <small>ADMIN PANEL</small>
-            </div>
-        </div>
-
-        <div class="nav-label">WORKSPACE</div>
-
-        <button class="nav-item active" type="button" id="navUsers">
-            <span class="nav-icon">◉</span>
-            <span>Users</span>
-        </button>
-
-        <button class="nav-item" type="button" id="navNotifications">
-            <span class="nav-icon">♧</span>
-            <span>Notifications</span>
-        </button>
-
-        <div class="nav-label">MANAGEMENT</div>
-
-        <button class="nav-item" type="button" data-placeholder="Memberships">
-            <span class="nav-icon">◇</span>
-            <span>Memberships</span>
-        </button>
-
-        <button class="nav-item" type="button" data-placeholder="Support">
-            <span class="nav-icon">✉</span>
-            <span>Support</span>
-        </button>
-
-        <div class="sidebar-bottom">
-            <div class="connection-indicator">
-                <div>
-                    <span class="status-dot" id="connectionDot"></span>
-                    <span id="connectionLabel">Not connected</span>
-                </div>
-                <div id="connectionUrl" style="margin-top:5px;overflow-wrap:anywhere">
-                    Configure API connection
-                </div>
-                <button class="btn btn-small" type="button"
-                    style="width:100%;margin-top:12px"
-                    id="connectionButton">
-                    API Settings
-                </button>
-            </div>
-        </div>
-    </aside>
-
-    <main class="main">
-
-        <header class="topbar">
-            <div>
-                <h1 class="page-title">Users</h1>
-                <div class="page-subtitle">
-                    Manage users and send e-commerce notifications.
-                </div>
-            </div>
-
-            <div class="topbar-actions">
-                <button class="btn" type="button" id="refreshButton">
-                    ↻ <span class="refresh-text">Refresh</span>
-                </button>
-                <button class="btn btn-primary" type="button" id="connectButton">
-                    Connect API
-                </button>
-            </div>
-        </header>
-
-        <section class="stats">
-            <div class="stat-card">
-                <div class="stat-head">
-                    <span>Total Users</span>
-                    <span class="stat-icon">♙</span>
-                </div>
-                <div class="stat-number" id="totalUsers">—</div>
-                <div class="stat-caption">All users returned by the API</div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-head">
-                    <span>App Users</span>
-                    <span class="stat-icon">▣</span>
-                </div>
-                <div class="stat-number" id="appUsersCount">—</div>
-                <div class="stat-caption">Users from the app database</div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-head">
-                    <span>Website Users</span>
-                    <span class="stat-icon">◎</span>
-                </div>
-                <div class="stat-number" id="websiteUsersCount">—</div>
-                <div class="stat-caption">Users from the website database</div>
-            </div>
-        </section>
-
-        <section class="panel">
-
-            <div class="panel-header">
-                <div>
-                    <div class="panel-title">All Users</div>
-                    <div class="panel-description">
-                        Select a user to send a notification or view notification history.
-                    </div>
-                </div>
-
-                <span class="badge badge-blue" id="listCountBadge">
-                    0 users
-                </span>
-            </div>
-
-            <div class="toolbar">
-                <div class="search-wrap">
-                    <span class="search-icon">⌕</span>
-                    <input type="search" id="userSearch"
-                        placeholder="Search name, email, username or UID...">
-                </div>
-
-                <select id="sourceFilter" aria-label="Filter users by source">
-                    <option value="all">All Sources</option>
-                    <option value="app">App Users</option>
-                    <option value="website">Website Users</option>
-                </select>
-
-                <select id="verifiedFilter" aria-label="Filter users by verification">
-                    <option value="all">All Users</option>
-                    <option value="verified">Verified</option>
-                    <option value="unverified">Not Verified</option>
-                </select>
-            </div>
-
-            <div class="table-wrap" id="desktopUserList">
-                <div class="loading">
-                    <span class="spinner"></span>
-                    Loading users...
-                </div>
-            </div>
-
-            <div class="mobile-user-list" id="mobileUserList">
-                <div class="loading">
-                    <span class="spinner"></span>
-                    Loading users...
-                </div>
-            </div>
-
-            <div class="pagination-info">
-                <span id="resultsText">Waiting for users...</span>
-                <span id="lastUpdated"></span>
-            </div>
-
-        </section>
-
-<section class="panel" id="taxSettingsPanel" style="margin:24px 0 30px">
-  <div class="panel-header"><div><div class="panel-title">Cart taxes & charges</div><div class="panel-description">Manage percentage charges displayed automatically in the customer cart.</div></div><button class="btn" id="refreshTaxesButton" type="button">Refresh</button></div>
-  <div style="padding:20px">
-    <div id="taxNotice" class="notice"></div>
-    <div id="taxRows" style="display:grid;gap:10px;margin-bottom:22px"><div class="loading">Connect the admin API to load taxes.</div></div>
-    <form id="addTaxForm" style="display:grid;grid-template-columns:minmax(0,1fr) minmax(110px,160px) auto;gap:10px;align-items:end">
-      <div class="form-group" style="margin:0"><label for="newTaxTitle">Charge title</label><input id="newTaxTitle" maxlength="60" placeholder="e.g. Handling fee" required></div>
-      <div class="form-group" style="margin:0"><label for="newTaxPercent">Percent (%)</label><input id="newTaxPercent" type="number" min="0" max="100" step="0.01" placeholder="2" required></div>
-      <button class="btn btn-primary" type="submit">Add charge</button>
-    </form>
-    <p class="form-hint">Default charges: Shipping 2%, Packaging 3%, Platform fee 1%, Delivery charges 2%, GST 18%. GST rates in India vary by product category (commonly 0%, 5%, 12%, 18% or 28%); configure the legally applicable rate for your products.</p>
-  </div>
-</section>
-<section class="panel" id="discountSettingsPanel" style="margin:24px 0 30px">
-  <div class="panel-header"><div><div class="panel-title">Customer discounts</div><div class="panel-description">Publish a percentage discount for every customer or target one customer by their account email.</div></div><button class="btn" id="refreshDiscountsButton" type="button">Refresh</button></div>
-  <div style="padding:20px">
-    <div id="discountNotice" class="notice"></div>
-    <div id="discountRows" style="display:grid;gap:10px;margin-bottom:22px"><div class="loading">Connect the admin API to load discounts.</div></div>
-    <form id="addDiscountForm" style="display:grid;grid-template-columns:minmax(0,1fr) minmax(150px,220px) minmax(110px,150px) auto;gap:10px;align-items:end">
-      <div class="form-group" style="margin:0"><label for="newDiscountTitle">Discount title</label><input id="newDiscountTitle" maxlength="60" placeholder="e.g. Festival offer" required></div>
-      <div class="form-group" style="margin:0"><label for="newDiscountScope">Apply to</label><select id="newDiscountScope"><option value="all">All users</option><option value="user">Single user</option></select></div>
-      <div class="form-group" style="margin:0"><label for="newDiscountPercent">Discount (%)</label><input id="newDiscountPercent" type="number" min="0.01" max="100" step="0.01" placeholder="10" required></div>
-      <button class="btn btn-primary" type="submit">Add discount</button>
-      <div class="form-group" id="discountEmailGroup" style="margin:0;grid-column:1 / -1;display:none"><label for="newDiscountEmail">Customer account email</label><input id="newDiscountEmail" type="email" maxlength="254" placeholder="customer@example.com"><div class="form-hint">Use the email associated with the customer’s Shoppy account.</div></div>
-    </form>
-    <p class="form-hint">The highest matching discount is applied once to the cart subtotal before percentage charges. A user-specific offer is matched by the signed-in account email.</p>
-  </div>
-</section>
-
-    </main>
-
-    <nav class="mobile-nav">
-        <button type="button" class="active" id="mobileNavUsers">
-            <span>◉</span>
-            Users
-        </button>
-        <button type="button" id="mobileNavNotifications">
-            <span>♧</span>
-            Notifications
-        </button>
-        <button type="button" id="mobileNavSettings">
-            <span>⚙</span>
-            Settings
-        </button>
-    </nav>
-
-</div>
-
-<!-- Bottom sheet backdrop -->
-<div class="sheet-backdrop" id="sheetBackdrop"></div>
-
-<!-- User notification bottom sheet -->
-<section class="bottom-sheet" id="userSheet"
-    role="dialog" aria-modal="true" aria-labelledby="sheetUserName">
-
-    <div class="sheet-handle"></div>
-
-    <div class="sheet-header">
-        <div class="sheet-user">
-            <div class="avatar" id="sheetAvatar">U</div>
-            <div class="sheet-user-info">
-                <h2 id="sheetUserName">Select a user</h2>
-                <p id="sheetUserEmail">—</p>
-                <p id="sheetUserUid">UID: —</p>
-            </div>
-        </div>
-
-        <button type="button" class="icon-btn" id="closeSheet"
-            aria-label="Close">×</button>
+<aside class="sidebar">
+  <div class="brand"><div class="brand-logo">A</div><div>Appnetick<small>ADMIN PANEL</small></div></div>
+  <div class="nav-label">OVERVIEW</div>
+  <button class="nav-item" type="button" data-tab="home"><i class="ph ph-house"></i><span>Home</span></button>
+  <button class="nav-item" type="button" data-tab="users"><i class="ph ph-users"></i><span>Users</span></button>
+  <div class="nav-label">SYSTEMS</div>
+  <button class="nav-item" type="button" data-tab="notifications"><i class="ph ph-bell"></i><span>Notifications</span></button>
+  <button class="nav-item" type="button" data-tab="block"><i class="ph ph-prohibit"></i><span>Block users</span></button>
+  <button class="nav-item" type="button" data-tab="discounts"><i class="ph ph-tag"></i><span>Discounts</span></button>
+  <button class="nav-item" type="button" data-tab="taxes"><i class="ph ph-receipt"></i><span>Taxes &amp; charges</span></button>
+  <button class="nav-item" type="button" data-tab="memberships"><i class="ph ph-crown"></i><span>Memberships</span></button>
+  <button class="nav-item" type="button" data-tab="support"><i class="ph ph-headset"></i><span>Support</span></button>
+  <div class="sidebar-bottom">
+    <div class="connection-indicator">
+      <div><span class="status-dot" id="connectionDot"></span><span id="connectionLabel">Not connected</span></div>
+      <div id="connectionUrl" style="margin-top:5px;overflow-wrap:anywhere">Configure API connection</div>
+      <button class="btn btn-small" type="button" style="width:100%;margin-top:12px" id="connectionButton"><i class="ph ph-plugs-connected"></i> API Settings</button>
     </div>
+  </div>
+</aside>
 
-    <div class="sheet-tabs">
-        <button type="button" class="sheet-tab active" id="sendTab">
-            Send Notification
-        </button>
-        <button type="button" class="sheet-tab" id="historyTab">
-            Notification History
-        </button>
+<main class="main">
+  <header class="topbar">
+    <div class="title-block">
+      <button class="btn menu-btn" type="button" id="topMenuBtn" aria-label="Open menu"><i class="ph ph-list"></i></button>
+      <div>
+      <h1 class="page-title"><i class="ph ph-house" id="pageIcon"></i><span id="pageTitle">Home</span></h1>
+      <div class="page-subtitle" id="pageSubtitle"></div>
+      </div>
     </div>
+    <div class="topbar-actions">
+      <button class="btn" type="button" id="refreshButton"><i class="ph ph-arrows-clockwise"></i><span>Refresh</span></button>
+      <button class="btn btn-primary" type="button" id="connectButton"><i class="ph ph-plugs-connected"></i><span>Connect API</span></button>
+    </div>
+  </header>
 
-    <div id="sendPanel">
-        <div class="notice" id="sendNotice"></div>
+  <!-- HOME -->
+  <section class="page" id="page-home">
+    <div class="stats">
+      <div class="stat-card"><div class="stat-head"><span>Total Users</span><span class="stat-icon"><i class="ph ph-users"></i></span></div><div class="stat-number" id="totalUsers">—</div><div class="stat-caption">All users returned by the API</div></div>
+      <div class="stat-card"><div class="stat-head"><span>App Users</span><span class="stat-icon"><i class="ph ph-device-mobile"></i></span></div><div class="stat-number" id="appUsersCount">—</div><div class="stat-caption">From the app database</div></div>
+      <div class="stat-card"><div class="stat-head"><span>Website Users</span><span class="stat-icon"><i class="ph ph-globe"></i></span></div><div class="stat-number" id="websiteUsersCount">—</div><div class="stat-caption">From the website database</div></div>
+      <div class="stat-card"><div class="stat-head"><span>Blocked</span><span class="stat-icon"><i class="ph ph-prohibit"></i></span></div><div class="stat-number" id="blockedCount">—</div><div class="stat-caption">Open Block users to load</div></div>
+    </div>
+    <div class="panel-title" style="margin:0 0 12px">Quick access</div>
+    <div class="quick-grid">
+      <button class="quick-card" data-tab="users"><i class="ph ph-users"></i><b>Users</b><span>Browse, search and open any user.</span></button>
+      <button class="quick-card" data-tab="notifications"><i class="ph ph-bell"></i><b>Notifications</b><span>Send to one user or everyone, view history.</span></button>
+      <button class="quick-card" data-tab="block"><i class="ph ph-prohibit"></i><b>Block users</b><span>Block or unblock accounts.</span></button>
+      <button class="quick-card" data-tab="discounts"><i class="ph ph-tag"></i><b>Discounts</b><span>Global or per-customer offers.</span></button>
+      <button class="quick-card" data-tab="taxes"><i class="ph ph-receipt"></i><b>Taxes &amp; charges</b><span>Cart percentage charges.</span></button>
+      <button class="quick-card" data-tab="memberships"><i class="ph ph-crown"></i><b>Memberships</b><span>Manage membership plans.</span></button>
+      <button class="quick-card" data-tab="support"><i class="ph ph-headset"></i><b>Support</b><span>Reply to customer tickets.</span></button>
+    </div>
+  </section>
 
-        <form id="notificationForm">
+  <!-- USERS -->
+  <section class="page" id="page-users">
+    <section class="panel" style="margin:0">
+      <div class="panel-header">
+        <div><div class="panel-title">All Users</div><div class="panel-description">Select a user to open the side drawer (drag its left edge to resize).</div></div>
+        <span class="badge badge-blue" id="listCountBadge">0 users</span>
+      </div>
+      <div class="toolbar">
+        <div class="search-wrap"><i class="ph ph-magnifying-glass search-icon"></i><input type="search" id="userSearch" placeholder="Search name, email, username or UID..."></div>
+        <select id="sourceFilter" aria-label="Filter by source"><option value="all">All Sources</option><option value="app">App Users</option><option value="website">Website Users</option></select>
+        <select id="verifiedFilter" aria-label="Filter by verification"><option value="all">All Users</option><option value="verified">Verified</option><option value="unverified">Not Verified</option></select>
+      </div>
+      <div class="table-wrap" id="desktopUserList"><div class="empty-state">Connect the API to load users.</div></div>
+      <div class="mobile-user-list" id="mobileUserList"></div>
+      <div class="pagination-info"><span id="resultsText">Waiting for users...</span><span id="lastUpdated"></span></div>
+    </section>
+  </section>
 
-            <div class="form-group">
-                <label for="notificationCategory">Notification Category</label>
-                <select id="notificationCategory" required>
-                    <option value="orders">Orders</option>
-                    <option value="payments">Payments</option>
-                    <option value="shipping">Shipping</option>
-                    <option value="delivery">Delivery</option>
-                    <option value="returns">Returns</option>
-                    <option value="refunds">Refunds</option>
-                    <option value="cancellations">Cancellations</option>
-                    <option value="discounts">Discounts</option>
-                    <option value="promotions">Promotions</option>
-                    <option value="cart">Cart</option>
-                    <option value="wishlist">Wishlist</option>
-                    <option value="account">Account</option>
-                    <option value="security">Security</option>
-                    <option value="support">Support</option>
-                    <option value="system">System</option>
-                </select>
-                <div class="form-hint">
-                    Choose the e-commerce notification category.
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="notificationTitle">Notification Title</label>
-                <input id="notificationTitle" type="text"
-                    maxlength="150" required
-                    placeholder="Example: Your order has been shipped">
-            </div>
-
-            <div class="form-group">
-                <label for="notificationMessage">Message</label>
-                <textarea id="notificationMessage"
-                    maxlength="5000" required
-                    placeholder="Write the notification message..."></textarea>
-                <div class="form-hint">
-                    Maximum 5000 characters.
-                </div>
-            </div>
-
-            <div class="form-footer">
-                <button type="button" class="btn" id="cancelSend">
-                    Cancel
-                </button>
-                <button type="submit" class="btn btn-primary" id="sendNotificationButton">
-                    Send Notification
-                </button>
-            </div>
-
+  <!-- NOTIFICATIONS -->
+  <section class="page" id="page-notifications">
+    <section class="panel">
+      <div class="panel-header"><div><div class="panel-title"><i class="ph ph-paper-plane-tilt"></i> Send notification</div><div class="panel-description">Send to one customer or broadcast to all users.</div></div></div>
+      <div class="panel-body">
+        <div class="notice" id="nSendNotice"></div>
+        <div class="seg">
+          <button type="button" class="active" id="audUser"><i class="ph ph-user"></i> Single user</button>
+          <button type="button" id="audAll"><i class="ph ph-users-three"></i> All users</button>
+        </div>
+        <form id="nForm">
+          <div class="form-group" id="nUserGroup">
+            <label for="nUserSearch">Recipient</label>
+            <input id="nUserSearch" type="search" placeholder="Search name, email or UID...">
+            <div class="picker-list" id="nUserList"></div>
+            <div id="nUserChip"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label for="nCategory">Category</label><select id="nCategory" required></select></div>
+          </div>
+          <div class="form-group"><label for="nTitle">Title</label><input id="nTitle" maxlength="150" required placeholder="Example: Your order has been shipped"></div>
+          <div class="form-group"><label for="nMessage">Message</label><textarea id="nMessage" maxlength="5000" required placeholder="Write the notification message..."></textarea><div class="form-hint" id="nCounter">0 / 5000</div></div>
+          <div class="form-footer"><button type="submit" class="btn btn-primary" id="nSendBtn"><i class="ph ph-paper-plane-tilt"></i> Send notification</button></div>
         </form>
-    </div>
+      </div>
+    </section>
 
-    <div id="historyPanel" hidden>
-        <div class="notice" id="historyNotice"></div>
-
+    <section class="panel">
+      <div class="panel-header"><div><div class="panel-title"><i class="ph ph-clock-counter-clockwise"></i> Notification history</div><div class="panel-description">Pick a user to see what they received.</div></div></div>
+      <div class="panel-body">
+        <div class="notice" id="nHistNotice"></div>
+        <div class="form-group">
+          <input id="hUserSearch" type="search" placeholder="Search user to view history...">
+          <div class="picker-list" id="hUserList"></div>
+          <div id="hUserChip"></div>
+        </div>
         <div class="history-toolbar">
-            <select id="historyCategoryFilter" aria-label="Filter notification history">
-                <option value="all">All Categories</option>
-                <option value="orders">Orders</option>
-                <option value="payments">Payments</option>
-                <option value="shipping">Shipping</option>
-                <option value="delivery">Delivery</option>
-                <option value="returns">Returns</option>
-                <option value="refunds">Refunds</option>
-                <option value="cancellations">Cancellations</option>
-                <option value="discounts">Discounts</option>
-                <option value="promotions">Promotions</option>
-                <option value="cart">Cart</option>
-                <option value="wishlist">Wishlist</option>
-                <option value="account">Account</option>
-                <option value="security">Security</option>
-                <option value="support">Support</option>
-                <option value="system">System</option>
-            </select>
-
-            <button type="button" class="btn btn-small"
-                id="refreshHistoryButton">
-                ↻ Refresh
-            </button>
+          <select id="hCategory" aria-label="Filter category"></select>
+          <button type="button" class="btn btn-small" id="hRefresh"><i class="ph ph-arrows-clockwise"></i> Load</button>
         </div>
+        <div class="history-count" id="hCount">Select a user.</div>
+        <div class="notification-list" id="hList"></div>
+      </div>
+    </section>
 
-        <div class="history-count" id="historyCount">
-            Notification history
-        </div>
+    <section class="panel">
+      <div class="panel-header"><div><div class="panel-title"><i class="ph ph-list-checks"></i> Sent this session</div><div class="panel-description">Quick log of notifications you sent since opening this page.</div></div></div>
+      <div class="panel-body"><div class="notification-list" id="sentLog"><div class="empty-state">Nothing sent yet.</div></div></div>
+    </section>
+  </section>
 
-        <div class="notification-list" id="notificationList">
-            <div class="loading">Select a user to load notification history.</div>
-        </div>
-    </div>
-
-</section>
-
-<!-- API configuration dialog -->
-<div class="dialog-backdrop" id="apiDialogBackdrop">
-    <div class="dialog" role="dialog" aria-modal="true"
-        aria-labelledby="apiDialogTitle">
-
-        <h2 id="apiDialogTitle">API Connection</h2>
-
-        <p>
-            Enter the backend URL and admin API key. The key remains in
-            page memory and is not saved to local storage.
-        </p>
-
-        <form id="apiConfigForm">
-
-            <div class="form-group">
-                <label for="apiBaseInput">Backend Base URL</label>
-                <input id="apiBaseInput" type="url"
-                    value="https://apisequizeshoplite.vercel.app"
-                    required>
-            </div>
-
-            <div class="form-group">
-                <label for="apiKeyInput">Admin API Key</label>
-                <input id="apiKeyInput" type="password"
-                    autocomplete="off"
-                    placeholder="Enter ADMIN_API_KEY"
-                    required>
-            </div>
-
-            <div class="form-hint">
-                Use the same key configured as ADMIN_API_KEY in Vercel.
-                Do not publish this admin page with a shared secret embedded in its source.
-            </div>
-
-            <div class="dialog-actions">
-                <button type="button" class="btn" id="cancelApiConfig">
-                    Cancel
-                </button>
-                <button type="submit" class="btn btn-primary" id="saveApiConfig">
-                    Connect
-                </button>
-            </div>
-
+  <!-- BLOCK -->
+  <section class="page" id="page-block">
+    <section class="panel">
+      <div class="panel-header"><div><div class="panel-title"><i class="ph ph-prohibit"></i> Blocked users</div><div class="panel-description">Blocked users cannot sign in or place orders (enforced by your backend).</div></div><button class="btn btn-small" id="blockRefresh" type="button"><i class="ph ph-arrows-clockwise"></i> Refresh</button></div>
+      <div class="panel-body">
+        <div class="notice" id="blockNotice"></div>
+        <div class="item-list" id="blockRows"><div class="loading">Connect the admin API to load.</div></div>
+        <form id="blockForm">
+          <div class="form-group">
+            <label for="bUserSearch">Block a user</label>
+            <input id="bUserSearch" type="search" placeholder="Search user to block...">
+            <div class="picker-list" id="bUserList"></div>
+            <div id="bUserChip"></div>
+          </div>
+          <div class="form-group"><label for="bReason">Reason</label><input id="bReason" maxlength="200" placeholder="Optional reason"></div>
+          <div class="form-footer"><button class="btn btn-danger" type="submit"><i class="ph ph-prohibit"></i> Block user</button></div>
         </form>
-    </div>
-</div>
+      </div>
+    </section>
+  </section>
 
+  <!-- DISCOUNTS -->
+  <section class="page" id="page-discounts">
+    <section class="panel">
+      <div class="panel-header"><div><div class="panel-title"><i class="ph ph-tag"></i> Customer discounts</div><div class="panel-description">Publish a percentage discount for everyone or one customer by account email.</div></div><button class="btn btn-small" id="refreshDiscountsButton" type="button"><i class="ph ph-arrows-clockwise"></i> Refresh</button></div>
+      <div class="panel-body">
+        <div id="discountNotice" class="notice"></div>
+        <div id="discountRows" class="item-list"><div class="loading">Connect the admin API to load discounts.</div></div>
+        <form id="addDiscountForm">
+          <div class="form-row">
+            <div class="form-group"><label for="newDiscountTitle">Discount title</label><input id="newDiscountTitle" maxlength="60" placeholder="e.g. Festival offer" required></div>
+            <div class="form-group"><label for="newDiscountScope">Apply to</label><select id="newDiscountScope"><option value="all">All users</option><option value="user">Single user</option></select></div>
+            <div class="form-group"><label for="newDiscountPercent">Discount (%)</label><input id="newDiscountPercent" type="number" min="0.01" max="100" step="0.01" placeholder="10" required></div>
+          </div>
+          <div class="form-group" id="discountEmailGroup" style="display:none"><label for="newDiscountEmail">Customer account email</label><input id="newDiscountEmail" type="email" maxlength="254" placeholder="customer@example.com"><div class="form-hint">Use the email associated with the customer’s Shoppy account.</div></div>
+          <div class="form-footer"><button class="btn btn-primary" type="submit"><i class="ph ph-plus"></i> Add discount</button></div>
+        </form>
+        <p class="form-hint">The highest matching discount is applied once to the cart subtotal before percentage charges.</p>
+      </div>
+    </section>
+  </section>
+
+  <!-- TAXES -->
+  <section class="page" id="page-taxes">
+    <section class="panel">
+      <div class="panel-header"><div><div class="panel-title"><i class="ph ph-receipt"></i> Cart taxes &amp; charges</div><div class="panel-description">Percentage charges displayed automatically in the customer cart.</div></div><button class="btn btn-small" id="refreshTaxesButton" type="button"><i class="ph ph-arrows-clockwise"></i> Refresh</button></div>
+      <div class="panel-body">
+        <div id="taxNotice" class="notice"></div>
+        <div id="taxRows" class="item-list"><div class="loading">Connect the admin API to load taxes.</div></div>
+        <form id="addTaxForm">
+          <div class="form-row">
+            <div class="form-group"><label for="newTaxTitle">Charge title</label><input id="newTaxTitle" maxlength="60" placeholder="e.g. Handling fee" required></div>
+            <div class="form-group"><label for="newTaxPercent">Percent (%)</label><input id="newTaxPercent" type="number" min="0" max="100" step="0.01" placeholder="2" required></div>
+          </div>
+          <div class="form-footer"><button class="btn btn-primary" type="submit"><i class="ph ph-plus"></i> Add charge</button></div>
+        </form>
+        <p class="form-hint">Default charges: Shipping 2%, Packaging 3%, Platform fee 1%, Delivery charges 2%, GST 18%. GST rates in India vary by product category (commonly 0%, 5%, 12%, 18% or 28%); configure the legally applicable rate for your products.</p>
+      </div>
+    </section>
+  </section>
+
+  <!-- MEMBERSHIPS -->
+  <section class="page" id="page-memberships">
+    <section class="panel">
+      <div class="panel-header"><div><div class="panel-title"><i class="ph ph-crown"></i> Membership plans</div><div class="panel-description">Create and remove plans customers can buy.</div></div><button class="btn btn-small" id="memRefresh" type="button"><i class="ph ph-arrows-clockwise"></i> Refresh</button></div>
+      <div class="panel-body">
+        <div class="notice" id="memNotice"></div>
+        <div class="item-list" id="memRows"><div class="loading">Connect the admin API to load plans.</div></div>
+        <form id="memForm">
+          <div class="form-row">
+            <div class="form-group"><label for="memTitle">Plan name</label><input id="memTitle" maxlength="60" placeholder="e.g. Gold" required></div>
+            <div class="form-group"><label for="memPrice">Price (₹)</label><input id="memPrice" type="number" min="0" step="0.01" required></div>
+            <div class="form-group"><label for="memDays">Duration (days)</label><input id="memDays" type="number" min="1" step="1" required></div>
+          </div>
+          <div class="form-group"><label for="memBenefits">Benefits</label><textarea id="memBenefits" style="min-height:80px" placeholder="One benefit per line"></textarea></div>
+          <div class="form-footer"><button class="btn btn-primary" type="submit"><i class="ph ph-plus"></i> Add plan</button></div>
+        </form>
+      </div>
+    </section>
+  </section>
+
+  <!-- SUPPORT -->
+  <section class="page" id="page-support">
+    <section class="panel">
+      <div class="panel-header"><div><div class="panel-title"><i class="ph ph-headset"></i> Support tickets</div><div class="panel-description">Reply to customers and close resolved tickets.</div></div>
+        <div style="display:flex;gap:8px"><select id="supFilter" style="width:auto" aria-label="Filter tickets"><option value="all">All</option><option value="open">Open</option><option value="closed">Closed</option></select><button class="btn btn-small" id="supRefresh" type="button"><i class="ph ph-arrows-clockwise"></i> Refresh</button></div></div>
+      <div class="panel-body">
+        <div class="notice" id="supNotice"></div>
+        <div class="notification-list" id="supRows"><div class="loading">Connect the admin API to load tickets.</div></div>
+      </div>
+    </section>
+  </section>
+</main>
+
+<nav class="mobile-nav" id="mobileNav">
+  <div class="nav-shell" id="navShell">
+    <div class="glass-layer"></div>
+    <div class="nav-ind" id="navIndicator"></div>
+    <div class="nav-items" id="navPill">
+      <button type="button" data-tab="home" aria-label="Home"><i class="ph ph-house"></i></button>
+      <button type="button" data-tab="users" aria-label="Users"><i class="ph ph-users"></i></button>
+      <button type="button" data-tab="notifications" aria-label="Notifications"><i class="ph ph-bell"></i></button>
+      <button type="button" data-tab="discounts" aria-label="Discounts"><i class="ph ph-tag"></i></button>
+      <button type="button" data-tab="support" aria-label="Support"><i class="ph ph-headset"></i></button>
+    </div>
+  </div>
+</nav>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+  <filter id="lgPill" filterUnits="userSpaceOnUse" x="0" y="0" width="300" height="60" color-interpolation-filters="sRGB">
+    <feImage id="lgPillMap" x="0" y="0" width="300" height="60" preserveAspectRatio="none" result="map"/>
+    <feDisplacementMap in="SourceGraphic" in2="map" scale="50" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+  <filter id="lgInd" filterUnits="userSpaceOnUse" x="0" y="0" width="72" height="48" color-interpolation-filters="sRGB">
+    <feImage id="lgIndMap" x="0" y="0" width="72" height="48" preserveAspectRatio="none" result="map"/>
+    <feDisplacementMap in="SourceGraphic" in2="map" scale="36" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</defs></svg>
+
+<div class="sheet-backdrop" id="menuBackdrop"></div>
+<aside class="menu-sheet" id="menuSheet" role="dialog" aria-modal="true" aria-label="Menu">
+  <div class="sheet-handle"></div>
+  <div class="menu-head"><b>Menu</b><button type="button" class="icon-btn" id="menuClose" aria-label="Close"><i class="ph ph-x"></i></button></div>
+  <div class="menu-grid">
+    <button type="button" class="menu-item" data-tab="home"><i class="ph ph-house"></i>Home</button>
+    <button type="button" class="menu-item" data-tab="users"><i class="ph ph-users"></i>Users</button>
+    <button type="button" class="menu-item" data-tab="notifications"><i class="ph ph-bell"></i>Notifications</button>
+    <button type="button" class="menu-item" data-tab="block"><i class="ph ph-prohibit"></i>Block users</button>
+    <button type="button" class="menu-item" data-tab="discounts"><i class="ph ph-tag"></i>Discounts</button>
+    <button type="button" class="menu-item" data-tab="taxes"><i class="ph ph-receipt"></i>Taxes</button>
+    <button type="button" class="menu-item" data-tab="memberships"><i class="ph ph-crown"></i>Memberships</button>
+    <button type="button" class="menu-item" data-tab="support"><i class="ph ph-headset"></i>Support</button>
+    <button type="button" class="menu-item" id="menuApi"><i class="ph ph-plugs-connected"></i>API settings</button>
+  </div>
+</aside>
+
+<!-- User drawer (resizable on desktop) -->
+<div class="sheet-backdrop" id="sheetBackdrop"></div>
+<aside class="drawer" id="userSheet" role="dialog" aria-modal="true" aria-labelledby="sheetUserName">
+  <div class="drawer-resizer" id="drawerResizer" title="Drag to resize • double-click to reset"></div>
+  <div class="sheet-handle"></div>
+  <div class="sheet-header">
+    <div class="sheet-user">
+      <div class="avatar" id="sheetAvatar">U</div>
+      <div class="sheet-user-info"><h2 id="sheetUserName">Select a user</h2><p id="sheetUserEmail">—</p><p id="sheetUserUid">UID: —</p></div>
+    </div>
+    <button type="button" class="icon-btn" id="closeSheet" aria-label="Close"><i class="ph ph-x"></i></button>
+  </div>
+  <div class="sheet-tabs">
+    <button type="button" class="sheet-tab active" id="sendTab"><i class="ph ph-paper-plane-tilt"></i> Send</button>
+    <button type="button" class="sheet-tab" id="historyTab"><i class="ph ph-clock-counter-clockwise"></i> History</button>
+    <button type="button" class="sheet-tab" id="manageTab"><i class="ph ph-shield-warning"></i> Manage</button>
+  </div>
+
+  <div id="sendPanel">
+    <div class="notice" id="sendNotice"></div>
+    <form id="notificationForm">
+      <div class="form-group"><label for="notificationCategory">Category</label><select id="notificationCategory" required></select></div>
+      <div class="form-group"><label for="notificationTitle">Title</label><input id="notificationTitle" maxlength="150" required placeholder="Example: Your order has been shipped"></div>
+      <div class="form-group"><label for="notificationMessage">Message</label><textarea id="notificationMessage" maxlength="5000" required placeholder="Write the notification message..."></textarea></div>
+      <div class="form-footer"><button type="button" class="btn" id="cancelSend">Cancel</button><button type="submit" class="btn btn-primary" id="sendNotificationButton"><i class="ph ph-paper-plane-tilt"></i> Send</button></div>
+    </form>
+  </div>
+
+  <div id="historyPanel" hidden>
+    <div class="notice" id="historyNotice"></div>
+    <div class="history-toolbar"><select id="historyCategoryFilter" aria-label="Filter history"></select><button type="button" class="btn btn-small" id="refreshHistoryButton"><i class="ph ph-arrows-clockwise"></i> Refresh</button></div>
+    <div class="history-count" id="historyCount">Notification history</div>
+    <div class="notification-list" id="notificationList"></div>
+  </div>
+
+  <div id="managePanel" hidden>
+    <div class="notice" id="manageNotice"></div>
+    <div class="form-group"><label>Account status</label><div id="manageStatus"></div></div>
+    <div class="form-group"><label for="manageReason">Reason (for blocking)</label><input id="manageReason" maxlength="200" placeholder="Optional reason"></div>
+    <div class="form-footer"><button type="button" class="btn btn-danger" id="manageBlockBtn"><i class="ph ph-prohibit"></i> Block user</button><button type="button" class="btn btn-success" id="manageUnblockBtn"><i class="ph ph-check-circle"></i> Unblock</button></div>
+  </div>
+</aside>
+
+<div class="dialog-backdrop" id="apiDialogBackdrop">
+  <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="apiDialogTitle">
+    <h2 id="apiDialogTitle">API Connection</h2>
+    <p>Enter the backend URL and admin API key. The key stays in page memory and is not saved.</p>
+    <form id="apiConfigForm">
+      <div class="form-group"><label for="apiBaseInput">Backend Base URL</label><input id="apiBaseInput" type="url" value="https://apisequizeshoplite.vercel.app" required></div>
+      <div class="form-group"><label for="apiKeyInput">Admin API Key</label><input id="apiKeyInput" type="password" autocomplete="off" placeholder="Enter ADMIN_API_KEY" required></div>
+      <div class="form-hint">Use the same key configured as ADMIN_API_KEY in Vercel. Never embed the key in this page's source.</div>
+      <div class="dialog-actions"><button type="button" class="btn" id="cancelApiConfig">Cancel</button><button type="submit" class="btn btn-primary">Connect</button></div>
+    </form>
+  </div>
+</div>
 <div class="toast-container" id="toastContainer"></div>
 
 <script>
 "use strict";
-
-/*
- * Backend endpoints
- *
- * GET  /api/admin/users
- * POST /api/admin/notifications
- *
- * The notification API should support:
- * send, list, unread_count, delete
- */
-
 const DEFAULT_API_BASE = "https://apisequizeshoplite.vercel.app";
-
 const ENDPOINTS = {
-    users: "/api/admin/users",
-    notifications: "/api/admin/notifications",
-    taxes: "/api/admin/taxes",
-    discounts: "/api/admin/discounts"
+  users: "/api/admin/users",
+  notifications: "/api/admin/notifications",
+  taxes: "/api/admin/taxes",
+  discounts: "/api/admin/discounts",
+  blocks: "/api/admin/blocks",
+  memberships: "/api/admin/memberships",
+  support: "/api/admin/support"
+};
+const CATEGORIES = ["orders","payments","shipping","delivery","returns","refunds","cancellations","discounts","promotions","cart","wishlist","account","security","support","system"];
+const TABS = {
+  home:{title:"Home",icon:"house",sub:"Overview of your store."},
+  users:{title:"Users",icon:"users",sub:"Browse users and open their drawer."},
+  notifications:{title:"Notifications",icon:"bell",sub:"Send notifications and check history."},
+  block:{title:"Block users",icon:"prohibit",sub:"Block or unblock accounts."},
+  discounts:{title:"Discounts",icon:"tag",sub:"Publish customer discounts."},
+  taxes:{title:"Taxes & charges",icon:"receipt",sub:"Manage cart percentage charges."},
+  memberships:{title:"Memberships",icon:"crown",sub:"Manage membership plans."},
+  support:{title:"Support",icon:"headset",sub:"Handle customer tickets."}
 };
 
-const CATEGORIES = [
-    "orders",
-    "payments",
-    "shipping",
-    "delivery",
-    "returns",
-    "refunds",
-    "cancellations",
-    "discounts",
-    "promotions",
-    "cart",
-    "wishlist",
-    "account",
-    "security",
-    "support",
-    "system"
-];
-
-let API_BASE = DEFAULT_API_BASE;
-let ADMIN_API_KEY = "";
-
-let allUsers = [];
-let visibleUsers = [];
-let selectedUser = null;
-let notificationHistory = [];
-
-let isLoadingUsers = false;
-let isSendingNotification = false;
-let isLoadingHistory = false;
-
+let API_BASE = DEFAULT_API_BASE, ADMIN_API_KEY = "";
+let allUsers = [], visibleUsers = [], selectedUser = null;
+let currentTab = "home";
+let busy = {};
+const loaded = {};
 const $ = id => document.getElementById(id);
 
-function escapeHTML(value) {
-    return String(value == null ? "" : value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+function escapeHTML(v){return String(v==null?"":v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;")}
+function showToast(msg,type="success"){const t=document.createElement("div");t.className="toast "+type;t.textContent=msg;$("toastContainer").appendChild(t);setTimeout(()=>t.remove(),4200)}
+function showNotice(el,msg,type){el.className="notice show "+(type||"");el.textContent=msg}
+function hideNotice(el){el.className="notice";el.textContent=""}
+function setConnection(ok,label){$("connectionDot").className="status-dot "+(ok?"online":"offline");$("connectionLabel").textContent=label||(ok?"Connected":"Not connected");$("connectionUrl").textContent=API_BASE}
+function icon(n){return `<i class="ph ph-${n}"></i>`}
+function fillCategories(sel,withAll){sel.innerHTML=(withAll?'<option value="all">All Categories</option>':"")+CATEGORIES.map(c=>`<option value="${c}">${formatCategory(c)}</option>`).join("")}
+function formatCategory(c){return String(c||"general").replace(/[_-]+/g," ").replace(/\b\w/g,l=>l.toUpperCase())}
+function formatDate(value){
+  if(!value)return "—";let d;
+  if(typeof value==="number"||/^\d+$/.test(String(value))){let n=Number(value);if(n>0&&n<1e11)n*=1000;d=new Date(n)}else d=new Date(value);
+  if(Number.isNaN(d.getTime()))return "—";
+  return d.toLocaleString(undefined,{year:"numeric",month:"short",day:"numeric",hour:"2-digit",minute:"2-digit"});
 }
 
-function showToast(message, type = "success") {
-    const toast = document.createElement("div");
-    toast.className = "toast " + type;
-    toast.textContent = message;
-
-    $("toastContainer").appendChild(toast);
-
-    setTimeout(() => {
-        toast.remove();
-    }, 4200);
+/* ---------- API ---------- */
+async function apiRequest(path,options={}){
+  if(!ADMIN_API_KEY)throw new Error("Admin API key is missing. Connect the API first.");
+  const headers={"Authorization":"Bearer "+ADMIN_API_KEY,"Accept":"application/json",...(options.headers||{})};
+  if(options.body!==undefined)headers["Content-Type"]="application/json";
+  let res;
+  try{res=await fetch(API_BASE+path,{...options,headers,cache:"no-store"})}
+  catch(e){throw new Error("Could not connect to the backend. Check the URL, internet connection and CORS settings.")}
+  const text=await res.text();let data;
+  try{data=text?JSON.parse(text):{}}catch(e){throw new Error("Backend returned an invalid response. Check that the API route exists ("+path+").")}
+  if(!res.ok||data.success===false)throw new Error(data.message||("Request failed with HTTP "+res.status));
+  return data;
 }
 
-function showNotice(element, message, type) {
-    element.className = "notice show " + type;
-    element.textContent = message;
+/* ---------- Tabs ---------- */
+function showTab(tab){
+  if(!TABS[tab])tab="home";
+  currentTab=tab;
+  document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id==="page-"+tab));
+  document.querySelectorAll("[data-tab].nav-item,#mobileNav [data-tab],.menu-grid [data-tab]").forEach(b=>b.classList.toggle("active",b.dataset.tab===tab));
+  closeMenu();updateMobileNav(tab);
+  const t=TABS[tab];
+  $("pageTitle").textContent=t.title;$("pageIcon").className="ph ph-"+t.icon;$("pageSubtitle").textContent=t.sub;
+  try{history.replaceState(null,"","#"+tab)}catch(e){}
+  closeUserSheet();
+  if(ADMIN_API_KEY)loadTab(tab,false);
 }
-
-function hideNotice(element) {
-    element.className = "notice";
-    element.textContent = "";
+function loadTab(tab,force){
+  if(!force&&loaded[tab])return;
+  const map={home:()=>loadUsers(),users:()=>loadUsers(),block:loadBlocks,discounts:loadDiscounts,taxes:loadTaxes,memberships:loadMemberships,support:loadTickets,notifications:()=>{}};
+  if(map[tab]){loaded[tab]=true;map[tab]()}
 }
-
-function setConnection(connected, label) {
-    $("connectionDot").className =
-        "status-dot " + (connected ? "online" : "offline");
-
-    $("connectionLabel").textContent =
-        label || (connected ? "Connected" : "Not connected");
-
-    $("connectionUrl").textContent = API_BASE;
-}
-
-function getInitials(user) {
-    const name = user.full_name || user.name ||
-        user.username || user.Username || user.email || "U";
-
-    return String(name).trim().slice(0, 1).toUpperCase() || "U";
-}
-
-function normalizeUser(raw, forcedSource) {
-    if (!raw || typeof raw !== "object") {
-        return null;
-    }
-
-    const uid = String(
-        raw.uid ||
-        raw.UID ||
-        raw.id ||
-        raw.userId ||
-        raw.key ||
-        ""
-    ).trim();
-
-    if (!uid) {
-        return null;
-    }
-
-    const username = String(
-        raw.username ||
-        raw.Username ||
-        raw.user_name ||
-        ""
-    );
-
-    const fullName = String(
-        raw.full_name ||
-        raw.fullName ||
-        raw.name ||
-        raw.displayName ||
-        username ||
-        raw.email ||
-        "User"
-    );
-
-    const email = String(raw.email || raw.Email || "");
-
-    let source = forcedSource ||
-        raw.source ||
-        raw.userType ||
-        "";
-
-    source = String(source).toLowerCase();
-
-    if (source !== "app" && source !== "website") {
-        source = (
-            raw.Username !== undefined ||
-            raw.full_name !== undefined ||
-            raw.avatar !== undefined ||
-            raw.private_profile !== undefined
-        ) ? "app" : "website";
-    }
-
-    const verifiedValue =
-        raw.verified !== undefined ? raw.verified :
-        raw.verify !== undefined ? raw.verify :
-        raw.isVerified !== undefined ? raw.isVerified :
-        false;
-
-    const verified =
-        verifiedValue === true ||
-        verifiedValue === 1 ||
-        String(verifiedValue).toLowerCase() === "true" ||
-        String(verifiedValue) === "1";
-
-    return {
-        ...raw,
-        uid,
-        username,
-        full_name: fullName,
-        email,
-        avatar: String(raw.avatar || raw.photoURL || raw.photoUrl || ""),
-        source,
-        verified,
-        createdAt: raw.createdAt || raw.created_at || raw.created_at_ms || 0
-    };
-}
-
-/*
- * Supports the expected API format:
- * { success, total, users: [] }
- *
- * Also supports:
- * { websiteUsers: [], appUsers: [] }
- *
- * This makes the list resilient to differences in the API response.
- */
-function extractUsers(data) {
-    const output = [];
-    const seen = new Set();
-
-    function add(raw, source) {
-        const user = normalizeUser(raw, source);
-
-        if (!user || seen.has(user.uid)) {
-            return;
-        }
-
-        seen.add(user.uid);
-        output.push(user);
-    }
-
-    if (Array.isArray(data.users)) {
-        data.users.forEach(user => add(user, user && user.source));
-    } else if (data.users && typeof data.users === "object") {
-        Object.keys(data.users).forEach(key => {
-            const raw = data.users[key];
-
-            if (raw && typeof raw === "object") {
-                add({ ...raw, uid: raw.uid || key }, raw.source);
-            }
-        });
-    }
-
-    if (Array.isArray(data.appUsers)) {
-        data.appUsers.forEach(user => add(user, "app"));
-    } else if (data.appUsers && typeof data.appUsers === "object") {
-        Object.keys(data.appUsers).forEach(key => {
-            const raw = data.appUsers[key];
-            if (raw && typeof raw === "object") {
-                add({ ...raw, uid: raw.uid || key }, "app");
-            }
-        });
-    }
-
-    if (Array.isArray(data.websiteUsers)) {
-        data.websiteUsers.forEach(user => add(user, "website"));
-    } else if (data.websiteUsers && typeof data.websiteUsers === "object") {
-        Object.keys(data.websiteUsers).forEach(key => {
-            const raw = data.websiteUsers[key];
-            if (raw && typeof raw === "object") {
-                add({ ...raw, uid: raw.uid || key }, "website");
-            }
-        });
-    }
-
-    return output;
-}
-
-function getSourceCounts(data, normalizedUsers) {
-    let appCount = 0;
-    let websiteCount = 0;
-
-    if (Array.isArray(data.appUsers)) {
-        appCount = data.appUsers.length;
-    } else if (data.appUsers && typeof data.appUsers === "object") {
-        appCount = Object.keys(data.appUsers).length;
-    }
-
-    if (Array.isArray(data.websiteUsers)) {
-        websiteCount = data.websiteUsers.length;
-    } else if (data.websiteUsers && typeof data.websiteUsers === "object") {
-        websiteCount = Object.keys(data.websiteUsers).length;
-    }
-
-    if (
-        data.appUsers === undefined &&
-        data.websiteUsers === undefined
-    ) {
-        appCount = normalizedUsers.filter(u => u.source === "app").length;
-        websiteCount = normalizedUsers.filter(u => u.source === "website").length;
-    }
-
-    return { appCount, websiteCount };
-}
-
-async function apiRequest(path, options = {}) {
-    if (!ADMIN_API_KEY) {
-        throw new Error("Admin API key is missing. Connect the API first.");
-    }
-
-    const headers = {
-        "Authorization": "Bearer " + ADMIN_API_KEY,
-        "Accept": "application/json",
-        ...(options.headers || {})
-    };
-
-    if (options.body !== undefined) {
-        headers["Content-Type"] = "application/json";
-    }
-
-    let response;
-
-    try {
-        response = await fetch(API_BASE + path, {
-            ...options,
-            headers,
-            cache: "no-store"
-        });
-    } catch (error) {
-        throw new Error(
-            "Could not connect to the backend. Check the URL, internet connection and CORS settings."
-        );
-    }
-
-    const text = await response.text();
-
-    let data;
-
-    try {
-        data = text ? JSON.parse(text) : {};
-    } catch (error) {
-        throw new Error(
-            "Backend returned an invalid response. Check the API route and Vercel deployment."
-        );
-    }
-
-    if (!response.ok || data.success === false) {
-        throw new Error(
-            data.message ||
-            ("Request failed with HTTP " + response.status)
-        );
-    }
-
-    return data;
-}
-
-function setUsersLoading() {
-    $("desktopUserList").innerHTML = `
-        <div class="loading">
-            <span class="spinner"></span>
-            Loading users...
-        </div>`;
-
-    $("mobileUserList").innerHTML = `
-        <div class="loading">
-            <span class="spinner"></span>
-            Loading users...
-        </div>`;
-
-    $("resultsText").textContent = "Loading users...";
-}
-
-function renderAvatar(user, className = "avatar") {
-    const initial = escapeHTML(getInitials(user));
-    const avatarURL = String(user.avatar || "").trim();
-
-    if (avatarURL) {
-        return `
-            <div class="${className}">
-                <img src="${escapeHTML(avatarURL)}"
-                    alt=""
-                    loading="lazy"
-                    referrerpolicy="no-referrer"
-                    onerror="this.parentElement.textContent='${initial}'">
-            </div>`;
-    }
-
-    return `<div class="${className}">${initial}</div>`;
-}
-
-function formatDate(value) {
-    if (!value) return "—";
-
-    let date;
-
-    if (typeof value === "number" || /^\d+$/.test(String(value))) {
-        let numeric = Number(value);
-
-        if (numeric > 0 && numeric < 100000000000) {
-            numeric *= 1000;
-        }
-
-        date = new Date(numeric);
-    } else {
-        date = new Date(value);
-    }
-
-    if (Number.isNaN(date.getTime())) {
-        return "—";
-    }
-
-    return date.toLocaleDateString(undefined, {
-        year: "numeric",
-        month: "short",
-        day: "numeric"
-    });
-}
-
-function getFilteredUsers() {
-    const query = $("userSearch").value.trim().toLowerCase();
-    const source = $("sourceFilter").value;
-    const verification = $("verifiedFilter").value;
-
-    return allUsers.filter(user => {
-        const searchText = [
-            user.uid,
-            user.username,
-            user.Username,
-            user.full_name,
-            user.name,
-            user.email
-        ].join(" ").toLowerCase();
-
-        if (query && !searchText.includes(query)) {
-            return false;
-        }
-
-        if (source !== "all" && user.source !== source) {
-            return false;
-        }
-
-        if (verification === "verified" && !user.verified) {
-            return false;
-        }
-
-        if (verification === "unverified" && user.verified) {
-            return false;
-        }
-
-        return true;
-    });
-}
-
-function renderDesktopUsers(users) {
-    if (!users.length) {
-        $("desktopUserList").innerHTML = `
-            <div class="empty-state">
-                <div style="font-size:28px;margin-bottom:10px">⌕</div>
-                <strong>No users found</strong>
-                <div>Try changing the search or filters.</div>
-            </div>`;
-        return;
-    }
-
-    const rows = users.map(user => {
-        const sourceBadge = user.source === "app"
-            ? `<span class="badge badge-blue">App</span>`
-            : `<span class="badge">Website</span>`;
-
-        const verifiedBadge = user.verified
-            ? `<span class="badge badge-green">Verified</span>`
-            : `<span class="badge badge-yellow">Unverified</span>`;
-
-        return `
-            <tr data-user-uid="${escapeHTML(user.uid)}">
-                <td>
-                    <div class="user-cell">
-                        ${renderAvatar(user)}
-                        <div>
-                            <div class="user-name">
-                                ${escapeHTML(user.full_name)}
-                            </div>
-                            <div class="user-secondary">
-                                @${escapeHTML(user.username || "—")}
-                            </div>
-                        </div>
-                    </div>
-                </td>
-
-                <td>
-                    <div style="max-width:240px;overflow:hidden;text-overflow:ellipsis">
-                        ${escapeHTML(user.email || "—")}
-                    </div>
-                </td>
-
-                <td>${sourceBadge}</td>
-                <td>${verifiedBadge}</td>
-
-                <td>
-                    <div style="max-width:150px;overflow:hidden;text-overflow:ellipsis">
-                        ${escapeHTML(user.uid)}
-                    </div>
-                </td>
-
-                <td>
-                    <button class="table-action"
-                        type="button"
-                        data-open-user="${escapeHTML(user.uid)}">
-                        Manage →
-                    </button>
-                </td>
-            </tr>`;
-    }).join("");
-
-    $("desktopUserList").innerHTML = `
-        <table>
-            <thead>
-                <tr>
-                    <th>USER</th>
-                    <th>EMAIL</th>
-                    <th>SOURCE</th>
-                    <th>VERIFICATION</th>
-                    <th>UID</th>
-                    <th>ACTION</th>
-                </tr>
-            </thead>
-            <tbody>${rows}</tbody>
-        </table>`;
-}
-
-function renderMobileUsers(users) {
-    if (!users.length) {
-        $("mobileUserList").innerHTML = `
-            <div class="empty-state">
-                <strong>No users found</strong>
-                <div>Try changing the search or filters.</div>
-            </div>`;
-        return;
-    }
-
-    $("mobileUserList").innerHTML = users.map(user => {
-        const sourceLabel = user.source === "app" ? "App user" : "Website user";
-        const verifiedLabel = user.verified ? "Verified" : "Not verified";
-
-        return `
-            <div class="mobile-user-card"
-                data-open-user="${escapeHTML(user.uid)}">
-
-                ${renderAvatar(user)}
-
-                <div class="mobile-user-info">
-                    <div class="user-name">
-                        ${escapeHTML(user.full_name)}
-                    </div>
-
-                    <div class="user-secondary">
-                        ${escapeHTML(user.email || user.username || user.uid)}
-                    </div>
-
-                    <div class="user-secondary">
-                        ${escapeHTML(user.uid)}
-                    </div>
-                </div>
-
-                <div class="mobile-user-right">
-                    <span class="badge ${user.source === "app" ? "badge-blue" : ""}">
-                        ${escapeHTML(sourceLabel)}
-                    </span>
-                    <small>${escapeHTML(verifiedLabel)}</small>
-                </div>
-            </div>`;
-    }).join("");
-}
-
-function renderUsers() {
-    visibleUsers = getFilteredUsers();
-
-    renderDesktopUsers(visibleUsers);
-    renderMobileUsers(visibleUsers);
-
-    $("listCountBadge").textContent =
-        visibleUsers.length + (visibleUsers.length === 1 ? " user" : " users");
-
-    $("resultsText").textContent =
-        "Showing " + visibleUsers.length + " of " + allUsers.length + " users";
-}
-
-async function loadUsers() {
-    if (isLoadingUsers) return;
-
-    if (!ADMIN_API_KEY) {
-        $("desktopUserList").innerHTML = `
-            <div class="empty-state">
-                <strong>Connect your API</strong>
-                <div>Enter the admin API key to load the user list.</div>
-                <button type="button" class="btn btn-primary"
-                    style="margin-top:15px" id="connectFromEmpty">
-                    Connect API
-                </button>
-            </div>`;
-
-        $("mobileUserList").innerHTML = `
-            <div class="empty-state">
-                <strong>Connect your API</strong>
-                <div>Enter the admin API key to load the user list.</div>
-                <button type="button" class="btn btn-primary"
-                    style="margin-top:15px" id="connectFromEmptyMobile">
-                    Connect API
-                </button>
-            </div>`;
-
-        $("totalUsers").textContent = "—";
-        $("appUsersCount").textContent = "—";
-        $("websiteUsersCount").textContent = "—";
-        $("resultsText").textContent = "API connection required";
-
-        return;
-    }
-
-    isLoadingUsers = true;
-    $("refreshButton").disabled = true;
-    setUsersLoading();
-
-    try {
-        /*
-         * Do not append query parameters here. The existing endpoint
-         * is expected to return the complete user list.
-         */
-        const data = await apiRequest(ENDPOINTS.users, {
-            method: "GET"
-        });
-
-        const users = extractUsers(data);
-
-        allUsers = users;
-
-        const counts = getSourceCounts(data, users);
-
-        /*
-         * Use the actual list length for Total Users.
-         * The backend total can be stale or represent a different subset.
-         */
-        $("totalUsers").textContent =
-            Number.isFinite(Number(data.total))
-                ? String(Math.max(Number(data.total), users.length))
-                : String(users.length);
-
-        $("appUsersCount").textContent = String(counts.appCount);
-        $("websiteUsersCount").textContent = String(counts.websiteCount);
-
-        renderUsers();
-
-        $("lastUpdated").textContent =
-            "Updated " + new Date().toLocaleTimeString();
-
-        setConnection(true, "Connected");
-
-        if (users.length === 0) {
-            $("desktopUserList").innerHTML = `
-                <div class="empty-state">
-                    <strong>API connected, but no users were returned.</strong>
-                    <div style="margin-top:8px">
-                        Check whether the API response contains a populated
-                        <code>users</code>, <code>appUsers</code> or
-                        <code>websiteUsers</code> array.
-                    </div>
-                </div>`;
-
-            $("mobileUserList").innerHTML = `
-                <div class="empty-state">
-                    <strong>API connected, but no users were returned.</strong>
-                    <div style="margin-top:8px">
-                        Check the users API response in Vercel.
-                    </div>
-                </div>`;
-
-            $("resultsText").textContent =
-                "The API returned zero readable users.";
-        }
-
-    } catch (error) {
-        console.error("Load users error:", error);
-
-        allUsers = [];
-        visibleUsers = [];
-
-        $("totalUsers").textContent = "—";
-        $("appUsersCount").textContent = "—";
-        $("websiteUsersCount").textContent = "—";
-
-        const message = escapeHTML(error.message);
-
-        $("desktopUserList").innerHTML = `
-            <div class="error-state">
-                <strong>Could not load users</strong>
-                <div style="margin-top:8px">${message}</div>
-                <button type="button" class="btn btn-primary"
-                    style="margin-top:15px" id="retryFromError">
-                    Try Again
-                </button>
-            </div>`;
-
-        $("mobileUserList").innerHTML = `
-            <div class="error-state">
-                <strong>Could not load users</strong>
-                <div style="margin-top:8px">${message}</div>
-                <button type="button" class="btn btn-primary"
-                    style="margin-top:15px" id="retryFromErrorMobile">
-                    Try Again
-                </button>
-            </div>`;
-
-        $("listCountBadge").textContent = "Unavailable";
-        $("resultsText").textContent = "User list failed to load";
-
-        setConnection(false, "Connection error");
-
-    } finally {
-        isLoadingUsers = false;
-        $("refreshButton").disabled = false;
-    }
-}
-
-/* ---------------- API configuration ---------------- */
-
-function openApiDialog() {
-    $("apiBaseInput").value = API_BASE;
-    $("apiKeyInput").value = ADMIN_API_KEY;
-    $("apiDialogBackdrop").classList.add("open");
-    setTimeout(() => $("apiBaseInput").focus(), 50);
-}
-
-function closeApiDialog() {
-    $("apiDialogBackdrop").classList.remove("open");
-}
-
-async function saveApiConfiguration(event) {
-    event.preventDefault();
-
-    const base = $("apiBaseInput").value.trim().replace(/\/+$/, "");
-    const key = $("apiKeyInput").value.trim();
-
-    if (!base || !key) {
-        showToast("Backend URL and API key are required.", "error");
-        return;
-    }
-
-    try {
-        const parsed = new URL(base);
-
-        if (parsed.protocol !== "https:" && parsed.hostname !== "localhost") {
-            showToast("Use HTTPS for the backend URL.", "error");
-            return;
-        }
-    } catch (error) {
-        showToast("Enter a valid backend URL.", "error");
-        return;
-    }
-
-    API_BASE = base;
-    ADMIN_API_KEY = key;
-
-    closeApiDialog();
-
-    setConnection(false, "Connecting...");
-
-    await loadUsers();
-    await loadTaxes();
-}
-
-/* ---------------- User bottom sheet ---------------- */
-
-function openUserSheet(uid) {
-    const user = allUsers.find(item => item.uid === uid);
-
-    if (!user) {
-        showToast("This user is not in the current user list.", "error");
-        return;
-    }
-
-    selectedUser = user;
-
-    $("sheetAvatar").innerHTML = "";
-    $("sheetAvatar").textContent = getInitials(user);
-
-    if (user.avatar) {
-        const img = document.createElement("img");
-        img.alt = "";
-        img.referrerPolicy = "no-referrer";
-        img.src = user.avatar;
-        img.onerror = () => {
-            $("sheetAvatar").innerHTML = "";
-            $("sheetAvatar").textContent = getInitials(user);
-        };
-        $("sheetAvatar").appendChild(img);
-    }
-
-    $("sheetUserName").textContent = user.full_name || "User";
-    $("sheetUserEmail").textContent = user.email || user.username || "No email";
-    $("sheetUserUid").textContent = "UID: " + user.uid;
-
-    hideNotice($("sendNotice"));
-    hideNotice($("historyNotice"));
-
-    $("sheetBackdrop").classList.add("open");
-    $("userSheet").classList.add("open");
-    document.body.style.overflow = "hidden";
-
-    switchSheetTab("send");
-
-    $("notificationForm").reset();
-    $("notificationCategory").value = "orders";
-}
-
-function closeUserSheet() {
-    $("sheetBackdrop").classList.remove("open");
-    $("userSheet").classList.remove("open");
-    document.body.style.overflow = "";
-    selectedUser = null;
-}
-
-function switchSheetTab(tab) {
-    const history = tab === "history";
-
-    $("sendTab").classList.toggle("active", !history);
-    $("historyTab").classList.toggle("active", history);
-
-    $("sendPanel").hidden = history;
-    $("historyPanel").hidden = !history;
-
-    if (history && selectedUser) {
-        loadNotificationHistory();
-    }
-}
-
-/* ---------------- Notifications ---------------- */
-
-function formatCategory(category) {
-    return String(category || "general")
-        .replace(/[_-]+/g, " ")
-        .replace(/\b\w/g, letter => letter.toUpperCase());
-}
-
-function normalizeNotification(raw, id) {
-    if (!raw || typeof raw !== "object") return null;
-
-    return {
-        ...raw,
-        id: String(raw.id || raw.notificationId || id || ""),
-        title: String(raw.title || ""),
-        message: String(raw.message || ""),
-        category: String(raw.category || "general"),
-        createdAt: raw.createdAt || raw.created_at || 0,
-        read: raw.read === true
-    };
-}
-
-function extractNotifications(data) {
-    let raw = data.notifications;
-
-    if (!raw && data.items) {
-        raw = data.items;
-    }
-
-    if (!raw && data.history) {
-        raw = data.history;
-    }
-
-    const result = [];
-
-    if (Array.isArray(raw)) {
-        raw.forEach(item => {
-            const normalized = normalizeNotification(item);
-            if (normalized) result.push(normalized);
-        });
-    } else if (raw && typeof raw === "object") {
-        Object.keys(raw).forEach(id => {
-            const normalized = normalizeNotification(raw[id], id);
-            if (normalized) result.push(normalized);
-        });
-    }
-
-    result.sort((a, b) => {
-        const av = Number(a.createdAt) || Date.parse(a.createdAt) || 0;
-        const bv = Number(b.createdAt) || Date.parse(b.createdAt) || 0;
-        return bv - av;
-    });
-
-    return result;
-}
-
-async function sendNotification(event) {
-    event.preventDefault();
-
-    if (!selectedUser) {
-        showToast("Select a user first.", "error");
-        return;
-    }
-
-    if (isSendingNotification) return;
-
-    const title = $("notificationTitle").value.trim();
-    const message = $("notificationMessage").value.trim();
-    const category = $("notificationCategory").value;
-
-    if (!title || !message) {
-        showNotice(
-            $("sendNotice"),
-            "Notification title and message are required.",
-            "error"
-        );
-        return;
-    }
-
-    if (!CATEGORIES.includes(category)) {
-        showNotice(
-            $("sendNotice"),
-            "Select a valid e-commerce notification category.",
-            "error"
-        );
-        return;
-    }
-
-    isSendingNotification = true;
-    $("sendNotificationButton").disabled = true;
-    $("sendNotificationButton").innerHTML =
-        '<span class="spinner"></span> Sending...';
-
-    hideNotice($("sendNotice"));
-
-    try {
-        const data = await apiRequest(ENDPOINTS.notifications, {
-            method: "POST",
-            body: JSON.stringify({
-                action: "send",
-                uid: selectedUser.uid,
-                title,
-                message,
-                category
-            })
-        });
-
-        showNotice(
-            $("sendNotice"),
-            "Notification sent successfully to " +
-                (selectedUser.full_name || selectedUser.uid) +
-                ". Notification ID: " +
-                (data.notificationId || "created"),
-            "success"
-        );
-
-        showToast("Notification sent successfully.");
-
-        $("notificationForm").reset();
-        $("notificationCategory").value = "orders";
-
-    } catch (error) {
-        console.error("Send notification error:", error);
-
-        showNotice(
-            $("sendNotice"),
-            error.message,
-            "error"
-        );
-    } finally {
-        isSendingNotification = false;
-        $("sendNotificationButton").disabled = false;
-        $("sendNotificationButton").textContent = "Send Notification";
-    }
-}
-
-function renderNotificationHistory() {
-    const category = $("historyCategoryFilter").value;
-
-    const items = notificationHistory.filter(item => {
-        return category === "all" || item.category === category;
-    });
-
-    $("historyCount").textContent =
-        items.length + (items.length === 1
-            ? " notification"
-            : " notifications");
-
-    if (!items.length) {
-        $("notificationList").innerHTML = `
-            <div class="empty-state">
-                <div style="font-size:25px;margin-bottom:8px">♧</div>
-                <strong>No notifications found</strong>
-                <div>There are no notifications for this user in this category.</div>
-            </div>`;
-        return;
-    }
-
-    $("notificationList").innerHTML = items.map(item => {
-        const categoryBadge = escapeHTML(formatCategory(item.category));
-
-        const sourceLabel = item.source === "broadcast"
-            ? "Broadcast"
-            : "Personal";
-
-        const readBadge = item.read
-            ? `<span class="badge badge-green">Read</span>`
-            : `<span class="badge badge-yellow">Unread</span>`;
-
-        return `
-            <article class="notification-card">
-                <div class="notification-card-top">
-                    <div class="notification-title">
-                        ${escapeHTML(item.title || "Notification")}
-                    </div>
-
-                    <span class="badge badge-blue">${categoryBadge}</span>
-                </div>
-
-                <div class="notification-message">
-                    ${escapeHTML(item.message)}
-                </div>
-
-                <div class="notification-meta">
-                    ${readBadge}
-                    <span class="badge">${escapeHTML(sourceLabel)}</span>
-                    <span class="notification-date">
-                        ${escapeHTML(formatDate(item.createdAt))}
-                    </span>
-                </div>
-            </article>`;
-    }).join("");
-}
-
-async function loadNotificationHistory() {
-    if (!selectedUser || isLoadingHistory) return;
-
-    if (!ADMIN_API_KEY) {
-        showNotice(
-            $("historyNotice"),
-            "Connect the API first.",
-            "error"
-        );
-        return;
-    }
-
-    isLoadingHistory = true;
-
-    $("notificationList").innerHTML = `
-        <div class="loading">
-            <span class="spinner"></span>
-            Loading notification history...
-        </div>`;
-
-    hideNotice($("historyNotice"));
-
-    try {
-        const data = await apiRequest(ENDPOINTS.notifications, {
-            method: "POST",
-            body: JSON.stringify({
-                action: "list",
-                uid: selectedUser.uid,
-                limit: 100
-            })
-        });
-
-        notificationHistory = extractNotifications(data);
-
-        renderNotificationHistory();
-
-    } catch (error) {
-        console.error("Notification history error:", error);
-
-        notificationHistory = [];
-
-        $("notificationList").innerHTML = `
-            <div class="error-state">
-                <strong>Could not load notification history</strong>
-                <div style="margin-top:8px">
-                    ${escapeHTML(error.message)}
-                </div>
-            </div>`;
-
-        showNotice(
-            $("historyNotice"),
-            error.message,
-            "error"
-        );
-
-    } finally {
-        isLoadingHistory = false;
-    }
-}
-
-/* ---------------- Navigation and events ---------------- */
-
-function showUsersPage() {
-    $("userSearch").focus();
-}
-
-function showNotificationsPage() {
-    if (!selectedUser) {
-        showToast("Select a user from the user list first.", "error");
-        return;
-    }
-
-    openUserSheet(selectedUser.uid);
-    switchSheetTab("history");
-}
-
-$("refreshButton").addEventListener("click", loadUsers);
-$("connectButton").addEventListener("click", openApiDialog);
-$("connectionButton").addEventListener("click", openApiDialog);
-
-$("apiConfigForm").addEventListener("submit", saveApiConfiguration);
-
-$("cancelApiConfig").addEventListener("click", closeApiDialog);
-
-$("apiDialogBackdrop").addEventListener("click", event => {
-    if (event.target === $("apiDialogBackdrop")) {
-        closeApiDialog();
-    }
+document.addEventListener("click",e=>{
+  const b=e.target.closest("[data-tab]");
+  if(b)showTab(b.dataset.tab);
+});
+$("refreshButton").addEventListener("click",()=>{
+  if(!ADMIN_API_KEY){openApiDialog();return}
+  if(currentTab==="home"||currentTab==="users")loaded.users=loaded.home=false;
+  loaded[currentTab]=false;loadTab(currentTab,true);
 });
 
-$("userSearch").addEventListener("input", renderUsers);
-$("sourceFilter").addEventListener("change", renderUsers);
-$("verifiedFilter").addEventListener("change", renderUsers);
-
-$("desktopUserList").addEventListener("click", event => {
-    const button = event.target.closest("[data-open-user]");
-    const row = event.target.closest("tr[data-user-uid]");
-
-    const uid = button
-        ? button.getAttribute("data-open-user")
-        : row
-            ? row.getAttribute("data-user-uid")
-            : null;
-
-    if (uid) openUserSheet(uid);
-});
-
-$("mobileUserList").addEventListener("click", event => {
-    const card = event.target.closest("[data-open-user]");
-
-    if (card) {
-        openUserSheet(card.getAttribute("data-open-user"));
-    }
-});
-
-document.addEventListener("click", event => {
-    if (event.target.closest("#connectFromEmpty") ||
-        event.target.closest("#connectFromEmptyMobile")) {
-        openApiDialog();
-    }
-
-    if (event.target.closest("#retryFromError") ||
-        event.target.closest("#retryFromErrorMobile")) {
-        loadUsers();
-    }
-});
-
-$("sheetBackdrop").addEventListener("click", closeUserSheet);
-$("closeSheet").addEventListener("click", closeUserSheet);
-$("cancelSend").addEventListener("click", closeUserSheet);
-
-$("sendTab").addEventListener("click", () => switchSheetTab("send"));
-$("historyTab").addEventListener("click", () => switchSheetTab("history"));
-
-$("notificationForm").addEventListener("submit", sendNotification);
-
-$("historyCategoryFilter").addEventListener("change", renderNotificationHistory);
-
-$("refreshHistoryButton").addEventListener("click", () => {
-    notificationHistory = [];
-    loadNotificationHistory();
-});
-
-$("navUsers").addEventListener("click", showUsersPage);
-$("mobileNavUsers").addEventListener("click", showUsersPage);
-
-$("navNotifications").addEventListener("click", showNotificationsPage);
-$("mobileNavNotifications").addEventListener("click", showNotificationsPage);
-
-$("mobileNavSettings").addEventListener("click", openApiDialog);
-
-document.querySelectorAll("[data-placeholder]").forEach(button => {
-    button.addEventListener("click", () => {
-        showToast(button.dataset.placeholder + " section is not connected yet.");
-    });
-});
-
-document.addEventListener("keydown", event => {
-    if (event.key === "Escape") {
-        closeUserSheet();
-        closeApiDialog();
-    }
-});
-
-/* Initial state */
-setConnection(false, "Not connected");
-loadUsers();
-
-
-/* ---------------- Cart tax and charge settings ---------------- */
-let currentTaxes = [];
-function showTaxNotice(message, type) {
-  const el = $("taxNotice"); if (!el) return;
-  el.textContent = message; el.className = "notice show " + (type || "");
+/* ---------- Users ---------- */
+function getInitials(u){return (String(u.full_name||u.name||u.username||u.email||"U").trim().slice(0,1).toUpperCase())||"U"}
+function normalizeUser(raw,forced){
+  if(!raw||typeof raw!=="object")return null;
+  const uid=String(raw.uid||raw.UID||raw.id||raw.userId||raw.key||"").trim();if(!uid)return null;
+  const username=String(raw.username||raw.Username||raw.user_name||"");
+  const full=String(raw.full_name||raw.fullName||raw.name||raw.displayName||username||raw.email||"User");
+  let source=String(forced||raw.source||raw.userType||"").toLowerCase();
+  if(source!=="app"&&source!=="website")source=(raw.Username!==undefined||raw.full_name!==undefined||raw.avatar!==undefined||raw.private_profile!==undefined)?"app":"website";
+  const vv=raw.verified!==undefined?raw.verified:raw.verify!==undefined?raw.verify:raw.isVerified!==undefined?raw.isVerified:false;
+  const verified=vv===true||vv===1||String(vv).toLowerCase()==="true"||String(vv)==="1";
+  const bv=raw.blocked!==undefined?raw.blocked:raw.isBlocked;
+  return {...raw,uid,username,full_name:full,email:String(raw.email||raw.Email||""),avatar:String(raw.avatar||raw.photoURL||raw.photoUrl||""),source,verified,blocked:bv===true||String(bv)==="true"};
 }
-function renderTaxes() {
-  const host = $("taxRows"); if (!host) return;
-  if (!currentTaxes.length) { host.innerHTML = '<div class="empty-state">No charges configured.</div>'; return; }
-  host.innerHTML = currentTaxes.map((tax, index) => `
-    <div style="display:grid;grid-template-columns:minmax(0,1fr) 110px auto;gap:10px;align-items:center;padding:12px;border:1px solid var(--border);border-radius:12px">
-      <div style="font-weight:700;overflow-wrap:anywhere">${escapeHTML(tax.title)}</div>
-      <div style="color:var(--muted)">${Number(tax.percent)}%</div>
-      <button class="btn btn-danger btn-small" type="button" data-remove-tax="${escapeHTML(tax.id || String(index))}">Remove</button>
-    </div>`).join("");
-  host.querySelectorAll("[data-remove-tax]").forEach(button => button.addEventListener("click", async () => {
-    if (!confirm("Remove this cart charge?")) return;
-    try {
-      const data = await apiRequest(ENDPOINTS.taxes, { method:"PUT", body:JSON.stringify({ action:"remove", id:button.dataset.removeTax }) });
-      currentTaxes = data.taxes || []; renderTaxes(); showTaxNotice("Charge removed. Cart will use the updated charges.", "success");
-    } catch (e) { showTaxNotice(e.message || "Could not remove charge.", "error"); }
-  }));
+function extractUsers(data){
+  const out=[],seen=new Set();
+  const add=(raw,src)=>{const u=normalizeUser(raw,src);if(!u||seen.has(u.uid))return;seen.add(u.uid);out.push(u)};
+  const walk=(coll,src)=>{
+    if(Array.isArray(coll))coll.forEach(u=>add(u,src||(u&&u.source)));
+    else if(coll&&typeof coll==="object")Object.keys(coll).forEach(k=>{const r=coll[k];if(r&&typeof r==="object")add({...r,uid:r.uid||k},src||r.source)});
+  };
+  walk(data.users);walk(data.appUsers,"app");walk(data.websiteUsers,"website");
+  return out;
 }
-async function loadTaxes() {
-  const host = $("taxRows");
-  if (host) host.innerHTML = '<div class="loading"><span class="spinner"></span>Loading charges...</div>';
-  try {
-    const data = await apiRequest(ENDPOINTS.taxes, { method:"GET" });
-    currentTaxes = Array.isArray(data.taxes) ? data.taxes : [];
-    renderTaxes(); showTaxNotice("Charges loaded.", "success");
-  } catch (e) {
-    if (host) host.innerHTML = '<div class="empty-state">Unable to load. Connect the admin API using the API button first.</div>';
-    showTaxNotice(e.message || "Unable to load charges.", "error");
+function countOf(c){return Array.isArray(c)?c.length:(c&&typeof c==="object"?Object.keys(c).length:0)}
+function renderAvatar(user,cls="avatar"){
+  const init=escapeHTML(getInitials(user)),url=String(user.avatar||"").trim();
+  if(url)return `<div class="${cls}"><img src="${escapeHTML(url)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentElement.textContent='${init}'"></div>`;
+  return `<div class="${cls}">${init}</div>`;
+}
+function getFilteredUsers(){
+  const q=$("userSearch").value.trim().toLowerCase(),s=$("sourceFilter").value,v=$("verifiedFilter").value;
+  return allUsers.filter(u=>{
+    if(q&&![u.uid,u.username,u.full_name,u.email].join(" ").toLowerCase().includes(q))return false;
+    if(s!=="all"&&u.source!==s)return false;
+    if(v==="verified"&&!u.verified)return false;
+    if(v==="unverified"&&u.verified)return false;
+    return true;
+  });
+}
+function statusBadges(u){
+  return (u.source==="app"?'<span class="badge badge-blue">App</span>':'<span class="badge">Website</span>')+" "+
+    (u.verified?'<span class="badge badge-green">Verified</span>':'<span class="badge badge-yellow">Unverified</span>')+
+    (u.blocked?' <span class="badge badge-red">Blocked</span>':"");
+}
+function renderUsers(){
+  visibleUsers=getFilteredUsers();
+  if(!visibleUsers.length){
+    const empty=`<div class="empty-state">${icon("magnifying-glass")}<strong>No users found</strong><div>Try changing the search or filters.</div></div>`;
+    $("desktopUserList").innerHTML=empty;$("mobileUserList").innerHTML=empty;
+  }else{
+    $("desktopUserList").innerHTML=`<table><thead><tr><th>USER</th><th>EMAIL</th><th>STATUS</th><th>UID</th><th>ACTION</th></tr></thead><tbody>${visibleUsers.map(u=>`
+      <tr data-user-uid="${escapeHTML(u.uid)}"><td><div class="user-cell">${renderAvatar(u)}<div><div class="user-name">${escapeHTML(u.full_name)}</div><div class="user-secondary">@${escapeHTML(u.username||"—")}</div></div></div></td>
+      <td><div style="max-width:240px;overflow:hidden;text-overflow:ellipsis">${escapeHTML(u.email||"—")}</div></td>
+      <td>${statusBadges(u)}</td>
+      <td><div style="max-width:150px;overflow:hidden;text-overflow:ellipsis">${escapeHTML(u.uid)}</div></td>
+      <td><button class="table-action" type="button" data-open-user="${escapeHTML(u.uid)}">Manage ${icon("arrow-right")}</button></td></tr>`).join("")}</tbody></table>`;
+    $("mobileUserList").innerHTML=visibleUsers.map(u=>`
+      <div class="mobile-user-card" data-open-user="${escapeHTML(u.uid)}">${renderAvatar(u)}
+      <div class="mobile-user-info"><div class="user-name">${escapeHTML(u.full_name)}</div><div class="user-secondary">${escapeHTML(u.email||u.username||u.uid)}</div></div>
+      <div class="mobile-user-right"><span class="badge ${u.source==="app"?"badge-blue":""}">${u.source==="app"?"App":"Website"}</span><small>${u.blocked?"Blocked":(u.verified?"Verified":"Not verified")}</small></div></div>`).join("");
   }
+  $("listCountBadge").textContent=visibleUsers.length+(visibleUsers.length===1?" user":" users");
+  $("resultsText").textContent="Showing "+visibleUsers.length+" of "+allUsers.length+" users";
 }
-$("addTaxForm")?.addEventListener("submit", async event => {
-  event.preventDefault();
-  const title = $("newTaxTitle").value.trim(), percent = Number($("newTaxPercent").value);
-  if (!title || !Number.isFinite(percent) || percent < 0 || percent > 100) { showTaxNotice("Enter a title and a percentage from 0 to 100.", "error"); return; }
-  try {
-    const data = await apiRequest(ENDPOINTS.taxes, { method:"PUT", body:JSON.stringify({ action:"add", title, percent }) });
-    currentTaxes = Array.isArray(data.taxes) ? data.taxes : [];
-    renderTaxes(); $("addTaxForm").reset(); showTaxNotice("Charge added and published to the cart.", "success");
-  } catch (e) { showTaxNotice(e.message || "Could not add charge.", "error"); }
+async function loadUsers(){
+  if(busy.users)return;
+  if(!ADMIN_API_KEY){
+    const e=`<div class="empty-state">${icon("plugs")}<strong>Connect your API</strong><div>Enter the admin API key to load users.</div></div>`;
+    $("desktopUserList").innerHTML=e;$("mobileUserList").innerHTML=e;return;
+  }
+  busy.users=true;
+  const sp=`<div class="loading"><span class="spinner"></span>Loading users...</div>`;
+  $("desktopUserList").innerHTML=sp;$("mobileUserList").innerHTML=sp;
+  try{
+    const data=await apiRequest(ENDPOINTS.users,{method:"GET"});
+    allUsers=extractUsers(data);
+    let app=countOf(data.appUsers),web=countOf(data.websiteUsers);
+    if(data.appUsers===undefined&&data.websiteUsers===undefined){app=allUsers.filter(u=>u.source==="app").length;web=allUsers.filter(u=>u.source==="website").length}
+    $("totalUsers").textContent=Number.isFinite(Number(data.total))?String(Math.max(Number(data.total),allUsers.length)):String(allUsers.length);
+    $("appUsersCount").textContent=String(app);$("websiteUsersCount").textContent=String(web);
+    renderUsers();refreshPickers();
+    $("lastUpdated").textContent="Updated "+new Date().toLocaleTimeString();
+    setConnection(true,"Connected");
+  }catch(err){
+    allUsers=[];
+    const msg=escapeHTML(err.message);
+    const e=`<div class="error-state"><strong>Could not load users</strong><div style="margin-top:8px">${msg}</div></div>`;
+    $("desktopUserList").innerHTML=e;$("mobileUserList").innerHTML=e;
+    $("listCountBadge").textContent="Unavailable";setConnection(false,"Connection error");loaded.users=loaded.home=false;
+  }finally{busy.users=false}
+}
+
+/* ---------- API dialog ---------- */
+function openApiDialog(){$("apiBaseInput").value=API_BASE;$("apiKeyInput").value=ADMIN_API_KEY;$("apiDialogBackdrop").classList.add("open");setTimeout(()=>$("apiBaseInput").focus(),50)}
+function closeApiDialog(){$("apiDialogBackdrop").classList.remove("open")}
+async function saveApiConfiguration(e){
+  e.preventDefault();
+  const base=$("apiBaseInput").value.trim().replace(/\/+$/,""),key=$("apiKeyInput").value.trim();
+  if(!base||!key){showToast("Backend URL and API key are required.","error");return}
+  try{const p=new URL(base);if(p.protocol!=="https:"&&p.hostname!=="localhost"){showToast("Use HTTPS for the backend URL.","error");return}}
+  catch(err){showToast("Enter a valid backend URL.","error");return}
+  API_BASE=base;ADMIN_API_KEY=key;closeApiDialog();setConnection(false,"Connecting...");
+  Object.keys(loaded).forEach(k=>delete loaded[k]);
+  await loadUsers();loaded.users=loaded.home=true;
+  loadTab(currentTab,false);
+}
+$("connectButton").addEventListener("click",openApiDialog);
+$("connectionButton").addEventListener("click",openApiDialog);
+$("menuApi").addEventListener("click",()=>{closeMenu();openApiDialog()});
+$("apiConfigForm").addEventListener("submit",saveApiConfiguration);
+$("cancelApiConfig").addEventListener("click",closeApiDialog);
+$("apiDialogBackdrop").addEventListener("click",e=>{if(e.target===$("apiDialogBackdrop"))closeApiDialog()});
+
+/* ---------- User picker (reusable) ---------- */
+const pickers=[];
+function createPicker(prefix,onChange){
+  const input=$(prefix+"UserSearch"),list=$(prefix+"UserList"),chip=$(prefix+"UserChip");
+  const p={selected:null,render(){
+    const q=input.value.trim().toLowerCase();
+    const items=allUsers.filter(u=>!q||[u.uid,u.full_name,u.email,u.username].join(" ").toLowerCase().includes(q)).slice(0,40);
+    list.innerHTML=items.length?items.map(u=>`<div class="picker-item${p.selected&&p.selected.uid===u.uid?" sel":""}" data-uid="${escapeHTML(u.uid)}">${escapeHTML(u.full_name)}<small>${escapeHTML(u.email||u.uid)}</small></div>`).join(""):`<div class="picker-item">${allUsers.length?"No match":"Load users first (connect the API)."}</div>`;
+  },set(u){
+    p.selected=u;
+    chip.innerHTML=u?`<span class="chip">${icon("user")} ${escapeHTML(u.full_name)} (${escapeHTML(u.email||u.uid)}) <button type="button" aria-label="Clear">${icon("x")}</button></span>`:"";
+    p.render();if(onChange)onChange(u);
+  }};
+  input.addEventListener("input",p.render);
+  list.addEventListener("click",e=>{const it=e.target.closest("[data-uid]");if(it)p.set(allUsers.find(u=>u.uid===it.dataset.uid)||null)});
+  chip.addEventListener("click",e=>{if(e.target.closest("button"))p.set(null)});
+  pickers.push(p);p.render();return p;
+}
+function refreshPickers(){pickers.forEach(p=>p.render())}
+
+/* ---------- Notifications tab ---------- */
+let audience="user";
+const nPicker=createPicker("n");
+const hPicker=createPicker("h",()=>{notificationHistoryTab=[];if(hPicker.selected)loadHistoryTab();else{$("hList").innerHTML="";$("hCount").textContent="Select a user."}});
+const sentLog=[];
+function setAudience(a){
+  audience=a;$("audUser").classList.toggle("active",a==="user");$("audAll").classList.toggle("active",a==="all");
+  $("nUserGroup").style.display=a==="user"?"":"none";
+}
+$("audUser").addEventListener("click",()=>setAudience("user"));
+$("audAll").addEventListener("click",()=>setAudience("all"));
+$("nMessage").addEventListener("input",()=>{$("nCounter").textContent=$("nMessage").value.length+" / 5000"});
+function renderSentLog(){
+  $("sentLog").innerHTML=sentLog.length?sentLog.map(s=>`<article class="notification-card"><div class="notification-card-top"><div class="notification-title">${escapeHTML(s.title)}</div><span class="badge badge-blue">${escapeHTML(formatCategory(s.category))}</span></div><div class="notification-message">${escapeHTML(s.message)}</div><div class="notification-meta"><span class="badge">${icon("paper-plane-tilt")} ${escapeHTML(s.to)}</span><span class="notification-date">${escapeHTML(s.time)}</span></div></article>`).join(""):'<div class="empty-state">Nothing sent yet.</div>';
+}
+$("nForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  if(busy.nSend)return;
+  const title=$("nTitle").value.trim(),message=$("nMessage").value.trim(),category=$("nCategory").value;
+  const notice=$("nSendNotice");
+  if(!title||!message){showNotice(notice,"Title and message are required.","error");return}
+  if(audience==="user"&&!nPicker.selected){showNotice(notice,"Select a recipient first.","error");return}
+  if(audience==="all"&&!confirm("Send this notification to ALL users?"))return;
+  busy.nSend=true;const btn=$("nSendBtn");btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Sending...';hideNotice(notice);
+  try{
+    const body=audience==="all"?{action:"broadcast",title,message,category}:{action:"send",uid:nPicker.selected.uid,title,message,category};
+    const data=await apiRequest(ENDPOINTS.notifications,{method:"POST",body:JSON.stringify(body)});
+    const to=audience==="all"?"All users":(nPicker.selected.full_name||nPicker.selected.uid);
+    showNotice(notice,"Sent to "+to+". ID: "+(data.notificationId||"created"),"success");showToast("Notification sent.");
+    sentLog.unshift({title,message,category,to,time:new Date().toLocaleTimeString()});renderSentLog();
+    $("nTitle").value="";$("nMessage").value="";$("nCounter").textContent="0 / 5000";
+  }catch(err){showNotice(notice,err.message+(audience==="all"?" (Broadcast needs backend action \"broadcast\".)":""),"error")}
+  finally{busy.nSend=false;btn.disabled=false;btn.innerHTML=icon("paper-plane-tilt")+" Send notification"}
 });
-$("refreshTaxesButton")?.addEventListener("click", loadTaxes);
-
-
-/* Customer discount management */
-let currentDiscounts = [];
-function showDiscountNotice(message, type) { const el = $("discountNotice"); if (!el) return; el.textContent = message; el.className = "notice show " + (type || ""); }
-function renderDiscounts() {
-  const host = $("discountRows"); if (!host) return;
-  if (!currentDiscounts.length) { host.innerHTML = '<div class="empty-state">No discounts configured.</div>'; return; }
-  host.innerHTML = currentDiscounts.map((d, i) => `<div style="display:grid;grid-template-columns:minmax(0,1fr) 100px minmax(120px,220px) auto;gap:10px;align-items:center;padding:12px;border:1px solid var(--border);border-radius:12px"><div style="font-weight:700;overflow-wrap:anywhere">${escapeHTML(d.title)}</div><div style="color:var(--success);font-weight:700">${Number(d.percent)}% off</div><div style="color:var(--muted);overflow-wrap:anywhere">${d.scope === "user" ? "User: " + escapeHTML(d.userEmail || "—") : "All users"}</div><button class="btn btn-danger btn-small" type="button" data-remove-discount="${escapeHTML(d.id || String(i))}">Remove</button></div>`).join("");
-  host.querySelectorAll("[data-remove-discount]").forEach(button => button.addEventListener("click", async () => {
-    if (!confirm("Remove this discount?")) return;
-    try { const data = await apiRequest(ENDPOINTS.discounts, { method:"PUT", body:JSON.stringify({ action:"remove", id:button.dataset.removeDiscount }) }); currentDiscounts = data.discounts || []; renderDiscounts(); showDiscountNotice("Discount removed.", "success"); }
-    catch (e) { showDiscountNotice(e.message || "Could not remove discount.", "error"); }
-  }));
+function normalizeNotification(raw,id){
+  if(!raw||typeof raw!=="object")return null;
+  return {...raw,id:String(raw.id||raw.notificationId||id||""),title:String(raw.title||""),message:String(raw.message||""),category:String(raw.category||"general"),createdAt:raw.createdAt||raw.created_at||0,read:raw.read===true};
 }
-async function loadDiscounts() {
-  const host = $("discountRows"); if (host) host.innerHTML = '<div class="loading"><span class="spinner"></span>Loading discounts...</div>';
-  try { const data = await apiRequest(ENDPOINTS.discounts, { method:"GET" }); currentDiscounts = Array.isArray(data.discounts) ? data.discounts : []; renderDiscounts(); showDiscountNotice("Discounts loaded.", "success"); }
-  catch (e) { if (host) host.innerHTML = '<div class="empty-state">Unable to load. Connect the admin API using the API button first.</div>'; showDiscountNotice(e.message || "Unable to load discounts.", "error"); }
+function extractNotifications(data){
+  const raw=data.notifications||data.items||data.history;const r=[];
+  if(Array.isArray(raw))raw.forEach(i=>{const n=normalizeNotification(i);if(n)r.push(n)});
+  else if(raw&&typeof raw==="object")Object.keys(raw).forEach(id=>{const n=normalizeNotification(raw[id],id);if(n)r.push(n)});
+  const ts=v=>Number(v)||Date.parse(v)||0;
+  r.sort((a,b)=>ts(b.createdAt)-ts(a.createdAt));return r;
 }
-$("newDiscountScope")?.addEventListener("change", () => { const single = $("newDiscountScope").value === "user"; $("discountEmailGroup").style.display = single ? "block" : "none"; $("newDiscountEmail").required = single; });
-$("addDiscountForm")?.addEventListener("submit", async event => {
-  event.preventDefault();
-  const title = $("newDiscountTitle").value.trim(), scope = $("newDiscountScope").value, percent = Number($("newDiscountPercent").value), userEmail = $("newDiscountEmail").value.trim().toLowerCase();
-  if (!title || !Number.isFinite(percent) || percent <= 0 || percent > 100) { showDiscountNotice("Enter a title and a discount between 0 and 100%.", "error"); return; }
-  if (scope === "user" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userEmail)) { showDiscountNotice("Enter the customer’s valid account email.", "error"); return; }
-  try { const data = await apiRequest(ENDPOINTS.discounts, { method:"PUT", body:JSON.stringify({ action:"add", title, scope, percent, userEmail: scope === "user" ? userEmail : "" }) }); currentDiscounts = Array.isArray(data.discounts) ? data.discounts : []; renderDiscounts(); $("addDiscountForm").reset(); $("discountEmailGroup").style.display = "none"; $("newDiscountEmail").required = false; showDiscountNotice("Discount published to the customer cart.", "success"); }
-  catch (e) { showDiscountNotice(e.message || "Could not add discount.", "error"); }
+function notificationCards(items){
+  return items.map(i=>`<article class="notification-card"><div class="notification-card-top"><div class="notification-title">${escapeHTML(i.title||"Notification")}</div><span class="badge badge-blue">${escapeHTML(formatCategory(i.category))}</span></div><div class="notification-message">${escapeHTML(i.message)}</div><div class="notification-meta">${i.read?'<span class="badge badge-green">Read</span>':'<span class="badge badge-yellow">Unread</span>'}<span class="badge">${i.source==="broadcast"?"Broadcast":"Personal"}</span><span class="notification-date">${escapeHTML(formatDate(i.createdAt))}</span></div></article>`).join("");
+}
+async function fetchHistory(uid){
+  const data=await apiRequest(ENDPOINTS.notifications,{method:"POST",body:JSON.stringify({action:"list",uid,limit:100})});
+  return extractNotifications(data);
+}
+let notificationHistoryTab=[];
+function renderHistoryTab(){
+  const c=$("hCategory").value;const items=notificationHistoryTab.filter(i=>c==="all"||i.category===c);
+  $("hCount").textContent=items.length+(items.length===1?" notification":" notifications");
+  $("hList").innerHTML=items.length?notificationCards(items):`<div class="empty-state">${icon("bell-slash")}<strong>No notifications found</strong></div>`;
+}
+async function loadHistoryTab(){
+  if(!hPicker.selected){showNotice($("nHistNotice"),"Select a user first.","error");return}
+  if(busy.hist)return;busy.hist=true;hideNotice($("nHistNotice"));
+  $("hList").innerHTML='<div class="loading"><span class="spinner"></span>Loading...</div>';
+  try{notificationHistoryTab=await fetchHistory(hPicker.selected.uid);renderHistoryTab()}
+  catch(err){$("hList").innerHTML="";showNotice($("nHistNotice"),err.message,"error")}
+  finally{busy.hist=false}
+}
+$("hRefresh").addEventListener("click",loadHistoryTab);
+$("hCategory").addEventListener("change",renderHistoryTab);
+
+/* ---------- User drawer ---------- */
+let drawerHistory=[];
+function openUserSheet(uid,tab){
+  const user=allUsers.find(u=>u.uid===uid);
+  if(!user){showToast("This user is not in the current list.","error");return}
+  selectedUser=user;
+  const av=$("sheetAvatar");av.innerHTML="";av.textContent=getInitials(user);
+  if(user.avatar){const img=document.createElement("img");img.alt="";img.referrerPolicy="no-referrer";img.src=user.avatar;img.onerror=()=>{av.innerHTML="";av.textContent=getInitials(user)};av.appendChild(img)}
+  $("sheetUserName").textContent=user.full_name||"User";
+  $("sheetUserEmail").textContent=user.email||user.username||"No email";
+  $("sheetUserUid").textContent="UID: "+user.uid;
+  ["sendNotice","historyNotice","manageNotice"].forEach(i=>hideNotice($(i)));
+  $("sheetBackdrop").classList.add("open");$("userSheet").classList.add("open");document.body.style.overflow="hidden";
+  $("notificationForm").reset();$("notificationCategory").value="orders";
+  switchSheetTab(tab||"send");
+}
+function closeUserSheet(){$("sheetBackdrop").classList.remove("open");$("userSheet").classList.remove("open");document.body.style.overflow="";selectedUser=null}
+function switchSheetTab(tab){
+  ["send","history","manage"].forEach(t=>{$(t+"Tab").classList.toggle("active",t===tab);$(t+"Panel").hidden=t!==tab});
+  if(tab==="history"&&selectedUser)loadDrawerHistory();
+  if(tab==="manage")renderManage();
+}
+$("sendTab").addEventListener("click",()=>switchSheetTab("send"));
+$("historyTab").addEventListener("click",()=>switchSheetTab("history"));
+$("manageTab").addEventListener("click",()=>switchSheetTab("manage"));
+$("sheetBackdrop").addEventListener("click",closeUserSheet);
+$("closeSheet").addEventListener("click",closeUserSheet);
+$("cancelSend").addEventListener("click",closeUserSheet);
+
+$("notificationForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  if(!selectedUser||busy.dSend)return;
+  const title=$("notificationTitle").value.trim(),message=$("notificationMessage").value.trim(),category=$("notificationCategory").value;
+  if(!title||!message){showNotice($("sendNotice"),"Title and message are required.","error");return}
+  busy.dSend=true;const btn=$("sendNotificationButton");btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Sending...';hideNotice($("sendNotice"));
+  try{
+    const data=await apiRequest(ENDPOINTS.notifications,{method:"POST",body:JSON.stringify({action:"send",uid:selectedUser.uid,title,message,category})});
+    showNotice($("sendNotice"),"Notification sent. ID: "+(data.notificationId||"created"),"success");showToast("Notification sent.");
+    sentLog.unshift({title,message,category,to:selectedUser.full_name||selectedUser.uid,time:new Date().toLocaleTimeString()});renderSentLog();
+    $("notificationForm").reset();$("notificationCategory").value="orders";
+  }catch(err){showNotice($("sendNotice"),err.message,"error")}
+  finally{busy.dSend=false;btn.disabled=false;btn.innerHTML=icon("paper-plane-tilt")+" Send"}
 });
-$("refreshDiscountsButton")?.addEventListener("click", loadDiscounts);
+function renderDrawerHistory(){
+  const c=$("historyCategoryFilter").value;const items=drawerHistory.filter(i=>c==="all"||i.category===c);
+  $("historyCount").textContent=items.length+(items.length===1?" notification":" notifications");
+  $("notificationList").innerHTML=items.length?notificationCards(items):`<div class="empty-state">${icon("bell-slash")}<strong>No notifications found</strong></div>`;
+}
+async function loadDrawerHistory(){
+  if(!selectedUser||busy.dHist)return;busy.dHist=true;hideNotice($("historyNotice"));
+  $("notificationList").innerHTML='<div class="loading"><span class="spinner"></span>Loading...</div>';
+  try{drawerHistory=await fetchHistory(selectedUser.uid);renderDrawerHistory()}
+  catch(err){$("notificationList").innerHTML="";showNotice($("historyNotice"),err.message,"error")}
+  finally{busy.dHist=false}
+}
+$("historyCategoryFilter").addEventListener("change",renderDrawerHistory);
+$("refreshHistoryButton").addEventListener("click",loadDrawerHistory);
 
+function renderManage(){
+  if(!selectedUser)return;
+  const b=selectedUser.blocked;
+  $("manageStatus").innerHTML=b?'<span class="badge badge-red">Blocked</span>':'<span class="badge badge-green">Active</span>';
+  $("manageBlockBtn").style.display=b?"none":"";$("manageUnblockBtn").style.display=b?"":"none";
+}
+async function setBlocked(uid,block,reason){
+  await apiRequest(ENDPOINTS.blocks,{method:"PUT",body:JSON.stringify({action:block?"block":"unblock",uid,reason:reason||""})});
+  const u=allUsers.find(x=>x.uid===uid);if(u)u.blocked=block;
+  renderUsers();loaded.block=false;
+}
+$("manageBlockBtn").addEventListener("click",async()=>{
+  if(!selectedUser)return;
+  if(!confirm("Block "+(selectedUser.full_name||selectedUser.uid)+"?"))return;
+  try{await setBlocked(selectedUser.uid,true,$("manageReason").value.trim());showNotice($("manageNotice"),"User blocked.","success");renderManage()}
+  catch(err){showNotice($("manageNotice"),err.message,"error")}
+});
+$("manageUnblockBtn").addEventListener("click",async()=>{
+  if(!selectedUser)return;
+  try{await setBlocked(selectedUser.uid,false);showNotice($("manageNotice"),"User unblocked.","success");renderManage()}
+  catch(err){showNotice($("manageNotice"),err.message,"error")}
+});
+
+/* Drawer resize (desktop) */
+(function(){
+  const drawer=$("userSheet"),handle=$("drawerResizer");
+  const clamp=w=>Math.max(360,Math.min(w,Math.min(1000,window.innerWidth*0.85)));
+  const apply=w=>document.documentElement.style.setProperty("--drawer-w",clamp(w)+"px");
+  try{const s=Number(localStorage.getItem("drawerWidth"));if(s)apply(s)}catch(e){}
+  let dragging=false;
+  handle.addEventListener("pointerdown",e=>{dragging=true;drawer.classList.add("resizing");handle.setPointerCapture(e.pointerId);e.preventDefault()});
+  handle.addEventListener("pointermove",e=>{if(dragging)apply(window.innerWidth-e.clientX)});
+  const end=e=>{if(!dragging)return;dragging=false;drawer.classList.remove("resizing");try{localStorage.setItem("drawerWidth",String(Math.round(drawer.getBoundingClientRect().width)))}catch(err){}};
+  handle.addEventListener("pointerup",end);handle.addEventListener("pointercancel",end);
+  handle.addEventListener("dblclick",()=>{apply(480);try{localStorage.removeItem("drawerWidth")}catch(e){}});
+})();
+
+/* user list events */
+$("userSearch").addEventListener("input",renderUsers);
+$("sourceFilter").addEventListener("change",renderUsers);
+$("verifiedFilter").addEventListener("change",renderUsers);
+function userClick(e){
+  const b=e.target.closest("[data-open-user]"),r=e.target.closest("tr[data-user-uid]");
+  const uid=b?b.dataset.openUser:r?r.dataset.userUid:null;if(uid)openUserSheet(uid);
+}
+$("desktopUserList").addEventListener("click",userClick);
+$("mobileUserList").addEventListener("click",userClick);
+
+/* ---------- Generic list helpers ---------- */
+function loadingHTML(t){return `<div class="loading"><span class="spinner"></span>${t}</div>`}
+
+/* ---------- Block tab ---------- */
+let blockedList=[];
+const bPicker=createPicker("b");
+function renderBlocks(){
+  $("blockedCount").textContent=String(blockedList.length);
+  $("blockRows").innerHTML=blockedList.length?blockedList.map(b=>`<div class="item-row"><div class="grow"><b>${escapeHTML(b.full_name||b.email||b.uid)}</b><div class="meta">${escapeHTML(b.email||"")} • UID ${escapeHTML(b.uid)}${b.reason?" • "+escapeHTML(b.reason):""}${b.createdAt?" • "+escapeHTML(formatDate(b.createdAt)):""}</div></div><button class="btn btn-success btn-small" type="button" data-unblock="${escapeHTML(b.uid)}">${icon("check-circle")} Unblock</button></div>`).join(""):'<div class="empty-state">No blocked users.</div>';
+}
+async function loadBlocks(){
+  $("blockRows").innerHTML=loadingHTML("Loading blocked users...");
+  try{
+    const data=await apiRequest(ENDPOINTS.blocks,{method:"GET"});
+    const raw=data.blocked||data.users||data.blocks||[];
+    blockedList=(Array.isArray(raw)?raw:Object.keys(raw).map(k=>({...raw[k],uid:raw[k].uid||k}))).map(b=>({...b,uid:String(b.uid||b.id||"")})).filter(b=>b.uid);
+    const ids=new Set(blockedList.map(b=>b.uid));allUsers.forEach(u=>{u.blocked=ids.has(u.uid)});renderUsers();
+    renderBlocks();hideNotice($("blockNotice"));
+  }catch(err){$("blockRows").innerHTML='<div class="empty-state">Unable to load blocked users.</div>';showNotice($("blockNotice"),err.message+" (Backend route "+ENDPOINTS.blocks+" required.)","error");loaded.block=false}
+}
+$("blockRows").addEventListener("click",async e=>{
+  const b=e.target.closest("[data-unblock]");if(!b)return;
+  try{await setBlocked(b.dataset.unblock,false);await loadBlocks();showNotice($("blockNotice"),"User unblocked.","success")}
+  catch(err){showNotice($("blockNotice"),err.message,"error")}
+});
+$("blockForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  if(!bPicker.selected){showNotice($("blockNotice"),"Select a user to block.","error");return}
+  if(!confirm("Block "+(bPicker.selected.full_name||bPicker.selected.uid)+"?"))return;
+  try{await setBlocked(bPicker.selected.uid,true,$("bReason").value.trim());bPicker.set(null);$("bReason").value="";await loadBlocks();showNotice($("blockNotice"),"User blocked.","success")}
+  catch(err){showNotice($("blockNotice"),err.message,"error")}
+});
+$("blockRefresh").addEventListener("click",loadBlocks);
+
+/* ---------- Taxes ---------- */
+let currentTaxes=[];
+const taxNotice=(m,t)=>showNotice($("taxNotice"),m,t);
+function renderTaxes(){
+  $("taxRows").innerHTML=currentTaxes.length?currentTaxes.map((t,i)=>`<div class="item-row"><div class="grow"><b>${escapeHTML(t.title)}</b></div><div style="color:var(--muted)">${Number(t.percent)}%</div><button class="btn btn-danger btn-small" type="button" data-remove-tax="${escapeHTML(t.id||String(i))}">${icon("trash")} Remove</button></div>`).join(""):'<div class="empty-state">No charges configured.</div>';
+}
+async function loadTaxes(){
+  $("taxRows").innerHTML=loadingHTML("Loading charges...");
+  try{const d=await apiRequest(ENDPOINTS.taxes,{method:"GET"});currentTaxes=Array.isArray(d.taxes)?d.taxes:[];renderTaxes();hideNotice($("taxNotice"))}
+  catch(err){$("taxRows").innerHTML='<div class="empty-state">Unable to load.</div>';taxNotice(err.message,"error");loaded.taxes=false}
+}
+$("taxRows").addEventListener("click",async e=>{
+  const b=e.target.closest("[data-remove-tax]");if(!b||!confirm("Remove this cart charge?"))return;
+  try{const d=await apiRequest(ENDPOINTS.taxes,{method:"PUT",body:JSON.stringify({action:"remove",id:b.dataset.removeTax})});currentTaxes=d.taxes||[];renderTaxes();taxNotice("Charge removed.","success")}
+  catch(err){taxNotice(err.message,"error")}
+});
+$("addTaxForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const title=$("newTaxTitle").value.trim(),percent=Number($("newTaxPercent").value);
+  if(!title||!Number.isFinite(percent)||percent<0||percent>100){taxNotice("Enter a title and a percentage from 0 to 100.","error");return}
+  try{const d=await apiRequest(ENDPOINTS.taxes,{method:"PUT",body:JSON.stringify({action:"add",title,percent})});currentTaxes=Array.isArray(d.taxes)?d.taxes:[];renderTaxes();$("addTaxForm").reset();taxNotice("Charge added and published to the cart.","success")}
+  catch(err){taxNotice(err.message,"error")}
+});
+$("refreshTaxesButton").addEventListener("click",loadTaxes);
+
+/* ---------- Discounts ---------- */
+let currentDiscounts=[];
+const discNotice=(m,t)=>showNotice($("discountNotice"),m,t);
+function renderDiscounts(){
+  $("discountRows").innerHTML=currentDiscounts.length?currentDiscounts.map((d,i)=>`<div class="item-row"><div class="grow"><b>${escapeHTML(d.title)}</b><div class="meta">${d.scope==="user"?"User: "+escapeHTML(d.userEmail||"—"):"All users"}</div></div><div style="color:var(--success);font-weight:700">${Number(d.percent)}% off</div><button class="btn btn-danger btn-small" type="button" data-remove-discount="${escapeHTML(d.id||String(i))}">${icon("trash")} Remove</button></div>`).join(""):'<div class="empty-state">No discounts configured.</div>';
+}
+async function loadDiscounts(){
+  $("discountRows").innerHTML=loadingHTML("Loading discounts...");
+  try{const d=await apiRequest(ENDPOINTS.discounts,{method:"GET"});currentDiscounts=Array.isArray(d.discounts)?d.discounts:[];renderDiscounts();hideNotice($("discountNotice"))}
+  catch(err){$("discountRows").innerHTML='<div class="empty-state">Unable to load.</div>';discNotice(err.message,"error");loaded.discounts=false}
+}
+$("discountRows").addEventListener("click",async e=>{
+  const b=e.target.closest("[data-remove-discount]");if(!b||!confirm("Remove this discount?"))return;
+  try{const d=await apiRequest(ENDPOINTS.discounts,{method:"PUT",body:JSON.stringify({action:"remove",id:b.dataset.removeDiscount})});currentDiscounts=d.discounts||[];renderDiscounts();discNotice("Discount removed.","success")}
+  catch(err){discNotice(err.message,"error")}
+});
+$("newDiscountScope").addEventListener("change",()=>{const s=$("newDiscountScope").value==="user";$("discountEmailGroup").style.display=s?"block":"none";$("newDiscountEmail").required=s});
+$("addDiscountForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const title=$("newDiscountTitle").value.trim(),scope=$("newDiscountScope").value,percent=Number($("newDiscountPercent").value),userEmail=$("newDiscountEmail").value.trim().toLowerCase();
+  if(!title||!Number.isFinite(percent)||percent<=0||percent>100){discNotice("Enter a title and a discount between 0 and 100%.","error");return}
+  if(scope==="user"&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userEmail)){discNotice("Enter the customer’s valid account email.","error");return}
+  try{const d=await apiRequest(ENDPOINTS.discounts,{method:"PUT",body:JSON.stringify({action:"add",title,scope,percent,userEmail:scope==="user"?userEmail:""})});currentDiscounts=Array.isArray(d.discounts)?d.discounts:[];renderDiscounts();$("addDiscountForm").reset();$("discountEmailGroup").style.display="none";$("newDiscountEmail").required=false;discNotice("Discount published to the customer cart.","success")}
+  catch(err){discNotice(err.message,"error")}
+});
+$("refreshDiscountsButton").addEventListener("click",loadDiscounts);
+
+/* ---------- Memberships ---------- */
+let plans=[];
+const memNotice=(m,t)=>showNotice($("memNotice"),m,t);
+function renderPlans(){
+  $("memRows").innerHTML=plans.length?plans.map((p,i)=>`<div class="item-row"><div class="grow"><b>${escapeHTML(p.title)}</b><div class="meta">₹${Number(p.price)} • ${Number(p.days)} days${p.benefits&&p.benefits.length?" • "+escapeHTML([].concat(p.benefits).join(", ")):""}</div></div><button class="btn btn-danger btn-small" type="button" data-remove-plan="${escapeHTML(p.id||String(i))}">${icon("trash")} Remove</button></div>`).join(""):'<div class="empty-state">No plans yet.</div>';
+}
+async function loadMemberships(){
+  $("memRows").innerHTML=loadingHTML("Loading plans...");
+  try{const d=await apiRequest(ENDPOINTS.memberships,{method:"GET"});plans=Array.isArray(d.plans)?d.plans:[];renderPlans();hideNotice($("memNotice"))}
+  catch(err){$("memRows").innerHTML='<div class="empty-state">Unable to load.</div>';memNotice(err.message+" (Backend route "+ENDPOINTS.memberships+" required.)","error");loaded.memberships=false}
+}
+$("memRows").addEventListener("click",async e=>{
+  const b=e.target.closest("[data-remove-plan]");if(!b||!confirm("Remove this plan?"))return;
+  try{const d=await apiRequest(ENDPOINTS.memberships,{method:"PUT",body:JSON.stringify({action:"remove",id:b.dataset.removePlan})});plans=d.plans||[];renderPlans();memNotice("Plan removed.","success")}
+  catch(err){memNotice(err.message,"error")}
+});
+$("memForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const title=$("memTitle").value.trim(),price=Number($("memPrice").value),days=Number($("memDays").value);
+  const benefits=$("memBenefits").value.split("\n").map(s=>s.trim()).filter(Boolean);
+  if(!title||!Number.isFinite(price)||price<0||!Number.isInteger(days)||days<1){memNotice("Enter a name, valid price and duration.","error");return}
+  try{const d=await apiRequest(ENDPOINTS.memberships,{method:"PUT",body:JSON.stringify({action:"add",title,price,days,benefits})});plans=Array.isArray(d.plans)?d.plans:[];renderPlans();$("memForm").reset();memNotice("Plan added.","success")}
+  catch(err){memNotice(err.message,"error")}
+});
+$("memRefresh").addEventListener("click",loadMemberships);
+
+/* ---------- Support ---------- */
+let tickets=[];
+const supNotice=(m,t)=>showNotice($("supNotice"),m,t);
+function renderTickets(){
+  const f=$("supFilter").value;const items=tickets.filter(t=>f==="all"||(t.status||"open")===f);
+  $("supRows").innerHTML=items.length?items.map(t=>{
+    const closed=(t.status||"open")==="closed";
+    const replies=Array.isArray(t.replies)?t.replies.map(r=>`<div class="notification-message" style="border-left:2px solid var(--primary);padding-left:10px">${escapeHTML(r.message||r)}</div>`).join(""):"";
+    return `<article class="notification-card" data-ticket="${escapeHTML(t.id)}"><div class="notification-card-top"><div class="notification-title">${escapeHTML(t.subject||"Support request")}</div><span class="badge ${closed?"badge-green":"badge-yellow"}">${closed?"Closed":"Open"}</span></div><div class="notification-meta"><span class="badge">${icon("envelope-simple")} ${escapeHTML(t.email||t.uid||"—")}</span><span class="notification-date">${escapeHTML(formatDate(t.createdAt))}</span></div><div class="notification-message">${escapeHTML(t.message||"")}</div>${replies}${closed?"":`<div class="form-group" style="margin:12px 0 0"><textarea style="min-height:70px" placeholder="Write a reply..."></textarea></div><div class="form-footer" style="margin-top:10px"><button class="btn btn-small" type="button" data-t-close="${escapeHTML(t.id)}">${icon("check")} Close</button><button class="btn btn-primary btn-small" type="button" data-t-reply="${escapeHTML(t.id)}">${icon("paper-plane-tilt")} Reply</button></div>`}</article>`;
+  }).join(""):`<div class="empty-state">${icon("tray")}<strong>No tickets</strong></div>`;
+}
+async function loadTickets(){
+  $("supRows").innerHTML=loadingHTML("Loading tickets...");
+  try{const d=await apiRequest(ENDPOINTS.support,{method:"GET"});const raw=d.tickets||[];tickets=(Array.isArray(raw)?raw:Object.keys(raw).map(k=>({...raw[k],id:raw[k].id||k}))).map(t=>({...t,id:String(t.id||"")}));renderTickets();hideNotice($("supNotice"))}
+  catch(err){$("supRows").innerHTML='<div class="empty-state">Unable to load.</div>';supNotice(err.message+" (Backend route "+ENDPOINTS.support+" required.)","error");loaded.support=false}
+}
+$("supRows").addEventListener("click",async e=>{
+  const r=e.target.closest("[data-t-reply]"),c=e.target.closest("[data-t-close]");
+  if(!r&&!c)return;
+  const id=(r||c).dataset.tReply||(r||c).dataset.tClose;
+  const card=e.target.closest("[data-ticket]");const text=card.querySelector("textarea").value.trim();
+  try{
+    if(r){if(!text){supNotice("Write a reply first.","error");return}
+      await apiRequest(ENDPOINTS.support,{method:"PUT",body:JSON.stringify({action:"reply",id,message:text})});
+      showToast("Reply sent.")}
+    else{if(text)await apiRequest(ENDPOINTS.support,{method:"PUT",body:JSON.stringify({action:"reply",id,message:text})});
+      await apiRequest(ENDPOINTS.support,{method:"PUT",body:JSON.stringify({action:"close",id})});showToast("Ticket closed.")}
+    await loadTickets();
+  }catch(err){supNotice(err.message,"error")}
+});
+$("supFilter").addEventListener("change",renderTickets);
+$("supRefresh").addEventListener("click",loadTickets);
+
+/* ---------- Mobile nav (liquid glass) + menu ---------- */
+const MAIN_TABS=["home","users","notifications","discounts","support"];
+const IS_CHROMIUM=!!(navigator.userAgentData&&navigator.userAgentData.brands&&navigator.userAgentData.brands.some(b=>/Chromium|Google Chrome/.test(b.brand)));
+if(IS_CHROMIUM)document.documentElement.classList.add("lg-refract");
+const mapCache={},XLINK="http://www.w3.org/1999/xlink";
+function makeMap(w,h,bezel){
+  const k=2,W=w*k,H=h*k,B=bezel*k,r=H/2;
+  const c=document.createElement("canvas");c.width=W;c.height=H;
+  const ctx=c.getContext("2d"),img=ctx.createImageData(W,H),d=img.data;
+  for(let y=0;y<H;y++)for(let x=0;x<W;x++){
+    const px=x+.5,py=y+.5,cx=Math.min(Math.max(px,r),W-r),dx=px-cx,dy=py-r,dist=Math.hypot(dx,dy),depth=r-dist;
+    let ox=0,oy=0;
+    if(depth>=0&&depth<B&&dist>0){const t=1-depth/B,mag=t*t;ox=-(dx/dist)*mag;oy=-(dy/dist)*mag}
+    const i=(y*W+x)*4;d[i]=128+ox*127;d[i+1]=128+oy*127;d[i+2]=128;d[i+3]=255;
+  }
+  ctx.putImageData(img,0,0);return c.toDataURL("image/png");
+}
+function setMap(id,w,h,bezel){
+  w=Math.round(w);h=Math.round(h);if(!w||!h)return;
+  const key=w+"x"+h;if(mapCache[id]===key)return;mapCache[id]=key;
+  const f=$(id),im=$(id+"Map"),url=makeMap(w,h,bezel);
+  [f,im].forEach(e=>{e.setAttribute("width",w);e.setAttribute("height",h)});
+  im.setAttribute("href",url);im.setAttributeNS(XLINK,"href",url);
+}
+function positionIndicator(){
+  const shell=$("navShell"),ind=$("navIndicator"),items=$("navPill");
+  if(!shell.offsetWidth){return}
+  const act=items.querySelector("button.active"),ref=act||items.querySelector("button");
+  const h=48,bw=ref.offsetWidth,w=Math.max(bw,Math.round(h*1.5));   /* always a horizontal capsule */
+  const center=ref.offsetLeft+bw/2;
+  const x=Math.max(3,Math.min(Math.round(center-w/2),shell.offsetWidth-3-w));
+  ind.style.opacity=act?"1":"0";ind.style.width=w+"px";ind.style.transform="translateX("+x+"px)";
+  if(IS_CHROMIUM){setMap("lgPill",shell.offsetWidth,shell.offsetHeight,18);setMap("lgInd",w,h,14)}
+}
+function updateMobileNav(tab){positionIndicator()}
+function openMenu(){$("menuBackdrop").classList.add("open");$("menuSheet").classList.add("open");document.body.style.overflow="hidden"}
+function closeMenu(){$("menuBackdrop").classList.remove("open");$("menuSheet").classList.remove("open");if(!$("userSheet").classList.contains("open"))document.body.style.overflow=""}
+$("topMenuBtn").addEventListener("click",openMenu);
+$("menuClose").addEventListener("click",closeMenu);
+$("menuBackdrop").addEventListener("click",closeMenu);
+window.addEventListener("resize",positionIndicator);
+window.addEventListener("load",()=>requestAnimationFrame(positionIndicator));
+
+/* ---------- Init ---------- */
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeUserSheet();closeApiDialog();closeMenu()}});
+[ "nCategory","notificationCategory"].forEach(id=>fillCategories($(id),false));
+["hCategory","historyCategoryFilter"].forEach(id=>fillCategories($(id),true));
+$("nCategory").value="orders";
+setAudience("user");
+setConnection(false,"Not connected");
+showTab((location.hash||"#home").slice(1));
+loadUsers();
 </script>
-
 </body>
 </html>
