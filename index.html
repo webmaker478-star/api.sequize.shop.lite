@@ -284,20 +284,48 @@ tbody tr:hover{background:var(--surface2)}
     </section>
   </section>
 
-  <section class="page" id="page-products">
+    <section class="page" id="page-products">
     <section class="panel">
-      <div class="panel-header"><div><div class="panel-title"><i class="ph ph-storefront"></i> Products</div><div class="panel-description">Manage the products shown in your store.</div></div><button class="btn btn-small" id="prodRefresh" type="button"><i class="ph ph-arrows-clockwise"></i> Refresh</button></div>
+      <div class="panel-header"><div><div class="panel-title"><i class="ph ph-storefront"></i> Products</div><div class="panel-description">Add, edit or remove store products.</div></div><button class="btn btn-small" id="prodRefresh" type="button"><i class="ph ph-arrows-clockwise"></i> Refresh</button></div>
       <div class="panel-body">
         <div class="notice" id="prodNotice"></div>
         <div class="item-list" id="prodRows"><div class="loading">Connect the admin API to load products.</div></div>
+        <div class="panel-title" id="prodFormTitle" style="margin:6px 0 14px">Add new product</div>
         <form id="prodForm">
           <div class="form-row">
-            <div class="form-group"><label for="prodTitle">Product name</label><input id="prodTitle" maxlength="100" required></div>
-            <div class="form-group"><label for="prodPrice">Price (₹)</label><input id="prodPrice" type="number" min="0" step="0.01" required></div>
-            <div class="form-group"><label for="prodStock">Stock</label><input id="prodStock" type="number" min="0" step="1" required></div>
+            <div class="form-group"><label for="pfTitle">Product name *</label><input id="pfTitle" maxlength="200" required></div>
+            <div class="form-group"><label for="pfSourceId">Source ID (DummyJSON) *</label><input id="pfSourceId" type="number" min="1" step="1" required><div class="form-hint">Home page API is ID se provider details leti hai.</div></div>
           </div>
-          <div class="form-group"><label for="prodImage">Image URL (optional)</label><input id="prodImage" type="url" placeholder="https://..."></div>
-          <div class="form-footer"><button class="btn btn-primary" type="submit"><i class="ph ph-plus"></i> Add product</button></div>
+          <div class="form-group"><label for="pfDescription">Description</label><textarea id="pfDescription" maxlength="5000" style="min-height:90px"></textarea></div>
+          <div class="form-row">
+            <div class="form-group"><label for="pfCategory">Category</label><input id="pfCategory" maxlength="100"></div>
+            <div class="form-group"><label for="pfBrand">Brand</label><input id="pfBrand" maxlength="100" placeholder="Generic"></div>
+            <div class="form-group"><label for="pfSku">SKU</label><input id="pfSku" maxlength="100"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label for="pfPrice">Price (₹) *</label><input id="pfPrice" type="number" min="0" step="0.01" required></div>
+            <div class="form-group"><label for="pfPriceUSD">Original price (USD)</label><input id="pfPriceUSD" type="number" min="0" step="0.01"></div>
+            <div class="form-group"><label for="pfStock">Stock *</label><input id="pfStock" type="number" min="0" step="1" required></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label for="pfRating">Rating (0-5)</label><input id="pfRating" type="number" min="0" max="5" step="0.1"></div>
+            <div class="form-group"><label for="pfAvail">Availability status</label><input id="pfAvail" maxlength="60" placeholder="In Stock"></div>
+            <div class="form-group"><label for="pfMinQty">Minimum order quantity</label><input id="pfMinQty" type="number" min="1" step="1" placeholder="1"></div>
+          </div>
+          <div class="form-group"><label for="pfThumb">Thumbnail URL</label><input id="pfThumb" type="url" placeholder="https://..."></div>
+          <div class="form-group"><label for="pfImages">Images (one URL per line)</label><textarea id="pfImages" style="min-height:80px" placeholder="https://..."></textarea></div>
+          <div class="form-group"><label for="pfTags">Tags (comma separated)</label><input id="pfTags" placeholder="beauty, mascara"></div>
+          <div class="form-row">
+            <div class="form-group"><label for="pfWeight">Weight</label><input id="pfWeight" type="number" min="0" step="0.01"></div>
+            <div class="form-group"><label for="pfDimW">Width</label><input id="pfDimW" type="number" min="0" step="0.01"></div>
+            <div class="form-group"><label for="pfDimH">Height</label><input id="pfDimH" type="number" min="0" step="0.01"></div>
+            <div class="form-group"><label for="pfDimD">Depth</label><input id="pfDimD" type="number" min="0" step="0.01"></div>
+          </div>
+          <div class="form-group"><label for="pfWarranty">Warranty information</label><input id="pfWarranty" maxlength="300"></div>
+          <div class="form-group"><label for="pfShipping">Shipping information</label><input id="pfShipping" maxlength="300"></div>
+          <div class="form-group"><label for="pfReturn">Return policy</label><input id="pfReturn" maxlength="300"></div>
+          <div class="form-group"><label for="pfReviews">Reviews (one per line)</label><textarea id="pfReviews" style="min-height:90px" placeholder="rating | name | email | date | comment"></textarea><div class="form-hint">Format: rating | reviewer name | reviewer email | date | comment</div></div>
+          <div class="form-footer"><button class="btn" type="button" id="prodCancelEdit" hidden>Cancel edit</button><button class="btn btn-primary" type="submit" id="prodSubmit"><i class="ph ph-plus"></i> Add product</button></div>
         </form>
       </div>
     </section>
@@ -1142,27 +1170,84 @@ $("ordFilter").addEventListener("change",renderOrders);
 $("ordRefresh").addEventListener("click",loadOrders);
 
 /* ---------- Products ---------- */
-let products=[];
+let products=[],editingProductId=null;
 const prodNotice=(m,t)=>showNotice($("prodNotice"),m,t);
+const PF_IDS=["pfTitle","pfSourceId","pfDescription","pfCategory","pfBrand","pfSku","pfPrice","pfPriceUSD","pfStock","pfRating","pfAvail","pfMinQty","pfThumb","pfImages","pfTags","pfWeight","pfDimW","pfDimH","pfDimD","pfWarranty","pfShipping","pfReturn","pfReviews"];
+
 function renderProducts(){
-  $("prodRows").innerHTML=products.length?products.map((p,i)=>`<div class="item-row"><div class="grow"><b>${escapeHTML(p.title)}</b><div class="meta">₹${Number(p.price)} • Stock ${Number(p.stock)}</div></div><button class="btn btn-danger btn-small" type="button" data-remove-prod="${escapeHTML(p.id||String(i))}">${icon("trash")} Remove</button></div>`).join(""):`<div class="empty-state">${icon("storefront")}<strong>No products yet</strong></div>`;
+  $("prodRows").innerHTML=products.length?products.map((p,i)=>{
+    const id=escapeHTML(p.id||String(i));
+    return `<div class="item-row"><div class="grow"><b>${escapeHTML(p.title)}</b><div class="meta">₹${Number(p.price)||0} • Stock ${Number(p.stock)||0}${p.category?" • "+escapeHTML(p.category):""}${p.brand?" • "+escapeHTML(p.brand):""}</div></div><button class="btn btn-small" type="button" data-edit-prod="${id}">${icon("pencil-simple")} Edit</button><button class="btn btn-danger btn-small" type="button" data-remove-prod="${id}">${icon("trash")} Remove</button></div>`;
+  }).join(""):`<div class="empty-state">${icon("storefront")}<strong>No products yet</strong></div>`;
 }
 async function loadProducts(){
   $("prodRows").innerHTML=loadingHTML("Loading products...");
   try{const d=await apiRequest(ENDPOINTS.products,{method:"GET"});products=Array.isArray(d.products)?d.products:[];renderProducts();hideNotice($("prodNotice"))}
   catch(err){$("prodRows").innerHTML='<div class="empty-state">Unable to load.</div>';prodNotice(err.message+" (Backend route "+ENDPOINTS.products+" required.)","error");loaded.products=false}
 }
+function resetProductForm(){
+  editingProductId=null;$("prodForm").reset();
+  $("prodFormTitle").textContent="Add new product";
+  $("prodSubmit").innerHTML=icon("plus")+" Add product";
+  $("prodCancelEdit").hidden=true;
+}
+function fillProductForm(p){
+  const d=p.dimensions||{};
+  const v={pfTitle:p.title,pfSourceId:p.sourceId,pfDescription:p.description,pfCategory:p.category,pfBrand:p.brand,pfSku:p.sku,pfPrice:p.price,pfPriceUSD:p.originalPriceUSD,pfStock:p.stock,pfRating:p.rating,pfAvail:p.availabilityStatus,pfMinQty:p.minimumOrderQuantity,pfThumb:p.thumbnail,pfImages:(p.images||[]).join("\n"),pfTags:(p.tags||[]).join(", "),pfWeight:p.weight,pfDimW:d.width,pfDimH:d.height,pfDimD:d.depth,pfWarranty:p.warrantyInformation,pfShipping:p.shippingInformation,pfReturn:p.returnPolicy,
+    pfReviews:(Array.isArray(p.reviews)?p.reviews:[]).map(r=>[r.rating,r.reviewerName||"",r.reviewerEmail||"",r.date||"",r.comment||""].join(" | ")).join("\n")};
+  PF_IDS.forEach(id=>{$(id).value=v[id]==null?"":v[id]});
+  editingProductId=p.id;
+  $("prodFormTitle").textContent="Edit product";
+  $("prodSubmit").innerHTML=icon("check")+" Save changes";
+  $("prodCancelEdit").hidden=false;
+  $("prodForm").scrollIntoView({behavior:"smooth",block:"start"});
+}
+function collectProductForm(){
+  const lines=s=>s.split("\n").map(x=>x.trim()).filter(Boolean);
+  const reviews=lines($("pfReviews").value).map(l=>{
+    const p=l.split("|").map(x=>x.trim());
+    return {rating:Number(p[0])||0,reviewerName:p[1]||"",reviewerEmail:p[2]||"",date:p[3]||"",comment:p.slice(4).join(" | ")};
+  });
+  return {
+    title:$("pfTitle").value.trim(),sourceId:$("pfSourceId").value.trim(),
+    description:$("pfDescription").value.trim(),category:$("pfCategory").value.trim(),
+    brand:$("pfBrand").value.trim(),sku:$("pfSku").value.trim(),
+    price:$("pfPrice").value,originalPriceUSD:$("pfPriceUSD").value,stock:$("pfStock").value,
+    rating:$("pfRating").value,availabilityStatus:$("pfAvail").value.trim(),
+    minimumOrderQuantity:$("pfMinQty").value,thumbnail:$("pfThumb").value.trim(),
+    images:lines($("pfImages").value),
+    tags:$("pfTags").value.split(",").map(x=>x.trim()).filter(Boolean),
+    weight:$("pfWeight").value,
+    dimensions:{width:$("pfDimW").value,height:$("pfDimH").value,depth:$("pfDimD").value},
+    warrantyInformation:$("pfWarranty").value.trim(),shippingInformation:$("pfShipping").value.trim(),
+    returnPolicy:$("pfReturn").value.trim(),reviews
+  };
+}
 $("prodRows").addEventListener("click",async e=>{
+  const ed=e.target.closest("[data-edit-prod]");
+  if(ed){const p=products.find(x=>x.id===ed.dataset.editProd);if(p)fillProductForm(p);return}
   const b=e.target.closest("[data-remove-prod]");if(!b||!confirm("Remove this product?"))return;
-  try{const d=await apiRequest(ENDPOINTS.products,{method:"PUT",body:JSON.stringify({action:"remove",id:b.dataset.removeProd})});products=d.products||[];renderProducts();prodNotice("Product removed.","success")}
-  catch(err){prodNotice(err.message,"error")}
+  try{
+    const d=await apiRequest(ENDPOINTS.products,{method:"PUT",body:JSON.stringify({action:"remove",id:b.dataset.removeProd})});
+    products=d.products||[];if(editingProductId===b.dataset.removeProd)resetProductForm();
+    renderProducts();prodNotice("Product removed.","success");
+  }catch(err){prodNotice(err.message,"error")}
 });
+$("prodCancelEdit").addEventListener("click",resetProductForm);
 $("prodForm").addEventListener("submit",async e=>{
   e.preventDefault();
-  const title=$("prodTitle").value.trim(),price=Number($("prodPrice").value),stock=Number($("prodStock").value),image=$("prodImage").value.trim();
-  if(!title||!Number.isFinite(price)||price<0||!Number.isInteger(stock)||stock<0){prodNotice("Enter a name, a valid price and stock.","error");return}
-  try{const d=await apiRequest(ENDPOINTS.products,{method:"PUT",body:JSON.stringify({action:"add",title,price,stock,image})});products=Array.isArray(d.products)?d.products:[];renderProducts();$("prodForm").reset();prodNotice("Product added.","success")}
-  catch(err){prodNotice(err.message,"error")}
+  if(busy.prod)return;
+  const data=collectProductForm(),price=Number(data.price),stock=Number(data.stock);
+  if(!data.title||!/^\d+$/.test(data.sourceId)||!Number.isFinite(price)||price<0||!Number.isInteger(stock)||stock<0){prodNotice("Enter a name, numeric source ID, valid price and stock.","error");return}
+  busy.prod=true;$("prodSubmit").disabled=true;
+  const editing=!!editingProductId;
+  try{
+    const body=editing?{action:"update",id:editingProductId,...data}:{action:"add",...data};
+    const d=await apiRequest(ENDPOINTS.products,{method:"PUT",body:JSON.stringify(body)});
+    products=Array.isArray(d.products)?d.products:[];renderProducts();resetProductForm();
+    prodNotice(editing?"Product updated.":"Product added.","success");
+  }catch(err){prodNotice(err.message,"error")}
+  finally{busy.prod=false;$("prodSubmit").disabled=false}
 });
 $("prodRefresh").addEventListener("click",loadProducts);
 
