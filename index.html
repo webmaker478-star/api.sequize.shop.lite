@@ -123,6 +123,13 @@ tbody tr:hover{background:var(--surface2)}
 .history-toolbar{display:flex;gap:8px;margin-bottom:12px}
 .history-toolbar select{flex:1;min-width:0}
 
+/* Product form helpers: category switcher + separate image fields */
+.cat-bar{display:flex;align-items:center;gap:8px}
+.cat-bar select{flex:1;min-width:0}
+.cat-bar .icon-btn{width:42px;height:42px}
+.img-row{display:flex;gap:8px;margin-bottom:8px}
+.img-row input{flex:1;min-width:0}
+
 /* Drawer: flat side panel, drag its left edge to resize */
 .sheet-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;opacity:0;visibility:hidden;transition:opacity .2s,visibility .2s}
 .sheet-backdrop.open{opacity:1;visibility:visible}
@@ -284,7 +291,7 @@ tbody tr:hover{background:var(--surface2)}
     </section>
   </section>
 
-    <section class="page" id="page-products">
+  <section class="page" id="page-products">
     <section class="panel">
       <div class="panel-header"><div><div class="panel-title"><i class="ph ph-storefront"></i> Products</div><div class="panel-description">Add, edit or remove store products.</div></div><button class="btn btn-small" id="prodRefresh" type="button"><i class="ph ph-arrows-clockwise"></i> Refresh</button></div>
       <div class="panel-body">
@@ -292,10 +299,16 @@ tbody tr:hover{background:var(--surface2)}
         <div class="item-list" id="prodRows"><div class="loading">Connect the admin API to load products.</div></div>
         <div class="panel-title" id="prodFormTitle" style="margin:6px 0 14px">Add new product</div>
         <form id="prodForm">
-          <div class="form-row">
-            <div class="form-group"><label for="pfTitle">Product name *</label><input id="pfTitle" maxlength="200" required></div>
-            <div class="form-group"><label for="pfSourceId">Source ID (DummyJSON) *</label><input id="pfSourceId" type="number" min="1" step="1" required><div class="form-hint">Home page API is ID se provider details leti hai.</div></div>
+          <div class="form-group">
+            <label>Category (baaki details auto-fill hongi)</label>
+            <div class="cat-bar">
+              <button type="button" class="icon-btn" id="catPrev" aria-label="Previous category"><i class="ph ph-caret-left"></i></button>
+              <select id="pfCatSelect" aria-label="Category"></select>
+              <button type="button" class="icon-btn" id="catNext" aria-label="Next category"><i class="ph ph-caret-right"></i></button>
+            </div>
+            <div class="form-hint">Category badalne par brand, SKU, stock, tags, weight, size, warranty, shipping aur return policy khud bhar jaate hain. Aapko sirf title, description, price aur images daalni hain.</div>
           </div>
+          <div class="form-group"><label for="pfTitle">Product name *</label><input id="pfTitle" maxlength="200" required></div>
           <div class="form-group"><label for="pfDescription">Description</label><textarea id="pfDescription" maxlength="5000" style="min-height:90px"></textarea></div>
           <div class="form-row">
             <div class="form-group"><label for="pfCategory">Category</label><input id="pfCategory" maxlength="100"></div>
@@ -312,8 +325,12 @@ tbody tr:hover{background:var(--surface2)}
             <div class="form-group"><label for="pfAvail">Availability status</label><input id="pfAvail" maxlength="60" placeholder="In Stock"></div>
             <div class="form-group"><label for="pfMinQty">Minimum order quantity</label><input id="pfMinQty" type="number" min="1" step="1" placeholder="1"></div>
           </div>
-          <div class="form-group"><label for="pfThumb">Thumbnail URL</label><input id="pfThumb" type="url" placeholder="https://..."></div>
-          <div class="form-group"><label for="pfImages">Images (one URL per line)</label><textarea id="pfImages" style="min-height:80px" placeholder="https://..."></textarea></div>
+          <div class="form-group"><label for="pfThumb">Thumbnail URL (khali chhodo to pehli image use hogi)</label><input id="pfThumb" type="url" placeholder="https://..."></div>
+          <div class="form-group">
+            <label>Images (har image ka alag field)</label>
+            <div id="pfImageList"></div>
+            <button type="button" class="btn btn-small" id="pfAddImage"><i class="ph ph-plus"></i> Add image</button>
+          </div>
           <div class="form-group"><label for="pfTags">Tags (comma separated)</label><input id="pfTags" placeholder="beauty, mascara"></div>
           <div class="form-row">
             <div class="form-group"><label for="pfWeight">Weight</label><input id="pfWeight" type="number" min="0" step="0.01"></div>
@@ -1172,7 +1189,68 @@ $("ordRefresh").addEventListener("click",loadOrders);
 /* ---------- Products ---------- */
 let products=[],editingProductId=null;
 const prodNotice=(m,t)=>showNotice($("prodNotice"),m,t);
-const PF_IDS=["pfTitle","pfSourceId","pfDescription","pfCategory","pfBrand","pfSku","pfPrice","pfPriceUSD","pfStock","pfRating","pfAvail","pfMinQty","pfThumb","pfImages","pfTags","pfWeight","pfDimW","pfDimH","pfDimD","pfWarranty","pfShipping","pfReturn","pfReviews"];
+const PF_IDS=["pfTitle","pfDescription","pfCategory","pfBrand","pfSku","pfPrice","pfPriceUSD","pfStock","pfRating","pfAvail","pfMinQty","pfThumb","pfTags","pfWeight","pfDimW","pfDimH","pfDimD","pfWarranty","pfShipping","pfReturn","pfReviews"];
+
+/* ---- Category presets (everything except title, description, price, images) ---- */
+const CAT_BASE={brand:"Generic",stock:50,avail:"In Stock",minQty:1,ship:"Ships in 3-5 business days"};
+// [slug, tags, weight, width, height, depth, warranty, return policy]
+const CATS=[
+["beauty","beauty, makeup",1,5,12,5,"No warranty","30 days return policy"],
+["fragrances","fragrances, perfume",1,6,12,6,"No warranty","7 days return policy"],
+["furniture","furniture, home",15,80,90,50,"1 year warranty","30 days return policy"],
+["groceries","groceries, food",1,10,15,10,"No warranty","No return policy"],
+["home-decoration","home decor, decoration",2,30,30,15,"6 months warranty","30 days return policy"],
+["kitchen-accessories","kitchen, cookware",1,20,10,10,"6 months warranty","30 days return policy"],
+["laptops","laptop, electronics",2,35,2,25,"2 years warranty","30 days return policy"],
+["mens-shirts","mens, shirt, clothing",0.4,30,40,3,"No warranty","30 days return policy"],
+["mens-shoes","mens, shoes, footwear",1,30,12,15,"6 months warranty","30 days return policy"],
+["mens-watches","mens, watch, accessories",0.2,5,5,2,"1 year warranty","30 days return policy"],
+["mobile-accessories","mobile, accessories",0.3,10,15,3,"6 months warranty","7 days return policy"],
+["motorcycle","motorcycle, vehicle",150,200,110,70,"2 years warranty","7 days return policy"],
+["skin-care","skin care, beauty",1,5,12,5,"No warranty","7 days return policy"],
+["smartphones","smartphone, mobile, electronics",0.2,7,15,1,"1 year warranty","7 days return policy"],
+["sports-accessories","sports, fitness",1,20,20,10,"6 months warranty","30 days return policy"],
+["sunglasses","sunglasses, eyewear",0.1,14,5,5,"6 months warranty","30 days return policy"],
+["tablets","tablet, electronics",0.5,25,17,1,"1 year warranty","15 days return policy"],
+["tops","womens, tops, clothing",0.3,30,40,3,"No warranty","30 days return policy"],
+["vehicle","vehicle, automotive",1200,450,150,180,"3 years warranty","No return policy"],
+["womens-bags","womens, bags",1,35,30,12,"6 months warranty","30 days return policy"],
+["womens-dresses","womens, dress, clothing",0.5,35,45,3,"No warranty","30 days return policy"],
+["womens-jewellery","womens, jewellery",0.1,10,10,5,"6 months warranty","30 days return policy"],
+["womens-shoes","womens, shoes, footwear",0.9,28,12,14,"6 months warranty","30 days return policy"],
+["womens-watches","womens, watch, accessories",0.2,4,4,2,"1 year warranty","30 days return policy"]
+];
+let catIdx=0;
+$("pfCatSelect").innerHTML=CATS.map((c,i)=>`<option value="${i}">${escapeHTML(formatCategory(c[0]))}</option>`).join("");
+
+function applyPreset(){
+  const c=CATS[catIdx],set=(id,v)=>{$(id).value=v};
+  $("pfCatSelect").value=String(catIdx);
+  set("pfCategory",c[0]);set("pfBrand",CAT_BASE.brand);
+  set("pfSku",c[0].slice(0,3).toUpperCase()+"-"+Math.random().toString(36).slice(2,8).toUpperCase());
+  set("pfStock",CAT_BASE.stock);set("pfAvail",CAT_BASE.avail);set("pfMinQty",CAT_BASE.minQty);
+  set("pfTags",c[1]);set("pfWeight",c[2]);set("pfDimW",c[3]);set("pfDimH",c[4]);set("pfDimD",c[5]);
+  set("pfWarranty",c[6]);set("pfReturn",c[7]);set("pfShipping",CAT_BASE.ship);
+}
+function stepCat(d){catIdx=(catIdx+d+CATS.length)%CATS.length;applyPreset()}
+$("catPrev").addEventListener("click",()=>stepCat(-1));
+$("catNext").addEventListener("click",()=>stepCat(1));
+$("pfCatSelect").addEventListener("change",()=>{catIdx=Number($("pfCatSelect").value)||0;applyPreset()});
+
+/* Price (INR) -> USD auto */
+$("pfPrice").addEventListener("input",()=>{const p=Number($("pfPrice").value);$("pfPriceUSD").value=p>0?(p/85).toFixed(2):""});
+
+/* ---- Separate image fields ---- */
+function addImageField(v){
+  const row=document.createElement("div");row.className="img-row";
+  row.innerHTML='<input type="url" class="pf-img" placeholder="https://... image link"><button type="button" class="icon-btn" aria-label="Remove image"><i class="ph ph-x"></i></button>';
+  row.querySelector("input").value=v||"";
+  row.querySelector("button").onclick=()=>{row.remove();if(!$("pfImageList").children.length)addImageField("")};
+  $("pfImageList").appendChild(row);
+}
+function setImageFields(a){$("pfImageList").innerHTML="";(a&&a.length?a:["","",""]).forEach(addImageField)}
+function getImageValues(){return [].slice.call(document.querySelectorAll(".pf-img")).map(i=>i.value.trim()).filter(Boolean)}
+$("pfAddImage").addEventListener("click",()=>addImageField(""));
 
 function renderProducts(){
   $("prodRows").innerHTML=products.length?products.map((p,i)=>{
@@ -1190,12 +1268,15 @@ function resetProductForm(){
   $("prodFormTitle").textContent="Add new product";
   $("prodSubmit").innerHTML=icon("plus")+" Add product";
   $("prodCancelEdit").hidden=true;
+  setImageFields([]);applyPreset();
 }
 function fillProductForm(p){
   const d=p.dimensions||{};
-  const v={pfTitle:p.title,pfSourceId:p.sourceId,pfDescription:p.description,pfCategory:p.category,pfBrand:p.brand,pfSku:p.sku,pfPrice:p.price,pfPriceUSD:p.originalPriceUSD,pfStock:p.stock,pfRating:p.rating,pfAvail:p.availabilityStatus,pfMinQty:p.minimumOrderQuantity,pfThumb:p.thumbnail,pfImages:(p.images||[]).join("\n"),pfTags:(p.tags||[]).join(", "),pfWeight:p.weight,pfDimW:d.width,pfDimH:d.height,pfDimD:d.depth,pfWarranty:p.warrantyInformation,pfShipping:p.shippingInformation,pfReturn:p.returnPolicy,
+  const v={pfTitle:p.title,pfDescription:p.description,pfCategory:p.category,pfBrand:p.brand,pfSku:p.sku,pfPrice:p.price,pfPriceUSD:p.originalPriceUSD,pfStock:p.stock,pfRating:p.rating,pfAvail:p.availabilityStatus,pfMinQty:p.minimumOrderQuantity,pfThumb:p.thumbnail,pfTags:(p.tags||[]).join(", "),pfWeight:p.weight,pfDimW:d.width,pfDimH:d.height,pfDimD:d.depth,pfWarranty:p.warrantyInformation,pfShipping:p.shippingInformation,pfReturn:p.returnPolicy,
     pfReviews:(Array.isArray(p.reviews)?p.reviews:[]).map(r=>[r.rating,r.reviewerName||"",r.reviewerEmail||"",r.date||"",r.comment||""].join(" | ")).join("\n")};
   PF_IDS.forEach(id=>{$(id).value=v[id]==null?"":v[id]});
+  setImageFields(p.images||[]);
+  const ci=CATS.findIndex(c=>c[0]===p.category);if(ci>=0){catIdx=ci;$("pfCatSelect").value=String(ci)}
   editingProductId=p.id;
   $("prodFormTitle").textContent="Edit product";
   $("prodSubmit").innerHTML=icon("check")+" Save changes";
@@ -1209,13 +1290,13 @@ function collectProductForm(){
     return {rating:Number(p[0])||0,reviewerName:p[1]||"",reviewerEmail:p[2]||"",date:p[3]||"",comment:p.slice(4).join(" | ")};
   });
   return {
-    title:$("pfTitle").value.trim(),sourceId:$("pfSourceId").value.trim(),
+    title:$("pfTitle").value.trim(),
     description:$("pfDescription").value.trim(),category:$("pfCategory").value.trim(),
     brand:$("pfBrand").value.trim(),sku:$("pfSku").value.trim(),
     price:$("pfPrice").value,originalPriceUSD:$("pfPriceUSD").value,stock:$("pfStock").value,
     rating:$("pfRating").value,availabilityStatus:$("pfAvail").value.trim(),
     minimumOrderQuantity:$("pfMinQty").value,thumbnail:$("pfThumb").value.trim(),
-    images:lines($("pfImages").value),
+    images:getImageValues(),
     tags:$("pfTags").value.split(",").map(x=>x.trim()).filter(Boolean),
     weight:$("pfWeight").value,
     dimensions:{width:$("pfDimW").value,height:$("pfDimH").value,depth:$("pfDimD").value},
@@ -1238,141 +1319,8 @@ $("prodForm").addEventListener("submit",async e=>{
   e.preventDefault();
   if(busy.prod)return;
   const data=collectProductForm(),price=Number(data.price),stock=Number(data.stock);
-  if(!data.title||!/^\d+$/.test(data.sourceId)||!Number.isFinite(price)||price<0||!Number.isInteger(stock)||stock<0){prodNotice("Enter a name, numeric source ID, valid price and stock.","error");return}
+  if(!data.title||!Number.isFinite(price)||price<0||!Number.isInteger(stock)||stock<0){prodNotice("Enter a name, valid price and stock.","error");return}
   busy.prod=true;$("prodSubmit").disabled=true;
   const editing=!!editingProductId;
   try{
-    const body=editing?{action:"update",id:editingProductId,...data}:{action:"add",...data};
-    const d=await apiRequest(ENDPOINTS.products,{method:"PUT",body:JSON.stringify(body)});
-    products=Array.isArray(d.products)?d.products:[];renderProducts();resetProductForm();
-    prodNotice(editing?"Product updated.":"Product added.","success");
-  }catch(err){prodNotice(err.message,"error")}
-  finally{busy.prod=false;$("prodSubmit").disabled=false}
-});
-$("prodRefresh").addEventListener("click",loadProducts);
-
-/* ---------- Dock navigation ----------
-   Desktop (>720px): floating vertical dock with all 10 tabs.
-   Mobile: bottom pill with 5 tabs, swaps between two sets.
-   Glass is plain dark blur: no SVG displacement, so no colour fringing. */
-const ALL_TABS=["home","users","orders","products","notifications","block","discounts","taxes","memberships","support"];
-const NAV_SETS=[ALL_TABS.slice(0,5),ALL_TABS.slice(5)];
-const PAD=4;
-const mq=window.matchMedia("(min-width:721px)");
-const isDesk=()=>mq.matches;
-let navSet=0,navDrag=null,navSwapTimer=null;
-const navTabs=()=>isDesk()?ALL_TABS:NAV_SETS[navSet];
-function setIndexFor(tab){return NAV_SETS.findIndex(x=>x.includes(tab))}
-function navButtons(){return [].slice.call($("navPill").querySelectorAll("button"))}
-function renderNav(idx){
-  navSet=idx;
-  $("navPill").innerHTML=navTabs().map(t=>`<button type="button" data-tab="${t}" aria-label="${escapeHTML(TABS[t].title)}" title="${escapeHTML(TABS[t].title)}"><i class="ph ph-${TABS[t].icon}"></i></button>`).join("");
-  navButtons().forEach(b=>b.classList.toggle("active",b.dataset.tab===currentTab));
-}
-/* sl = size of one slot along the main axis, L = total length of dock */
-function navMetrics(){
-  const shell=$("navShell"),ind=$("navIndicator");
-  if(isDesk()){
-    const N=ALL_TABS.length,sl=Math.max(36,Math.min(54,Math.floor((window.innerHeight-90-PAD*2)/N)));
-    shell.style.height=(sl*N+PAD*2)+"px";
-    ind.style.width=(shell.offsetWidth-PAD*2)+"px";ind.style.height=sl+"px";
-    return {desk:true,N,sl,L:sl*N+PAD*2};
-  }
-  const W=shell.offsetWidth;if(!W)return null;
-  const N=5,sl=(W-PAD*2)/N,h=Math.min(42,Math.floor(sl/1.4));
-  shell.style.height=(h+PAD*2)+"px";
-  ind.style.width=sl+"px";ind.style.height=h+"px";
-  return {desk:false,N,sl,L:W};
-}
-function setIndPos(pos,m){$("navIndicator").style.transform=m.desk?"translate("+PAD+"px,"+pos+"px)":"translate("+pos+"px,"+PAD+"px)"}
-function positionIndicator(){
-  const m=navMetrics();if(!m)return;
-  const idx=navTabs().indexOf(currentTab),ind=$("navIndicator");
-  ind.classList.remove("dragging");
-  if(idx<0){ind.style.opacity="0";return}
-  ind.style.opacity="1";setIndPos(PAD+idx*m.sl,m);lightIcons(null,m);
-}
-function lightIcons(center,m){
-  m=m||navMetrics();if(!m)return;
-  $("navPill").classList.toggle("pressing",center!=null);
-  navButtons().forEach((b,i)=>{
-    if(center==null){b.style.transform="";b.classList.remove("lit");return}
-    const bc=PAD+i*m.sl+m.sl/2,f=Math.max(0,1-Math.abs(center-bc)/(m.sl*.9));
-    b.style.transform="scale("+(1+.3*f)+")";b.classList.toggle("lit",f>.55);
-  });
-}
-function swapNavSet(idx){
-  const box=$("navPill"),ind=$("navIndicator");
-  if(!$("navShell").offsetWidth){renderNav(idx);return}
-  clearTimeout(navSwapTimer);
-  box.style.setProperty("--dir",idx>navSet?1:-1);
-  ind.classList.add("grown");box.classList.add("out");
-  navSwapTimer=setTimeout(()=>{
-    renderNav(idx);box.classList.remove("out");box.classList.add("in-start");void box.offsetWidth;box.classList.remove("in-start");
-    positionIndicator();setTimeout(()=>ind.classList.remove("grown"),260);
-  },190);
-}
-function updateNav(tab){
-  const idx=setIndexFor(tab);
-  if(!isDesk()&&idx>=0&&idx!==navSet)swapNavSet(idx);
-  else{navButtons().forEach(b=>b.classList.toggle("active",b.dataset.tab===tab));positionIndicator()}
-}
-/* Press, hold and drag the glass lens; release to select */
-(function(){
-  const shell=$("navShell"),ind=$("navIndicator");
-  const coord=(e,r,m)=>m.desk?e.clientY-r.top:e.clientX-r.left;
-  function follow(c,instant){
-    const m=navDrag.m;c=Math.max(PAD+m.sl/2,Math.min(c,m.L-PAD-m.sl/2));navDrag.center=c;
-    ind.classList.toggle("dragging",instant);setIndPos(c-m.sl/2,m);lightIcons(c,m);
-  }
-  shell.addEventListener("pointerdown",e=>{
-    if(e.button>0||!e.isPrimary)return;
-    const m=navMetrics();if(!m)return;
-    const rect=shell.getBoundingClientRect(),ir=ind.getBoundingClientRect(),p=coord(e,rect,m);
-    const cur=(m.desk?ir.top-rect.top:ir.left-rect.left)+m.sl/2;
-    const onInd=ind.style.opacity!=="0"&&Math.abs(p-cur)<=m.sl/2;
-    navDrag={pid:e.pointerId,s:p,m,rect,moved:false,off:onInd?p-cur:0,center:cur};
-    try{shell.setPointerCapture(e.pointerId)}catch(err){}
-    ind.style.opacity="1";ind.classList.add("grown");follow(p-navDrag.off,false);
-  });
-  shell.addEventListener("pointermove",e=>{
-    if(!navDrag||e.pointerId!==navDrag.pid)return;
-    const p=coord(e,navDrag.rect,navDrag.m);
-    if(!navDrag.moved&&Math.abs(p-navDrag.s)>3)navDrag.moved=true;
-    follow(p-navDrag.off,navDrag.moved);
-  });
-  function end(e,cancel){
-    if(!navDrag||e.pointerId!==navDrag.pid)return;
-    const m=navDrag.m,idx=Math.max(0,Math.min(m.N-1,Math.round((navDrag.center-PAD-m.sl/2)/m.sl)));
-    navDrag=null;ind.classList.remove("grown","dragging");lightIcons(null,m);
-    const tab=navTabs()[idx];
-    if(cancel||tab===currentTab)positionIndicator();else showTab(tab);
-  }
-  shell.addEventListener("pointerup",e=>end(e,false));
-  shell.addEventListener("pointercancel",e=>end(e,true));
-})();
-const onDockResize=()=>{if(!navDrag)positionIndicator()};
-window.addEventListener("resize",onDockResize);
-window.addEventListener("load",()=>requestAnimationFrame(positionIndicator));
-(mq.addEventListener?mq.addEventListener.bind(mq,"change"):mq.addListener.bind(mq))(()=>{renderNav(Math.max(0,setIndexFor(currentTab)));positionIndicator()});
-
-function openMenu(){$("menuBackdrop").classList.add("open");$("menuSheet").classList.add("open");document.body.style.overflow="hidden"}
-function closeMenu(){$("menuBackdrop").classList.remove("open");$("menuSheet").classList.remove("open");if(!$("userSheet").classList.contains("open"))document.body.style.overflow=""}
-$("topMenuBtn").addEventListener("click",openMenu);
-$("menuClose").addEventListener("click",closeMenu);
-$("menuBackdrop").addEventListener("click",closeMenu);
-
-/* ---------- Init ---------- */
-document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeUserSheet();closeApiDialog();closeMenu()}});
-["nCategory","notificationCategory"].forEach(id=>fillCategories($(id),false));
-["hCategory","historyCategoryFilter"].forEach(id=>fillCategories($(id),true));
-$("nCategory").value="orders";
-setAudience("user");
-setConnection(false,"Not connected");
-const startTab=(location.hash||"#home").slice(1),firstTab=TABS[startTab]?startTab:"home";
-currentTab=firstTab;renderNav(Math.max(0,setIndexFor(firstTab)));
-showTab(firstTab);
-loadUsers();
-</script>
-</body>
-</html>f
+    const body=editing?{action:"update",id:editingProductId,...data}:{action:"add",...data
