@@ -2,7 +2,10 @@
 // One function for two admin resources (keeps the Vercel function count low):
 //   /api/admin/productData?resource=products   -> products/{40-char id}
 //   /api/admin/productData?resource=discounts  -> DISCOUNTS_PATH/{id}
-// Products are stored at the same path api/product.js reads.
+//
+// PUBLIC (no key): GET ?resource=discounts[&email=...]
+//   returns only discounts eligible for that customer, safe fields only.
+// Everything else needs ADMIN_API_KEY.
 //
 // Environment variables (Vercel):
 //   ADMIN_API_KEY             -> same key used by the admin panel
@@ -293,13 +296,42 @@ module.exports = async function handler(req, res) {
   if (req.method === "OPTIONS") return res.status(204).end();
 
   try {
-    if (!isAuthorized(req)) {
-      return res.status(401).json({ success: false, message: "Unauthorized." });
-    }
-
     const resource = String((req.query && req.query.resource) || "products");
     if (resource !== "products" && resource !== "discounts") {
       throw new HttpError(400, "Unknown resource. Use products or discounts.");
+    }
+
+    const authorized = isAuthorized(req);
+    const publicDiscountRead = req.method === "GET" && resource === "discounts";
+
+    if (!authorized && !publicDiscountRead) {
+      return res.status(401).json({ success: false, message: "Unauthorized." });
+    }
+
+    /* Public read (no key): only this customer's eligible discounts, safe fields only */
+    if (publicDiscountRead && !authorized) {
+      const db = initializeFirebase();
+      const email = String((req.query && req.query.email) || "").trim().toLowerCase();
+      const all = await listDiscounts(db);
+      const discounts = all
+        .filter(d => {
+          const p = Number(d.percent);
+          if (!(p > 0 && p <= 100)) return false;
+          const scope = d.scope || "all";
+          if (scope === "all") return true;
+          return (
+            scope === "user" &&
+            email !== "" &&
+            String(d.userEmail || "").trim().toLowerCase() === email
+          );
+        })
+        .map(d => ({
+          id: d.id,
+          title: d.title,
+          percent: Number(d.percent),
+          scope: d.scope || "all"
+        }));
+      return res.status(200).json({ success: true, discounts });
     }
 
     if (!["GET", "PUT", "POST"].includes(req.method)) {
