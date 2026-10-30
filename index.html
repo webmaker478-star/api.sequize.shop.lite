@@ -1323,4 +1323,139 @@ $("prodForm").addEventListener("submit",async e=>{
   busy.prod=true;$("prodSubmit").disabled=true;
   const editing=!!editingProductId;
   try{
-    const body=editing?{action:"update",id:editingProductId,...data}:{action:"add",...data
+    const body=editing?{action:"update",id:editingProductId,...data}:{action:"add",...data};
+    const d=await apiRequest(ENDPOINTS.products,{method:"PUT",body:JSON.stringify(body)});
+    products=Array.isArray(d.products)?d.products:[];renderProducts();resetProductForm();
+    prodNotice(editing?"Product updated.":"Product added. Home page par 30 second ke andar dikh jayega.","success");
+  }catch(err){prodNotice(err.message,"error")}
+  finally{busy.prod=false;$("prodSubmit").disabled=false}
+});
+$("prodRefresh").addEventListener("click",loadProducts);
+
+setImageFields([]);applyPreset();
+
+/* ---------- Dock navigation ----------
+   Desktop (>720px): floating vertical dock with all 10 tabs.
+   Mobile: bottom pill with 5 tabs, swaps between two sets.
+   Glass is plain dark blur: no SVG displacement, so no colour fringing. */
+const ALL_TABS=["home","users","orders","products","notifications","block","discounts","taxes","memberships","support"];
+const NAV_SETS=[ALL_TABS.slice(0,5),ALL_TABS.slice(5)];
+const PAD=4;
+const mq=window.matchMedia("(min-width:721px)");
+const isDesk=()=>mq.matches;
+let navSet=0,navDrag=null,navSwapTimer=null;
+const navTabs=()=>isDesk()?ALL_TABS:NAV_SETS[navSet];
+function setIndexFor(tab){return NAV_SETS.findIndex(x=>x.includes(tab))}
+function navButtons(){return [].slice.call($("navPill").querySelectorAll("button"))}
+function renderNav(idx){
+  navSet=idx;
+  $("navPill").innerHTML=navTabs().map(t=>`<button type="button" data-tab="${t}" aria-label="${escapeHTML(TABS[t].title)}" title="${escapeHTML(TABS[t].title)}"><i class="ph ph-${TABS[t].icon}"></i></button>`).join("");
+  navButtons().forEach(b=>b.classList.toggle("active",b.dataset.tab===currentTab));
+}
+/* sl = size of one slot along the main axis, L = total length of dock */
+function navMetrics(){
+  const shell=$("navShell"),ind=$("navIndicator");
+  if(isDesk()){
+    const N=ALL_TABS.length,sl=Math.max(36,Math.min(54,Math.floor((window.innerHeight-90-PAD*2)/N)));
+    shell.style.height=(sl*N+PAD*2)+"px";
+    ind.style.width=(shell.offsetWidth-PAD*2)+"px";ind.style.height=sl+"px";
+    return {desk:true,N,sl,L:sl*N+PAD*2};
+  }
+  const W=shell.offsetWidth;if(!W)return null;
+  const N=5,sl=(W-PAD*2)/N,h=Math.min(42,Math.floor(sl/1.4));
+  shell.style.height=(h+PAD*2)+"px";
+  ind.style.width=sl+"px";ind.style.height=h+"px";
+  return {desk:false,N,sl,L:W};
+}
+function setIndPos(pos,m){$("navIndicator").style.transform=m.desk?"translate("+PAD+"px,"+pos+"px)":"translate("+pos+"px,"+PAD+"px)"}
+function positionIndicator(){
+  const m=navMetrics();if(!m)return;
+  const idx=navTabs().indexOf(currentTab),ind=$("navIndicator");
+  ind.classList.remove("dragging");
+  if(idx<0){ind.style.opacity="0";return}
+  ind.style.opacity="1";setIndPos(PAD+idx*m.sl,m);lightIcons(null,m);
+}
+function lightIcons(center,m){
+  m=m||navMetrics();if(!m)return;
+  $("navPill").classList.toggle("pressing",center!=null);
+  navButtons().forEach((b,i)=>{
+    if(center==null){b.style.transform="";b.classList.remove("lit");return}
+    const bc=PAD+i*m.sl+m.sl/2,f=Math.max(0,1-Math.abs(center-bc)/(m.sl*.9));
+    b.style.transform="scale("+(1+.3*f)+")";b.classList.toggle("lit",f>.55);
+  });
+}
+function swapNavSet(idx){
+  const box=$("navPill"),ind=$("navIndicator");
+  if(!$("navShell").offsetWidth){renderNav(idx);return}
+  clearTimeout(navSwapTimer);
+  box.style.setProperty("--dir",idx>navSet?1:-1);
+  ind.classList.add("grown");box.classList.add("out");
+  navSwapTimer=setTimeout(()=>{
+    renderNav(idx);box.classList.remove("out");box.classList.add("in-start");void box.offsetWidth;box.classList.remove("in-start");
+    positionIndicator();setTimeout(()=>ind.classList.remove("grown"),260);
+  },190);
+}
+function updateNav(tab){
+  const idx=setIndexFor(tab);
+  if(!isDesk()&&idx>=0&&idx!==navSet)swapNavSet(idx);
+  else{navButtons().forEach(b=>b.classList.toggle("active",b.dataset.tab===tab));positionIndicator()}
+}
+/* Press, hold and drag the glass lens; release to select */
+(function(){
+  const shell=$("navShell"),ind=$("navIndicator");
+  const coord=(e,r,m)=>m.desk?e.clientY-r.top:e.clientX-r.left;
+  function follow(c,instant){
+    const m=navDrag.m;c=Math.max(PAD+m.sl/2,Math.min(c,m.L-PAD-m.sl/2));navDrag.center=c;
+    ind.classList.toggle("dragging",instant);setIndPos(c-m.sl/2,m);lightIcons(c,m);
+  }
+  shell.addEventListener("pointerdown",e=>{
+    if(e.button>0||!e.isPrimary)return;
+    const m=navMetrics();if(!m)return;
+    const rect=shell.getBoundingClientRect(),ir=ind.getBoundingClientRect(),p=coord(e,rect,m);
+    const cur=(m.desk?ir.top-rect.top:ir.left-rect.left)+m.sl/2;
+    const onInd=ind.style.opacity!=="0"&&Math.abs(p-cur)<=m.sl/2;
+    navDrag={pid:e.pointerId,s:p,m,rect,moved:false,off:onInd?p-cur:0,center:cur};
+    try{shell.setPointerCapture(e.pointerId)}catch(err){}
+    ind.style.opacity="1";ind.classList.add("grown");follow(p-navDrag.off,false);
+  });
+  shell.addEventListener("pointermove",e=>{
+    if(!navDrag||e.pointerId!==navDrag.pid)return;
+    const p=coord(e,navDrag.rect,navDrag.m);
+    if(!navDrag.moved&&Math.abs(p-navDrag.s)>3)navDrag.moved=true;
+    follow(p-navDrag.off,navDrag.moved);
+  });
+  function end(e,cancel){
+    if(!navDrag||e.pointerId!==navDrag.pid)return;
+    const m=navDrag.m,idx=Math.max(0,Math.min(m.N-1,Math.round((navDrag.center-PAD-m.sl/2)/m.sl)));
+    navDrag=null;ind.classList.remove("grown","dragging");lightIcons(null,m);
+    const tab=navTabs()[idx];
+    if(cancel||tab===currentTab)positionIndicator();else showTab(tab);
+  }
+  shell.addEventListener("pointerup",e=>end(e,false));
+  shell.addEventListener("pointercancel",e=>end(e,true));
+})();
+const onDockResize=()=>{if(!navDrag)positionIndicator()};
+window.addEventListener("resize",onDockResize);
+window.addEventListener("load",()=>requestAnimationFrame(positionIndicator));
+(mq.addEventListener?mq.addEventListener.bind(mq,"change"):mq.addListener.bind(mq))(()=>{renderNav(Math.max(0,setIndexFor(currentTab)));positionIndicator()});
+
+function openMenu(){$("menuBackdrop").classList.add("open");$("menuSheet").classList.add("open");document.body.style.overflow="hidden"}
+function closeMenu(){$("menuBackdrop").classList.remove("open");$("menuSheet").classList.remove("open");if(!$("userSheet").classList.contains("open"))document.body.style.overflow=""}
+$("topMenuBtn").addEventListener("click",openMenu);
+$("menuClose").addEventListener("click",closeMenu);
+$("menuBackdrop").addEventListener("click",closeMenu);
+
+/* ---------- Init ---------- */
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeUserSheet();closeApiDialog();closeMenu()}});
+["nCategory","notificationCategory"].forEach(id=>fillCategories($(id),false));
+["hCategory","historyCategoryFilter"].forEach(id=>fillCategories($(id),true));
+$("nCategory").value="orders";
+setAudience("user");
+setConnection(false,"Not connected");
+const startTab=(location.hash||"#home").slice(1),firstTab=TABS[startTab]?startTab:"home";
+currentTab=firstTab;renderNav(Math.max(0,setIndexFor(firstTab)));
+showTab(firstTab);
+loadUsers();
+</script>
+</body>
+</html>
