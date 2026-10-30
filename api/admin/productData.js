@@ -9,7 +9,7 @@
 //
 // Environment variables (Vercel):
 //   ADMIN_API_KEY             -> same key used by the admin panel
-//   FIREBASE_SERVICE_ACCOUNT  -> service account JSON (same as api/product.js)
+//   FIREBASE_SERVICE_ACCOUNT  -> service account JSON (same as api/products.js)
 
 const admin = require("firebase-admin");
 const crypto = require("crypto");
@@ -121,19 +121,22 @@ function urlOrEmpty(value, label) {
   return s;
 }
 
-/* Validate and normalise every product field used by api/product.js */
+/* Validate and normalise every product field used by api/products.js */
 function cleanProduct(input) {
   if (!input || typeof input !== "object") throw new HttpError(400, "Product data is missing.");
 
+  // Source ID is optional now (products are loaded from Firebase only)
   const sourceId = String(input.sourceId == null ? "" : input.sourceId).trim();
-  if (!/^\d+$/.test(sourceId)) {
-    throw new HttpError(400, "Source ID must be a number (DummyJSON product ID).");
+  if (sourceId && !/^\d+$/.test(sourceId)) {
+    throw new HttpError(400, "Source ID must be a number.");
   }
 
   const images = list(input.images, 30, 2000, "Images");
   images.forEach(u => urlOrEmpty(u, "Image URL"));
 
-  let thumbnail = urlOrEmpty(input.thumbnail || input.image, "Thumbnail");
+  // If thumbnail is empty, the first image is used
+  const thumbnail =
+    urlOrEmpty(input.thumbnail || input.image, "Thumbnail") || images[0] || "";
 
   let dimensions = null;
   if (input.dimensions && typeof input.dimensions === "object") {
@@ -161,14 +164,18 @@ function cleanProduct(input) {
       }));
   }
 
+  const price = num(input.price, "Price", { min: 0, max: 1e9 }); // INR
+
   return {
-    sourceId,
+    sourceId: sourceId || null,
     title: str(input.title, 200, "Title", true),
     description: str(input.description, 5000, "Description"),
     category: str(input.category, 100, "Category"),
     brand: str(input.brand, 100, "Brand"),
-    price: num(input.price, "Price", { min: 0, max: 1e9 }),            // INR
+    price,
+    originalPrice: price,
     originalPriceUSD: num(input.originalPriceUSD, "Original price (USD)", { min: 0, max: 1e9 }),
+    discountPercentage: 0,
     rating: num(input.rating, "Rating", { min: 0, max: 5 }),
     stock: num(input.stock, "Stock", { min: 0, max: 1e9, integer: true }),
     availabilityStatus: str(input.availabilityStatus, 60, "Availability status"),
@@ -277,11 +284,14 @@ async function handleProducts(db, method, body) {
     const ref = db.ref("products").child(id);
     if (!(await ref.once("value")).exists()) throw new HttpError(404, "Product not found.");
     const clean = cleanProduct(body);
+    delete clean.sourceId; // keep the existing sourceId untouched
     await ref.update(forFirebase({ ...clean, updatedAt: Date.now() }));
   } else if (action === "remove") {
     const id = String(body.id || "");
     if (!PRODUCT_ID_PATTERN.test(id)) throw new HttpError(400, "A valid product ID is required.");
     await db.ref("products").child(id).remove();
+    // Remember the deletion so the one-time DummyJSON import never brings it back
+    await db.ref("removedProducts").child(id).set(true);
   } else {
     throw new HttpError(400, "Unknown action. Use add, update or remove.");
   }
